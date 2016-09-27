@@ -64,7 +64,7 @@ public class LogicBoard {
         }
     }
 
-    // Checks if a queens move is possible
+    // Checks if a queens move is possible and takes board boundaries into account to prevent out of boundary issues
     public boolean isMovePossible(int[][] board, int x, int y) {
         int i, j;
         int k, l;
