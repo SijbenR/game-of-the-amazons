@@ -3,7 +3,7 @@ package group4.gameoftheamazons.logic;
 public class LogicBoard {
 
     public int width, height;
-    public int[][] boardArray, currentBoard;
+    private int[][] boardArray, currentBoard;
 
     // According to sprite
     // {0 = empty, 1 = white queen, 2 = black queen, 3 = arrow, 4 = possible queen spot, 5 = possible arrow spot}
@@ -30,7 +30,7 @@ public class LogicBoard {
     }
 
     // Four white queens (player 1) and four black queens (player 2) to start with
-    public void initializeBoard() {
+    private void initializeBoard() {
         boardArray[0][3] = 2;
         boardArray[0][6] = 2;
         boardArray[3][0] = 2;
@@ -64,7 +64,7 @@ public class LogicBoard {
         }
     }
 
-    // Calculate possible moves
+    // Calculates possible moves and takes board boundaries into account to prevent out of boundary issues.
     public int[][] calculatePossibleMoves(int[][] board, int xStart, int yStart, int pieceIndex) {
         int i, j;
         int k, l;
@@ -101,6 +101,7 @@ public class LogicBoard {
             } else {
                 break;
             }
+            // hellos
             l--;
         }
 
