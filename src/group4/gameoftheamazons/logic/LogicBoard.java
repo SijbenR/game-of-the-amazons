@@ -64,6 +64,77 @@ public class LogicBoard {
         }
     }
 
+    // Checks if a queens move is possible
+    public boolean isMovePossible(int[][] board, int x, int y) {
+        int i, j;
+        int k, l;
+        int length = board.length;
+        boolean possible = false;
+        i = y - 1; j = x - 1;
+
+        // Direction: top vertical
+        k = i - 1;
+        if (k >= 0) {
+            if (board[k][j] == 0) {
+                possible = true;
+            }
+        }
+        // Direction: bottom vertical
+        k = i + 1;
+        if (k < length) {
+            if (board[k][j] == 0) {
+                possible = true;
+            }
+        }
+        // Direction: left horizontal
+        l = j - 1;
+        if (l >= 0) {
+            if (board[i][l] == 0) {
+                possible = true;
+            }
+        }
+        // Direction: right horizontal
+        l = j + 1;
+        if (l < length) {
+            if (board[i][l] == 0) {
+                possible = true;
+            }
+        }
+        // Direction: top right diagonal
+        k = i - 1; l = j + 1;
+        if (k >= 0 && l < length) {
+            if (board[k][l] == 0) {
+                possible = true;
+            }
+        }
+        // Direction: top left diagonal
+        k = i - 1; l = j - 1;
+        if (k >= 0 && l >= 0) {
+            if (board[k][l] == 0) {
+                possible = true;
+            }
+        }
+        // Direction: bottom right diagonal
+        k = i + 1; l = j + 1;
+        if (k < length && l < length) {
+            if (board[k][l] == 0) {
+                possible = true;
+            }
+        }
+        // Direction: bottom left diagonal
+        k = i + 1; l = j - 1;
+        if (k < length && l >= 0) {
+            if (board[k][l] == 0) {
+                possible = true;
+            }
+        }
+
+        if (!possible) {
+            System.out.println("This queen is not able to move anymore, choose another one!");
+        }
+        return possible;
+    }
+
     // Calculates possible moves and takes board boundaries into account to prevent out of boundary issues.
     public int[][] calculatePossibleMoves(int[][] board, int xStart, int yStart, int pieceIndex) {
         int i, j;
@@ -203,7 +274,6 @@ public class LogicBoard {
                 k++; l--;
             }
         }
-
         return board;
     }
 }

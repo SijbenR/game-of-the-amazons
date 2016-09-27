@@ -318,22 +318,26 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
 
         // Player 1
         if (player1) {
-            System.out.println("Player 1");
+            System.out.println("Player 1 (white)");
             if (selectQueen) {
-                System.out.println("Select queen - Player 1");
-                if (checkPiece(1)) {
-                    marker.clear(); markerCoordinates.clear();
+                System.out.println("Select queen - Player 1 (white)");
+                if (checkPiece(1) && logicBoard.isMovePossible(boardArray, gridXCor, gridYCor)) {
+                    marker.clear();
+                    markerCoordinates.clear();
                     currentPiece = 1;
                     GridCoordinate point = new GridCoordinate(gridXCor, gridYCor);
                     marker.add(new Rectangle2D.Double(gridXCor * width + 2, gridYCor * height + 2, width - 4, height - 4));
                     markerCoordinates.add(point);
-                    x = gridXCor*width; y = gridYCor*height;
                     logicBoard.calculatePossibleMoves(boardArray, point.x, point.y, 4);
-                    selectQueen = false; selectPossibleQueenSpot = true; updateNeeded = true;
+                    x = gridXCor * width;
+                    y = gridYCor * height;
+                    selectQueen = false;
+                    selectPossibleQueenSpot = true;
+                    updateNeeded = true;
                 }
             }
             if (selectPossibleQueenSpot) {
-                System.out.println("Select possible queen spot - Player 1");
+                System.out.println("Select possible queen spot - Player 1 (white)");
                 if (checkPiece(4)) {
                     GridCoordinate point = new GridCoordinate(gridXCor, gridYCor);
                     marker.add(new Rectangle2D.Double(gridXCor * width + 2, gridYCor * height + 2, width - 4, height - 4));
@@ -347,7 +351,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                 }
             }
             if (selectPossibleArrowSpot) {
-                System.out.println("Select possible arrow spot - Player 1");
+                System.out.println("Select possible arrow spot - Player 1 (white)");
                 if (checkPiece(5)) {
                     currentPiece = 3;
                     GridCoordinate point = new GridCoordinate(gridXCor, gridYCor);
@@ -362,10 +366,10 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
 
         // Player 2
         if (player2) {
-            System.out.println("Player 2");
+            System.out.println("Player 2 (black)");
             if (selectQueen) {
-                System.out.println("Select queen - Player 2");
-                if (checkPiece(2)) {
+                System.out.println("Select queen - Player 2 (black)");
+                if (checkPiece(2) && logicBoard.isMovePossible(boardArray, gridXCor, gridYCor)) {
                     marker.clear(); markerCoordinates.clear();
                     currentPiece = 2;
                     GridCoordinate point = new GridCoordinate(gridXCor, gridYCor);
@@ -377,7 +381,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                 }
             }
             if (selectPossibleQueenSpot) {
-                System.out.println("Select possible queen spot - Player 2");
+                System.out.println("Select possible queen spot - Player 2 (black)");
                 if (checkPiece(4)) {
                     GridCoordinate point = new GridCoordinate(gridXCor, gridYCor);
                     marker.add(new Rectangle2D.Double(gridXCor * width + 2, gridYCor * height + 2, width - 4, height - 4));
@@ -391,7 +395,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                 }
             }
             if (selectPossibleArrowSpot) {
-                System.out.println("Select possible arrow spot - Player 2");
+                System.out.println("Select possible arrow spot - Player 2 (black)");
                 if (checkPiece(5)) {
                     currentPiece = 3;
                     GridCoordinate point = new GridCoordinate(gridXCor, gridYCor);
@@ -399,6 +403,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                     markerCoordinates.add(point);
                     System.out.println("\nArrow move: (" + markerCoordinates.get(0).x + "," + markerCoordinates.get(0).y + ") -> (" + markerCoordinates.get(1).x + "," + markerCoordinates.get(1).y + ")");
                     selectPossibleArrowSpot = false; updateNeeded = false; startAnimation = true;
+                    //logicBoard.checkQueenPositions(boardArray);
                     player2 = false; player1 = true; selectQueen = true;
                 }
             }
