@@ -226,7 +226,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         GridCoordinate point = new GridCoordinate(column + 1, row + 1);
         markerCoordinates.add(point);
         System.out.println("Marker added | (x,y) = " + point.x + "," + point.y);
-        logicBoard.removePossibleMoves();
+        logicBoard.removePossibleMoves(boardArray);
         System.out.println("\nRemoved possible moves:");
         logicBoard.printBoard(boardArray);
         if (updateNeeded) {
@@ -234,6 +234,18 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
             System.out.println("Board updated:");
             logicBoard.printBoard(boardArray);
             marker.add(new Rectangle2D.Double(gridXCor * width + 2, gridYCor * height + 2, width - 4, height - 4));
+        }
+        if(logicBoard.isGameOver(boardArray, 1)) {
+            System.out.println("*******************************");
+            System.out.println("* Game is over, player 2 wins *");
+            System.out.println("*******************************");
+            player1 = false; player2 = false;
+        }
+        if(logicBoard.isGameOver(boardArray, 2)) {
+            System.out.println("*******************************");
+            System.out.println("* Game is over, player 1 wins *");
+            System.out.println("*******************************");
+            player1 = false; player2 = false;
         }
         counter++;
     }
@@ -403,7 +415,6 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                     markerCoordinates.add(point);
                     System.out.println("\nArrow move: (" + markerCoordinates.get(0).x + "," + markerCoordinates.get(0).y + ") -> (" + markerCoordinates.get(1).x + "," + markerCoordinates.get(1).y + ")");
                     selectPossibleArrowSpot = false; updateNeeded = false; startAnimation = true;
-                    //logicBoard.checkQueenPositions(boardArray);
                     player2 = false; player1 = true; selectQueen = true;
                 }
             }

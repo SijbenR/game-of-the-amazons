@@ -1,5 +1,9 @@
 package group4.gameoftheamazons.logic;
 
+import group4.gameoftheamazons.ui.GridCoordinate;
+
+import java.util.ArrayList;
+
 public class LogicBoard {
 
     public int width, height;
@@ -54,14 +58,58 @@ public class LogicBoard {
     }
 
     // Removes possible moves
-    public void removePossibleMoves() {
-        for (int i = 0; i < boardArray.length; i++) {
-            for (int j = 0; j < boardArray[0].length; j++) {
-                if (boardArray[i][j] == 4 || boardArray[i][j] == 5) {
-                    boardArray[i][j] = 0;
+    public int[][] removePossibleMoves(int[][] board) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j] == 4 || board[i][j] == 5) {
+                    board[i][j] = 0;
                 }
             }
         }
+        return board;
+    }
+
+    // Checks the status of the game (i.e. is every queen from a certain player locked in? if yes, then game over)
+    public boolean isGameOver(int[][] board, int index) {
+        int[][] tempBoard = new int[board.length][board[0].length];
+        int counter = 0;
+        boolean gameOver = false;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                tempBoard[i][j] = board[i][j];
+            }
+        }
+        tempBoard = removePossibleMoves(tempBoard);
+        ArrayList<GridCoordinate> queens = calculateQueenPositions(tempBoard, index);
+        System.out.println("* * * * * * * * * *");
+        printBoard(tempBoard);
+        System.out.println("* * * * * * * * * *");
+        System.out.println("The following queens are checked:");
+        for (int i = 0; i < queens.size(); i++) {
+            System.out.println("Queen of player " + index + " | x: " + queens.get(i).x + ", y: " + queens.get(i).y);
+            if (!isMovePossible(tempBoard, queens.get(i).x, queens.get(i).y)) {
+                counter++;
+                System.out.println("Counter: " + counter);
+                if (counter == 4) {
+                    gameOver = true;
+                }
+            }
+        }
+        return gameOver;
+    }
+
+    // Calculates queen positions
+    public ArrayList<GridCoordinate> calculateQueenPositions(int[][] board, int index) {
+        ArrayList<GridCoordinate> queens = new ArrayList<>();
+        for (int i = 0; i < board.length; i++ ) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (board[i][j] == index) {
+                    GridCoordinate boardPosition = new GridCoordinate(j + 1, i + 1);
+                    queens.add(boardPosition);
+                }
+            }
+        }
+        return queens;
     }
 
     // Checks if a queens move is possible and takes board boundaries into account to prevent out of boundary issues
@@ -136,17 +184,17 @@ public class LogicBoard {
     }
 
     // Calculates possible moves and takes board boundaries into account to prevent out of boundary issues.
-    public int[][] calculatePossibleMoves(int[][] board, int xStart, int yStart, int pieceIndex) {
+    public int[][] calculatePossibleMoves(int[][] board, int x, int y, int index) {
         int i, j;
         int k, l;
         int length = board.length;
-        i = yStart - 1; j = xStart - 1;
+        i = y - 1; j = x - 1;
 
         // Direction: top vertical
         k = i - 1;
         while (k >= 0) {
             if (board[k][j] == 0) {
-                board[k][j] = pieceIndex;
+                board[k][j] = index;
             } else {
                 break;
             }
@@ -157,7 +205,7 @@ public class LogicBoard {
         k = i + 1;
         while (k < length) {
             if (board[k][j] == 0) {
-                board[k][j] = pieceIndex;
+                board[k][j] = index;
             } else {
                 break;
             }
@@ -168,7 +216,7 @@ public class LogicBoard {
         l = j - 1;
         while (l >= 0) {
             if (board[i][l] == 0) {
-                board[i][l] = pieceIndex;
+                board[i][l] = index;
             } else {
                 break;
             }
@@ -180,7 +228,7 @@ public class LogicBoard {
         l = j + 1;
         while (l < length) {
             if (board[i][l] == 0) {
-                board[i][l] = pieceIndex;
+                board[i][l] = index;
             } else {
                 break;
             }
@@ -192,7 +240,7 @@ public class LogicBoard {
         if (k >= l) {
             while (k >= 0 && l < length) {
                 if (board[k][l] == 0) {
-                    board[k][l] = pieceIndex;
+                    board[k][l] = index;
                 } else {
                     break;
                 }
@@ -201,7 +249,7 @@ public class LogicBoard {
         } else {
             while (k >= 0 && l < length) {
                 if (board[k][l] == 0) {
-                    board[k][l] = pieceIndex;
+                    board[k][l] = index;
                 } else {
                     break;
                 }
@@ -214,7 +262,7 @@ public class LogicBoard {
         if (k >= l) {
             while (l >= 0 && l < length) {
                 if (board[k][l] == 0) {
-                    board[k][l] = pieceIndex;
+                    board[k][l] = index;
                 } else {
                     break;
                 }
@@ -223,7 +271,7 @@ public class LogicBoard {
         } else {
             while (k >= 0 && l < length) {
                 if (board[k][l] == 0) {
-                    board[k][l] = pieceIndex;
+                    board[k][l] = index;
                 } else {
                     break;
                 }
@@ -236,7 +284,7 @@ public class LogicBoard {
         if (k >= l) {
             while (l >= 0 && k < length) {
                 if (board[k][l] == 0) {
-                    board[k][l] = pieceIndex;
+                    board[k][l] = index;
                 } else {
                     break;
                 }
@@ -245,7 +293,7 @@ public class LogicBoard {
         } else {
             while (k >= 0 && l < length) {
                 if (board[k][l] == 0) {
-                    board[k][l] = pieceIndex;
+                    board[k][l] = index;
                 } else {
                     break;
                 }
@@ -258,7 +306,7 @@ public class LogicBoard {
         if (k >= l) {
             while (l >= 0 && k < length) {
                 if (board[k][l] == 0) {
-                    board[k][l] = pieceIndex;
+                    board[k][l] = index;
                 } else {
                     break;
                 }
@@ -267,7 +315,7 @@ public class LogicBoard {
         } else {
             while (l >= 0 && k < length) {
                 if (board[k][l] == 0) {
-                    board[k][l] = pieceIndex;
+                    board[k][l] = index;
                 } else {
                     break;
                 }
