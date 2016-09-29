@@ -1,7 +1,6 @@
 package group4.gameoftheamazons.logic;
 
 import group4.gameoftheamazons.ui.GridCoordinate;
-
 import java.util.ArrayList;
 
 public class LogicBoard {
@@ -69,7 +68,7 @@ public class LogicBoard {
         return board;
     }
 
-    // Checks the status of the game (i.e. is every queen from a certain player locked in? if yes, then game over)
+    // Checks whether the game is over (i.e. is every queen from a certain player locked in? if yes, then game over)
     public boolean isGameOver(int[][] board, int index) {
         int[][] tempBoard = new int[board.length][board[0].length];
         int counter = 0;
@@ -90,7 +89,7 @@ public class LogicBoard {
             if (!isMovePossible(tempBoard, queens.get(i).x, queens.get(i).y)) {
                 counter++;
                 System.out.println("Counter: " + counter);
-                if (counter == 4) {
+                if (counter == queens.size()) {
                     gameOver = true;
                 }
             }
@@ -178,7 +177,7 @@ public class LogicBoard {
         }
 
         if (!possible) {
-            System.out.println("This queen is not able to move anymore, choose another one!");
+            System.out.println("This queen is not able to move anymore!");
         }
         return possible;
     }
