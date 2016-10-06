@@ -15,6 +15,7 @@ public class Screen {
     private GameBoard gameBoard;
     private JButton button1, button2, button3, button4, button5, button6, button7, button8;
     private String message;
+    private int counter;
 
     public int sizeX;
     public int sizeY;
@@ -31,37 +32,42 @@ public class Screen {
         controlPanel = new ControlPanel(sizeX, sizeY - sizeX);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        frame.setSize(sizeX + gridX*2, sizeY + gridY*2 + 64);
+        frame.setSize(sizeX + gridX*2 - 8, sizeY + gridY*2 + 60 - 4);
         frame.add(gameBoard);
         frame.add(controlPanel, BorderLayout.SOUTH);
         addButtons();
         addListeners();
         frame.setTitle("The Game Of The Amazons");
         frame.setVisible(true);
+        counter = gameBoard.getCounter();
     }
 
     public void addButtons() {
-        button1 = new JButton("Path");
+        button1 = new JButton("Print");
         button2 = new JButton("Move");
         button3 = new JButton("End");
         button4 = new JButton("Restart");
         button5 = new JButton("Save");
-        button6 = new JButton("Print");
+        button6 = new JButton("Redo");
         button7 = new JButton("Undo");
         button8 = new JButton("Restore");
         controlPanel.add(button7);
+        controlPanel.add(button6);
         controlPanel.add(button5);
         controlPanel.add(button8);
         controlPanel.add(button4);
-
+        controlPanel.add(button1);
     }
 
     public void addListeners() {
         button1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                message = "You can now set the path of the movement.";
-                //JOptionPane.showMessageDialog(frame, message);
-                gameBoard.setMode(true, false, false, false);
+                int size = gameBoard.getBoardStatesSize();
+                for (int i = 0; i < size; i++) {
+                    System.out.println("\nBoard-index: " + i);
+                    System.out.println("-------------------");
+                    gameBoard.printBoard(gameBoard.getBoardStates().get(i));
+                }
             }
         });
         button2.addActionListener(new ActionListener() {
@@ -91,6 +97,7 @@ public class Screen {
                 message = "Your game has been reset. You can now start playing again.";
                 //JOptionPane.showMessageDialog(frame, message);
                 gameBoard.setMode(true, false, false, false);
+                counter = 0;
             }
         });
         button5.addActionListener(new ActionListener() {
@@ -99,16 +106,28 @@ public class Screen {
                 showSaveFileDialog();
             }
         });
+        // Redo
         button6.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                gameBoard.setMode(false, false, false, true);
-                print();
+                int index = gameBoard.getBoardStatesSize() - 1;
+                if ((index + counter) < index) {
+                    counter++;
+                }
+                gameBoard.returnBoard(index + counter);
+                frame.repaint();
+                System.out.println("index: " + (index + counter));
             }
         });
+        // Undo
         button7.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                gameBoard.undo();
+                int index = gameBoard.getBoardStatesSize() - 1;
+                if ((index + counter) > 0) {
+                    counter--;
+                }
+                gameBoard.returnBoard(index + counter);
                 frame.repaint();
+                System.out.println("index: " + (index + counter));
             }
         });
         button8.addActionListener(new ActionListener() {

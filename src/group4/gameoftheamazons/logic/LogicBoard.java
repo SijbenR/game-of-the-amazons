@@ -1,12 +1,19 @@
 package group4.gameoftheamazons.logic;
 
 import group4.gameoftheamazons.ui.GridCoordinate;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class LogicBoard {
 
     public int width, height;
     private int[][] boardArray, currentBoard;
+    private int[][] example1, example2;
+    private boolean DEBUG = false;
+    private ArrayList<int[][]> boardList = new ArrayList<>();
+    private ArrayList<int[][]> boardStates = new ArrayList<>();
 
     // According to sprite
     // {0 = empty, 1 = white queen, 2 = black queen, 3 = arrow, 4 = possible queen spot, 5 = possible arrow spot}
@@ -14,8 +21,65 @@ public class LogicBoard {
         this.width = width;
         this.height = height;
         boardArray = new int[width][height];
+        //initializeBoard();
+        example1 = new int[][]{
+                {0, 0, 0, 2, 2, 2, 2, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
+                {0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
+                {0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
+                {0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
+                {0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
+                {0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
+        };
+        example2 = new int[][]{
+                {0, 0, 0, 2, 0, 0, 2, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {2, 0, 0, 0, 0, 0, 0, 0, 0, 2},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 1, 0, 0, 0},
+        };
+        boardList.add(example1);
+        boardList.add(example2);
         initializeBoard();
+        boardStates.clear();
     }
+
+    public int[][] getBoard(int index) {
+        return boardStates.get(index);
+    }
+
+    public int getBoardStatesSize() {
+        return boardStates.size();
+    }
+
+    public void saveBoard(int[][] board) {
+        int[][] tempBoard = new int[board.length][board[0].length];
+        int[][] lastBoard;
+        int last;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                tempBoard[i][j] = board[i][j];
+            }
+        }
+        tempBoard = Arrays.copyOf(tempBoard, tempBoard.length);
+        boardStates.add(tempBoard);
+        if (boardStates.size() > 0) {
+            for (int i = 0; i < boardStates.size() - 1; i++) {
+                if (Arrays.equals(boardStates.get(i), boardStates.get(i+1))) {
+                    boardStates.remove(i);
+                }
+            }
+        }
+    }
+
 
     public void printBoard(int[][] array) {
         String s;
@@ -42,6 +106,10 @@ public class LogicBoard {
         boardArray[6][9] = 1;
         boardArray[9][3] = 1;
         boardArray[9][6] = 1;
+    }
+
+    public ArrayList<int[][]> getBoardStates() {
+        return boardStates;
     }
 
     public int[][] getBoard() {
@@ -80,15 +148,21 @@ public class LogicBoard {
         }
         tempBoard = removePossibleMoves(tempBoard);
         ArrayList<GridCoordinate> queens = calculateQueenPositions(tempBoard, index);
-        System.out.println("* * * * * * * * * *");
-        printBoard(tempBoard);
-        System.out.println("* * * * * * * * * *");
-        System.out.println("The following queens are checked:");
+        if (DEBUG) {
+            System.out.println("* * * * * * * * * *");
+            printBoard(tempBoard);
+            System.out.println("* * * * * * * * * *");
+            System.out.println("The following queens are checked:");
+        }
         for (int i = 0; i < queens.size(); i++) {
-            System.out.println("Queen of player " + index + " | x: " + queens.get(i).x + ", y: " + queens.get(i).y);
+            if (DEBUG) {
+                System.out.println("Queen of player " + index + " | x: " + queens.get(i).x + ", y: " + queens.get(i).y);
+            }
             if (!isMovePossible(tempBoard, queens.get(i).x, queens.get(i).y)) {
                 counter++;
-                System.out.println("Counter: " + counter);
+                if (DEBUG) {
+                    System.out.println("Counter: " + counter);
+                }
                 if (counter == queens.size()) {
                     gameOver = true;
                 }
