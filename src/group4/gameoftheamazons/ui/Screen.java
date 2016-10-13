@@ -59,6 +59,7 @@ public class Screen {
         controlPanel.add(button1);
     }
 
+    // Listeners
     public void addListeners() {
         button1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
