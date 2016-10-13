@@ -256,7 +256,7 @@ public class LogicBoard {
         return possible;
     }
 
-    // Calculates possible moves and takes board boundaries into account to prevent out of boundary issues.
+    // Calculates possible moves and takes board boundaries into account to prevent out of boundary issues..
     public int[][] calculatePossibleMoves(int[][] board, int x, int y, int index) {
         int i, j;
         int k, l;
