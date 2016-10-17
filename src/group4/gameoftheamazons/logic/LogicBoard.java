@@ -9,6 +9,7 @@ import java.util.Arrays;
 public class LogicBoard {
 
     public int width, height;
+
     private int[][] boardArray, currentBoard;
     private int[][] example1, example2;
     private boolean DEBUG = false;
@@ -397,4 +398,59 @@ public class LogicBoard {
         }
         return board;
     }
+
+    public void save(int[][] board) {
+        int[] list = arrayToList(board);
+        int[][] array = listToArray(list);
+        System.out.println("\nCurrent board (List):");
+        System.out.println("---------------------");
+        System.out.println(listToString(list) + "\n");
+        System.out.println("\nCurrent board (Array):");
+        System.out.println("----------------------");
+        printBoard(array);
+    }
+
+    public int[] arrayToList(int[][] array) {
+        int[] list = new int[array.length * array.length];
+        int k = 0;
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array.length; j++) {
+                list[k] = array[i][j];
+                k++;
+            }
+        }
+        return list;
+    }
+
+    public int[][] listToArray(int[] list) {
+        int size = (int) Math.sqrt(list.length);
+        int[][] array = new int[size][size];
+        int k = 0;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                array[i][j] = list[k];
+                k++;
+            }
+        }
+        return array;
+    }
+
+    public String listToString(int[] list) {
+        String string = "";
+        for (int i = 0; i < list.length; i++) {
+            string += list[i];
+        }
+        return string;
+    }
+
+    public String toString(int[][] board) {
+        String string = "";
+        int[] list = arrayToList(board);
+        for (int i = 0; i < list.length; i++) {
+            string += list[i];
+        }
+        return string;
+    }
+
+
 }

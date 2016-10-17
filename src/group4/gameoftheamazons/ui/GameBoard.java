@@ -28,7 +28,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
     private LogicBoard logicBoard;
     private boolean setPath = false, setStart = false, setEnd = false, startAnimation = false;
     private boolean entersBoard = false;
-    private boolean player1 = true, player2 = false;
+    private boolean player1 = false, player2 = false;
     private boolean printMe1, printMe2, printMe3;
     private boolean selectQueen = true, selectPossibleQueenSpot = false, selectPossibleArrowSpot = false;
     private boolean updateNeeded;
@@ -40,6 +40,8 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
     public int width;
     public int height;
     public int[][] boardArray, tempArray;
+
+    public Screen screen;
 
     ArrayList<Shape> cells = new ArrayList<>();
     ArrayList<Shape> marker = new ArrayList<>();
@@ -68,10 +70,10 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
     }
 
     // Sets the mode
-    public void setMode(boolean setPath, boolean setStart, boolean setEnd, boolean startAnimation) {
+    public void setMode(boolean setPath, boolean player1, boolean player2, boolean startAnimation) {
         this.setPath = setPath;
-        this.setStart = setStart;
-        this.setEnd = setEnd;
+        this.player1 = player1;
+        this.player2 = player2;
         this.startAnimation = startAnimation;
     }
 
@@ -99,6 +101,10 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         logicBoard.printBoard(board);
     }
 
+    public void save(int[][] board) {
+        logicBoard.save(board);
+    }
+
     // Paint method
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -106,7 +112,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         // Anti-aliasing (smooth rendering)
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // Bilinear interpolation (smooth scaling, slow down system)
-        //g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
         // Load Sprite Images
         try {
@@ -125,6 +131,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         for (int i = 0; i < letter.length; i++) {
             g2.drawImage(letter[i], (i + 1) * width, 0 * height, width, height, this);
             g2.drawImage(letter[i], (i + 1) * width, (letter.length + 1) * height, width, height, this);
+
         }
 
         // Boardfigures
@@ -256,12 +263,14 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
             System.out.println("*******************************");
             System.out.println("* Game is over, player 2 wins *");
             System.out.println("*******************************");
+            screen.setLabel("The game is over. Player 2 (black) wins.");
             player1 = false; player2 = false;
         }
         if(logicBoard.isGameOver(boardArray, 2)) {
             System.out.println("*******************************");
             System.out.println("* Game is over, player 1 wins *");
             System.out.println("*******************************");
+            screen.setLabel("The game is over. Player 1 (white) wins.");
             player1 = false; player2 = false;
         }
 
@@ -348,6 +357,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         // Player 1
         if (player1) {
             System.out.println("\nPlayer 1 (white)");
+            screen.setLabel("Player 1 (white) is up. Please select your amazon.");
             if (selectQueen) {
                 System.out.println("Select queen - Player 1 (white)");
                 if (checkPiece(1) && logicBoard.isMovePossible(boardArray, gridXCor, gridYCor)) {
@@ -367,6 +377,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
             }
             if (selectPossibleQueenSpot) {
                 System.out.println("Select possible queen spot - Player 1 (white)");
+                screen.setLabel("Select where to move the amazon.");
                 if (checkPiece(4)) {
                     GridCoordinate point = new GridCoordinate(gridXCor, gridYCor);
                     marker.add(new Rectangle2D.Double(gridXCor * width + 2, gridYCor * height + 2, width - 4, height - 4));
@@ -384,6 +395,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
             }
             if (selectPossibleArrowSpot) {
                 System.out.println("Select possible arrow spot - Player 1 (white)");
+                screen.setLabel("Select where to shoot an arrow.");
                 if (checkPiece(5)) {
                     currentPiece = 3;
                     GridCoordinate point = new GridCoordinate(gridXCor, gridYCor);
@@ -402,6 +414,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         // Player 2
         if (player2) {
             System.out.println("\nPlayer 2 (black)");
+            screen.setLabel("Player 2 (black) is up. Please select your amazon.");
             if (selectQueen) {
                 System.out.println("Select queen - Player 2 (black)");
                 if (checkPiece(2) && logicBoard.isMovePossible(boardArray, gridXCor, gridYCor)) {
@@ -420,6 +433,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
             if (selectPossibleQueenSpot) {
                 //logicBoard.saveBoard(boardArray);
                 System.out.println("Select possible queen spot - Player 2 (black)");
+                screen.setLabel("Select where to move the amazon.");
                 if (checkPiece(4)) {
                     GridCoordinate point = new GridCoordinate(gridXCor, gridYCor);
                     marker.add(new Rectangle2D.Double(gridXCor * width + 2, gridYCor * height + 2, width - 4, height - 4));
@@ -436,6 +450,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
             }
             if (selectPossibleArrowSpot) {
                 System.out.println("Select possible arrow spot - Player 2 (black)");
+                screen.setLabel("Select where to shoot an arrow.");
                 if (checkPiece(5)) {
                     currentPiece = 3;
                     GridCoordinate point = new GridCoordinate(gridXCor, gridYCor);
@@ -446,6 +461,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                     }
                     selectPossibleArrowSpot = false; updateNeeded = false; startAnimation = true;
                     player2 = false; player1 = true; selectQueen = true;
+                    screen.setLabel("Player 1 (white) is up. Please select your amazon.");
                 }
             }
         }
@@ -464,9 +480,16 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
     }
 
     // Returns the content of the arraylist as a string
-    public String toString() {
-        String string = "";
-        return string;
+    public String toString(int[][] board) {
+        return logicBoard.toString(board);
+    }
+
+    public String listToString(int[] list) {
+        return logicBoard.listToString(list);
+    }
+
+    public int[][] listToArray(int[] list) {
+        return logicBoard.listToArray(list);
     }
 
     public void mouseClicked(MouseEvent e) {

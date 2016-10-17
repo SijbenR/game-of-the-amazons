@@ -5,7 +5,7 @@ import group4.gameoftheamazons.ui.Screen;
 public class Game {
 
     public static void main(String[] args) {
-        new Screen(600, 600, 10, 10);
+        new Screen(500, 500, 10, 10);
     }
 
 }
