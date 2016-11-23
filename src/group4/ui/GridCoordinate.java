@@ -1,4 +1,4 @@
-package group4.gameoftheamazons.ui;
+package group4.ui;
 
 public class GridCoordinate {
 

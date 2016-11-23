@@ -1,87 +1,461 @@
-package group4.gameoftheamazons.logic;
+package group4.logic;
 
-import group4.gameoftheamazons.ui.GridCoordinate;
+import group4.ui.GridCoordinate;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import group4.Players.Player;
+import group4.ui.GridCoordinate;
+
 public class LogicBoard {
 
-    public int width, height;
+    private final int width = 10;
+    private final int height = 10;
 
-    private int[][] boardArray;
+    public final int wQueenVal = 1;
+    public final int bQueenVal = 2;
+    public final int arrowVal = 3;
 
-	private static int[][] currentBoard;
-    private int[][] example1, example2;
-    private boolean DEBUG = false;
-    private ArrayList<int[][]> boardList = new ArrayList<>();
+    public final int amazonPosVal = 4;
+    public final int arrowPosVal = 5;
+
+    private Player player1, player2, current;
+    private int[][] Grid = new int[height][width];
+
+
+    public boolean queenSelect;
+    public boolean arrowSpotSelect;
+
+    //private ArrayList<Move> Moves;
+    private ArrayList<tempBoard> Moves;
+    private int currentMoveIndex;
     private ArrayList<int[][]> boardStates = new ArrayList<>();
 
+    private GridCoordinate origin;
+
+
+    private boolean debugTurnIssues = false;
+    private boolean debugHistory = true;
+    private boolean printBoards = true;
+
+
+
+
     // According to sprite
-    // {0 = empty, 1 = white queen, 2 = black queen, 3 = arrow, 4 = possible queen spot, 5 = possible arrow spot}
-    public LogicBoard(int width, int height) {
-        this.width = width;
-        this.height = height;
-        boardArray = new int[width][height];
-        //initializeBoard();
-        example1 = new int[][]{
-                {0, 0, 0, 2, 2, 2, 2, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
-                {0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
-                {0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
-                {0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
-                {0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
-                {0, 0, 3, 3, 3, 3, 3, 3, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
-        };
-        example2 = new int[][]{
-                {0, 0, 0, 2, 0, 0, 2, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {2, 0, 0, 0, 0, 0, 0, 0, 0, 2},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 1, 0, 0, 1, 0, 0, 0},
-        };
-        boardList.add(example1);
-        boardList.add(example2);
+    // {0 = empty, 1 = white queen, 2 = black queen, 3 = arrow, 4 = possible
+    // queen spot, 5 = possible arrow spot}
+    public LogicBoard(Player player1, Player player2) {
+        this.player1 = player1;
+        this.player2 = player2;
+
+        if (player1.isFirst() == player2.isFirst()) {
+            player1.setFirst();
+            player2.setSecond();
+        }
+
+        if (player1.isFirst() == true) {
+            current = player1;
+        } else {
+            current = player2;
+        }
+
+        player1.setUpQueens();
+        player2.setUpQueens();
         initializeBoard();
-        boardStates.clear();
+
     }
 
-    public int[][] getBoard(int index) {
-        return boardStates.get(index);
+
+
+    public void printBoard() {
+        System.out.println("");
+        String s;
+        for (int i = 0; i < Grid.length; i++) {
+            for (int j = 0; j < Grid[0].length; j++) {
+                if (Grid[i][j] < 10) {
+                    s = "";
+                } else {
+                    s = "0";
+                }
+                System.out.print(s + Grid[i][j] + " ");
+            }
+            System.out.println("");
+        }
+        System.out.println("");
+    }
+
+    // Four white queens (player 1) and four black queens (player 2) to start
+    // with
+    private void initializeBoard() {
+        queenSelect = false;
+        arrowSpotSelect = false;
+        Moves = new ArrayList<>();
+		/*
+		queenSelect = true;
+		arrowSpotSelect = false;
+		*/
+        // For player1
+        GridCoordinate[] temp = player1.getAmazonsPosistions();
+
+        for (int i = 0; i < temp.length; i++) {
+            Grid[temp[i].y][temp[i].x] = wQueenVal /* + i */;
+        }
+
+        // For player2
+        temp = player2.getAmazonsPosistions();
+
+        for (int i = 0; i < temp.length; i++) {
+            Grid[temp[i].y][temp[i].x] = bQueenVal /* + i */;
+        }
+        currentMoveIndex = -1;
+        addMove();
+
+        System.out.println("CURRENT INDEX: " + currentMoveIndex + "\nCurrent Player: " + getCurrent() + "\nqueenSelect: " + queenSelect + "\narrowSpotSelect: " + arrowSpotSelect + "\n");
+    }
+
+    public int[][] getBoard() {
+        return Grid;
+    }
+
+
+
+    public GridCoordinate getOrigin()	{
+        return origin;
+    }
+
+    public String getBoardAsString()    {
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < Grid.length; i++)   {
+            for(int j = 0; j < Grid[0].length; j++) {
+                builder.append(Grid[i][j]);
+            }
+        }
+        return builder.toString();
+    }
+
+    public int[][] listToArray(int[] list) {
+        int size = (int) Math.sqrt(list.length);
+        int[][] array = new int[size][size];
+        int k = 0;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                array[i][j] = list[k];
+                k++;
+            }
+        }
+        return array;
+    }
+
+
+    public int[] arrayToList(int[][] array) {
+        int[] list = new int[array.length * array.length];
+        int k = 0;
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array.length; j++) {
+                list[k] = array[i][j];
+                k++;
+            }
+        }
+        return list;
+    }
+
+
+
+    public String toString(int[][] board) {
+        String string = "";
+        int[] list = arrayToList(board);
+        for (int i = 0; i < list.length; i++) {
+            string += list[i];
+        }
+        return string;
+    }
+
+    public ArrayList<int[][]> getBoardStates() {
+        return boardStates;
     }
 
     public int getBoardStatesSize() {
         return boardStates.size();
     }
 
-    public void saveBoard(int[][] board) {
-        int[][] tempBoard = new int[board.length][board[0].length];
-        int[][] lastBoard;
-        int last;
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[0].length; j++) {
-                tempBoard[i][j] = board[i][j];
-            }
+    public void printAllMoves()	{
+        int i = 0;
+        while(i < Moves.size())	{
+            System.out.println("Move: " + i);
+            Moves.get(i).print();
+            System.out.println("\n");
+            i++;
         }
-        tempBoard = Arrays.copyOf(tempBoard, tempBoard.length);
-        boardStates.add(tempBoard);
-        if (boardStates.size() > 0) {
-            for (int i = 0; i < boardStates.size() - 1; i++) {
-                if (Arrays.equals(boardStates.get(i), boardStates.get(i+1))) {
-                    boardStates.remove(i);
+    }
+
+
+
+    // Removes possible moves
+    public void removePossibleMoves() {
+        for (int i = 0; i < Grid.length; i++) {
+            for (int j = 0; j < Grid[0].length; j++) {
+                if (Grid[i][j] == amazonPosVal || Grid[i][j] == arrowPosVal) {
+                    Grid[i][j] = 0;
                 }
             }
         }
     }
+
+    public void setQueenOfCurrentOn(GridCoordinate point)	{
+        int x = point.x - 1;
+        int y = point.y - 1;
+
+        Grid[y][x] = getCurrent().getVal();
+    }
+
+    public void setQueenOfCurrentOn(int x, int y)	{
+        Grid[y][x] = getCurrent().getVal();
+    }
+
+    public void setQueenOfOpposing(GridCoordinate point)	{
+        int x = point.x - 1;
+        int y = point.y - 1;
+
+        if(current == player1)	{
+            Grid[y][x] = player2.getVal();
+        }
+        else 	{
+            Grid[y][x] = player1.getVal();
+        }
+    }
+
+    public void setArrowOn(int x, int y)	{
+        Grid[y][x] = arrowVal;
+        toggleTurn();
+    }
+
+    public void setArrowOn(GridCoordinate position)	{
+        int x = position.x - 1;
+        int y = position.y - 1;
+
+        Grid[y][x] = arrowVal;
+    }
+
+    public void setEmpty(GridCoordinate point)	{
+        int x = point.x - 1;
+        int y = point.y - 1;
+
+        Grid[y][x] = 0;
+    }
+
+
+    public void addMove()	{
+        int[][] t = copyBoard();
+        tempBoard tBoard = new tempBoard(t);
+
+        System.out.println("AddMove:\nMoveIndex: " + currentMoveIndex + "\nSize: " + Moves.size());
+
+        if(Moves.size() - 1 == currentMoveIndex)
+            Moves.add(tBoard);
+        else	{
+            while(Moves.size() - 1 > currentMoveIndex)	{
+                Moves.remove(Moves.size() - 1);
+            }
+            Moves.add(tBoard);
+
+
+        }
+
+        printAllMoves();
+
+        System.out.println("Last State");
+        printBoard(Moves.get(Moves.size() - 1).getMomentaryBoard());
+        currentMoveIndex++;
+
+
+    }
+
+    public int[][] copyBoard()	{
+
+        int length = Grid.length;
+        int[][] target = new int[length][Grid[0].length];
+        for (int i = 0; i < length; i++) {
+            System.arraycopy(Grid[i], 0, target[i], 0, Grid[i].length);
+        }
+        return target;
+
+    }
+
+    private void setBoard(int[][] newBoard)	{
+        for (int i = 0; i < Grid.length; i++) {
+            System.arraycopy(newBoard[i], 0, Grid[i], 0, newBoard[i].length);
+        }
+
+    }
+
+    public void redoMove()	{
+
+        if(currentMoveIndex < Moves.size() - 1)	{
+            tempBoard temp = Moves.get(currentMoveIndex);
+            int[][] temp2 = temp.getMomentaryBoard();
+            Grid = temp2;
+            currentMoveIndex++;
+            if(!arrowSpotSelect && queenSelect)	{
+                arrowSpotSelect = true;
+                queenSelect = false;
+            }
+            else if(arrowSpotSelect && !queenSelect)	{
+                toggleTurn();
+            }
+            else if(!arrowSpotSelect && !queenSelect)	{
+
+            }
+            else	{
+
+            }
+        }
+
+        if(!arrowSpotSelect && queenSelect)	{
+
+        }
+        else if(arrowSpotSelect && !queenSelect)	{
+
+        }
+        else if(!arrowSpotSelect && !queenSelect)	{
+
+        }
+        else	{
+
+        }
+    }
+
+
+    //SOMETHING DOES NOT WORK HERE
+    public void undoMove()	{
+
+        System.out.println("\nBefore Undo:\nCURRENT INDEX: " + currentMoveIndex + "\nSize: " + Moves.size() + "\nCurrent Player: " + getCurrent() + "\nqueenSelect: " + queenSelect + "\narrowSpotSelect: " + arrowSpotSelect + "\n");
+
+		/*
+		First case:			Queen has NOT been chosen for move
+			->	When goimg back possible go to previous state and allow opposite player to chose where to place Arrow
+
+		Second case:		Queen has been chosen for move but you wanna chosse a differnt queen
+			->	Remove possible options
+
+		Third case:			Queen has been placed and you are about to place the Arrow
+			->	Revert to previous state where queen was not yet moved
+
+		Fourth case:		Queen has been placed and you are about to place the Arrow
+			->	Revert to previous state where queen was not yet moved
+
+		 */
+
+        if(!arrowSpotSelect && !queenSelect)	{
+
+            if(Moves.size() > 1 && currentMoveIndex > 0)	{
+                --currentMoveIndex;
+                System.out.println("Index set to: " + currentMoveIndex);
+                tempBoard temp = Moves.get(currentMoveIndex);
+                int[][] temp2 = temp.getMomentaryBoard();
+
+                if(printBoards) {
+
+                    System.out.println("Supposingly new state");
+                    printBoard(temp2);
+                }
+
+                setBoard(temp2);
+
+                toggleTurn();
+
+                arrowSpotSelect = true;
+                queenSelect =  false;
+
+
+            }
+        }
+        else if(!arrowSpotSelect && queenSelect)	{
+            removePossibleMoves();
+            queenSelect = false;
+        }
+        else if(arrowSpotSelect && !queenSelect)	{
+            if(Moves.size() > 0 && currentMoveIndex > 0)	{
+                System.out.println("Entered");
+                --currentMoveIndex;
+                System.out.println("Index set to: " + currentMoveIndex);
+                tempBoard temp = Moves.get(currentMoveIndex);
+                int[][] temp2 = temp.getMomentaryBoard();
+
+
+
+				/*
+				if(printBoards) {
+					System.out.println("Temp:");
+					temp.print();
+					System.out.println("Supposingly new state");
+					printBoard(temp2);
+				}
+				*/
+
+                setBoard(temp2);
+
+
+                arrowSpotSelect = false;
+                queenSelect =  false;
+            }
+        }
+        else	{
+            if(Moves.size() > 0 && currentMoveIndex > 0) {
+                tempBoard temp = Moves.get(--currentMoveIndex);
+                int[][] temp2 = temp.getMomentaryBoard();
+
+                if (printBoards) {
+                    System.out.println("Temp:");
+                    temp.print();
+                    System.out.println("Supposingly new state");
+                    printBoard(temp2);
+                }
+
+                setBoard(temp2);
+
+                if(currentMoveIndex > 1)
+                    toggleTurn();
+            }
+        }
+
+        if(currentMoveIndex < -1)
+            currentMoveIndex = -1;
+
+
+
+        System.out.println("\nAfter Undo:\nCURRENT INDEX: " + currentMoveIndex + "\nCurrent Player: " + getCurrent() + "\nqueenSelect: " + queenSelect + "\narrowSpotSelect: " + arrowSpotSelect + "\n");
+
+        if(printBoards) {
+            System.out.println("Actual Grid");
+            printBoard();
+        }
+
+    }
+
+    public void setEmpty(int x, int y)	{
+        Grid[y][x] = 0;
+    }
+
+    // Checks whether the game is over (i.e. is every queen from a certain
+    // player locked in? if yes, then game over)
+    public boolean isGameOver() {
+        int currentPlayerVal = getCurrent().getVal();
+        for(int i = 0; i < Grid.length; i++)	{
+            for(int j = 0; j < Grid[0].length; j++)	{
+                if(Grid[i][j] == currentPlayerVal)	{
+                    calcPosMoves(new GridCoordinate(j + 1, i + 1), true);
+                    if(countPosMoves() > 0)	{
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
 
 
     public void printBoard(int[][] array) {
@@ -99,359 +473,284 @@ public class LogicBoard {
         }
     }
 
-    // Four white queens (player 1) and four black queens (player 2) to start with
-    private void initializeBoard() {
-        boardArray[0][3] = 2;
-        boardArray[0][6] = 2;
-        boardArray[3][0] = 2;
-        boardArray[3][9] = 2;
-        boardArray[6][0] = 1;
-        boardArray[6][9] = 1;
-        boardArray[9][3] = 1;
-        boardArray[9][6] = 1;
+
+
+
+
+    // Checks if a queens move is possible and takes board boundaries into
+    // account to prevent out of boundary issues
+    public void calcPosMoves(GridCoordinate position, boolean amazonMove) {
+        origin = position;
+        removePossibleMoves();
+
+        //Since GridCordinates start at 1,1 instead of 0,0
+        int x = position.x - 1;
+        int y = position.y - 1;
+
+
+        //System.out.println("Position: X = " + x + " Y= " + y);
+
+
+        int val;
+
+        if(amazonMove)	{
+            val = amazonPosVal;
+        }
+        else	{
+            val = arrowPosVal;
+        }
+
+        int i, j;
+        int tempX, tempY;
+        int length = Grid.length;
+        i = y - 1;
+        j = x - 1;
+
+        // up
+        for (tempY = y - 1; tempY >= 0 && Grid[tempY][x] == 0; tempY--) {
+            Grid[tempY][x] = val;
+        }
+
+        // Direction: bottom vertical
+        // down
+        for (tempY = y + 1; tempY < Grid.length && Grid[tempY][x] == 0; tempY++) {
+            Grid[tempY][x] = val;
+        }
+
+        // Direction: left horizontal
+        for (tempX = x - 1; tempX >= 0 && Grid[y][tempX] == 0; tempX--) {
+            Grid[y][tempX] = val;
+        }
+        // Direction: right horizontal
+        for (tempX = x + 1; tempX < Grid[0].length && Grid[y][tempX] == 0; tempX++) {
+            Grid[y][tempX] = val;
+        }
+        // Direction: top right diagonal
+        tempY = y - 1;
+        tempX = x + 1;
+
+        while (checkBound(tempY, tempX) && Grid[tempY][tempX] == 0) {
+            //System.out.println("Position:\tY = " + tempY + "\tX = " + tempX +
+            //"\nStill in Bounds? " + checkBound(tempY, tempX));
+
+            Grid[tempY][tempX] = val;
+            tempY--;
+            tempX++;
+
+        }
+        // Direction: top left diagonal
+        tempY = y - 1;
+        tempX = x - 1;
+
+        while (checkBound(tempY, tempX) && Grid[tempY][tempX] == 0) {
+
+            Grid[tempY][tempX] = val;
+            tempY--;
+            tempX--;
+
+        }
+        // Direction: bottom right diagonal
+        tempY = y + 1;
+        tempX = x + 1;
+
+        while (checkBound(tempY, tempX) && Grid[tempY][tempX] == 0) {
+            // System.out.println("Position:\tY = " + tempY + "\tX = " + tempX +
+            // "\nStill in Bounds? " + checkBound(tempY, tempX));
+
+            Grid[tempY][tempX] = val;
+            tempY++;
+            tempX++;
+
+        }
+        // Direction: bottom left diagonal
+        tempY = y + 1;
+        tempX = x - 1;
+
+        while (checkBound(tempY, tempX) && Grid[tempY][tempX] == 0) {
+            Grid[tempY][tempX] = val;
+            tempY++;
+            tempX--;
+
+        }
+
+
+
     }
 
-    public ArrayList<int[][]> getBoardStates() {
-        return boardStates;
+
+    public boolean isMovePossible()	{
+        int posMoves = countPosMoves();
+        if (posMoves == 0) {
+            System.out.println("This queen is not able to move anymore!");
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
-    public int[][] getBoard() {
-        return boardArray;
-    }
-
-    public static int[][] getCurrentBoard() {
-        return currentBoard;
-    }
-
-    public void setBoard(int[][] currentBoard) {
-        this.currentBoard = currentBoard;
-    }
-
-    // Removes possible moves
-    public int[][] removePossibleMoves(int[][] board) {
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[0].length; j++) {
-                if (board[i][j] == 4 || board[i][j] == 5) {
-                    board[i][j] = 0;
+    private int countPosMoves()	{
+        int count = 0;
+        for(int i = 0; i < Grid.length; i++)	{
+            for(int j = 0; j < Grid[0].length; j++)	{
+                if(Grid[i][j] == amazonPosVal)	{
+                    count++;
                 }
             }
         }
-        return board;
+        return count;
     }
 
-    // Checks whether the game is over (i.e. is every queen from a certain player locked in? if yes, then game over)
-    public boolean isGameOver(int[][] board, int index) {
-        int[][] tempBoard = new int[board.length][board[0].length];
-        int counter = 0;
-        boolean gameOver = false;
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[0].length; j++) {
-                tempBoard[i][j] = board[i][j];
-            }
-        }
-        tempBoard = removePossibleMoves(tempBoard);
-        ArrayList<GridCoordinate> queens = calculateQueenPositions(tempBoard, index);
-        if (DEBUG) {
-            System.out.println("* * * * * * * * * *");
-            printBoard(tempBoard);
-            System.out.println("* * * * * * * * * *");
-            System.out.println("The following queens are checked:");
-        }
-        for (int i = 0; i < queens.size(); i++) {
-            if (DEBUG) {
-                System.out.println("Queen of player " + index + " | x: " + queens.get(i).x + ", y: " + queens.get(i).y);
-            }
-            if (!isMovePossible(tempBoard, queens.get(i).x, queens.get(i).y)) {
-                counter++;
-                if (DEBUG) {
-                    System.out.println("Counter: " + counter);
+    public ArrayList<GridCoordinate> listQueensOfCurrent()	{
+        ArrayList<GridCoordinate> queens = new ArrayList<GridCoordinate>();
+        int pos=0;
+        GridCoordinate temp;
+        for(int x = 1; x < 11; x++)	{
+            for(int y = 1; y < 11; y++)	{
+                temp = new GridCoordinate(x,y);
+                if(amazonOfCurrentPlayer(temp))	{
+                    queens.add(temp);
                 }
-                if (counter == queens.size()) {
-                    gameOver = true;
-                }
-            }
-        }
-        return gameOver;
-    }
-
-    // Calculates queen positions
-    public ArrayList<GridCoordinate> calculateQueenPositions(int[][] board, int index) {
-        ArrayList<GridCoordinate> queens = new ArrayList<>();
-        for (int i = 0; i < board.length; i++ ) {
-            for (int j = 0; j < board[0].length; j++) {
-                if (board[i][j] == index) {
-                    GridCoordinate boardPosition = new GridCoordinate(j + 1, i + 1);
-                    queens.add(boardPosition);
+                if(queens.size() == 4)	{
+                    break;
                 }
             }
         }
         return queens;
     }
 
-    // Checks if a queens move is possible and takes board boundaries into account to prevent out of boundary issues
-    public boolean isMovePossible(int[][] board, int x, int y) {
-        int i, j;
-        int k, l;
-        int length = board.length;
-        boolean possible = false;
-        i = y - 1; j = x - 1;
+    public ArrayList<GridCoordinate> listPossibleMoves(GridCoordinate position)	{
+        ArrayList<GridCoordinate> posMoves = new ArrayList<GridCoordinate>();
+        calcPosMoves(position, false);
+        GridCoordinate temp;
+        for(int x = 1; x < 11; x++)	{
+            for(int y = 1; y < 11; y++)	{
+                temp = new GridCoordinate(x,y);
+                if(posMoveAt(temp))	{
+                    posMoves.add(temp);
+                }
+            }
+        }
+        removePossibleMoves();
+        return posMoves;
 
-        // Direction: top vertical
-        k = i - 1;
-        if (k >= 0) {
-            if (board[k][j] == 0) {
-                possible = true;
-            }
-        }
-        // Direction: bottom vertical
-        k = i + 1;
-        if (k < length) {
-            if (board[k][j] == 0) {
-                possible = true;
-            }
-        }
-        // Direction: left horizontal
-        l = j - 1;
-        if (l >= 0) {
-            if (board[i][l] == 0) {
-                possible = true;
-            }
-        }
-        // Direction: right horizontal
-        l = j + 1;
-        if (l < length) {
-            if (board[i][l] == 0) {
-                possible = true;
-            }
-        }
-        // Direction: top right diagonal
-        k = i - 1; l = j + 1;
-        if (k >= 0 && l < length) {
-            if (board[k][l] == 0) {
-                possible = true;
-            }
-        }
-        // Direction: top left diagonal
-        k = i - 1; l = j - 1;
-        if (k >= 0 && l >= 0) {
-            if (board[k][l] == 0) {
-                possible = true;
-            }
-        }
-        // Direction: bottom right diagonal
-        k = i + 1; l = j + 1;
-        if (k < length && l < length) {
-            if (board[k][l] == 0) {
-                possible = true;
-            }
-        }
-        // Direction: bottom left diagonal
-        k = i + 1; l = j - 1;
-        if (k < length && l >= 0) {
-            if (board[k][l] == 0) {
-                possible = true;
-            }
-        }
-
-        if (!possible) {
-            System.out.println("This queen is not able to move anymore!");
-        }
-        return possible;
     }
 
-    // Calculates possible moves and takes board boundaries into account to prevent out of boundary issues.
-    public int[][] calculatePossibleMoves(int[][] board, int x, int y, int index) {
-        int i, j;
-        int k, l;
-        int length = board.length;
-        i = y - 1; j = x - 1;
+    // Calculates possible moves and takes board boundaries into account to
+    // prevent out of boundary issues.
 
-        // Direction: top vertical
-        k = i - 1;
-        while (k >= 0) {
-            if (board[k][j] == 0) {
-                board[k][j] = index;
-            } else {
-                break;
-            }
-            k--;
-        }
 
-        // Direction: bottom vertical
-        k = i + 1;
-        while (k < length) {
-            if (board[k][j] == 0) {
-                board[k][j] = index;
-            } else {
-                break;
-            }
-            k++;
-        }
-
-        // Direction: left horizontal
-        l = j - 1;
-        while (l >= 0) {
-            if (board[i][l] == 0) {
-                board[i][l] = index;
-            } else {
-                break;
-            }
-            // hellos
-            l--;
-        }
-
-        // Direction: right horizontal
-        l = j + 1;
-        while (l < length) {
-            if (board[i][l] == 0) {
-                board[i][l] = index;
-            } else {
-                break;
-            }
-            l++;
-        }
-
-        // Direction: top right diagonal
-        k = i - 1; l = j + 1;
-        if (k >= l) {
-            while (k >= 0 && l < length) {
-                if (board[k][l] == 0) {
-                    board[k][l] = index;
-                } else {
-                    break;
-                }
-                k--; l++;
-            }
+    private boolean checkBound(int y, int x) {
+        if ((y >= 0 && y < Grid.length) && (x >= 0 && x < Grid[0].length)) {
+            return true;
         } else {
-            while (k >= 0 && l < length) {
-                if (board[k][l] == 0) {
-                    board[k][l] = index;
-                } else {
-                    break;
-                }
-                k--; l++;
-            }
+            return false;
         }
+    }
 
-        // Direction: top left diagonal
-        k = i - 1; l = j - 1;
-        if (k >= l) {
-            while (l >= 0 && l < length) {
-                if (board[k][l] == 0) {
-                    board[k][l] = index;
-                } else {
-                    break;
-                }
-                k--; l--;
-            }
+    private boolean checkBound(GridCoordinate position) {
+        int x = position.x;
+        int y = position.y;
+
+        if ((y >= 0 && y < Grid.length) && (x >= 0 && x < Grid[0].length)) {
+            return true;
         } else {
-            while (k >= 0 && l < length) {
-                if (board[k][l] == 0) {
-                    board[k][l] = index;
-                } else {
-                    break;
-                }
-                k--; l--;
-            }
+            return false;
         }
+    }
 
-        // Direction: bottom right diagonal
-        k = i + 1; l = j + 1;
-        if (k >= l) {
-            while (l >= 0 && k < length) {
-                if (board[k][l] == 0) {
-                    board[k][l] = index;
-                } else {
-                    break;
-                }
-                k++; l++;
-            }
+    public void toggleTurn() {
+        queenSelect = false;
+        arrowSpotSelect = false;
+        //Change to true
+        if(debugTurnIssues)
+            System.out.print("Turn ended: ");
+        if (current == player1) {
+
+            if(debugTurnIssues)
+                System.out.print("player 2 turn now\n");
+            current = player2;
         } else {
-            while (k >= 0 && l < length) {
-                if (board[k][l] == 0) {
-                    board[k][l] = index;
-                } else {
-                    break;
+
+            if(debugTurnIssues)
+                System.out.print("player 1 turn now\n");
+            current = player1;
+        }
+    }
+
+    public Player getCurrent()	{
+        return current;
+    }
+
+    public boolean posMovesDispl()	{
+        for(int i = 0; i < Grid.length; i++)	{
+            for(int j = 0; j < Grid[0].length; j++)	{
+                if(Grid[i][j] == amazonPosVal){
+                    return true;
                 }
-                k++; l++;
             }
         }
+        return false;
+    }
 
-        // Direction: bottom left diagonal
-        k = i + 1; l = j - 1;
-        if (k >= l) {
-            while (l >= 0 && k < length) {
-                if (board[k][l] == 0) {
-                    board[k][l] = index;
-                } else {
-                    break;
-                }
-                k++; l--;
-            }
+    public boolean amazonOfCurrentPlayer(GridCoordinate position) {
+        return amazonOfCurrentPlayer(position, getCurrent());
+    }
+
+    public boolean amazonOfCurrentPlayer(GridCoordinate position, Player inQuestion) {
+        int posX = position.x - 1;
+        int posY = position.y - 1;
+
+
+        if (Grid[posY][posX] == inQuestion.getVal()) {
+            return true;
         } else {
-            while (l >= 0 && k < length) {
-                if (board[k][l] == 0) {
-                    board[k][l] = index;
-                } else {
-                    break;
+            return false;
+        }
+    }
+
+
+    public boolean posMoveAt(GridCoordinate position){
+        int posX = position.x - 1;
+        int posY = position.y - 1;
+
+        if (Grid[posY][posX] == amazonPosVal || Grid[posY][posX] == arrowPosVal) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean checkGameOverForCurrent()	{
+        return isGameOver(current);
+    }
+
+    //rudimentary gameOver Checker
+    public boolean isGameOver(Player inQuestion)	{
+
+        ArrayList<GridCoordinate> queenPositions = new ArrayList();
+
+        //First get Positons of all Queens
+        for(int i = 0; i < 11; i++)	{
+            for(int j = 0; j < 11; j++)	{
+                if(amazonOfCurrentPlayer(new GridCoordinate(i,j), inQuestion)){
+                    queenPositions.add(new GridCoordinate(i,j));
                 }
-                k++; l--;
+                if(queenPositions.size() == 4)
+                    break;
             }
         }
-        return board;
-    }
 
-    public void save(int[][] board) {
-        int[] list = arrayToList(board);
-        int[][] array = listToArray(list);
-        System.out.println("\nCurrent board (List):");
-        System.out.println("---------------------");
-        System.out.println(listToString(list) + "\n");
-        System.out.println("\nCurrent board (Array):");
-        System.out.println("----------------------");
-        printBoard(array);
-    }
-
-    public int[] arrayToList(int[][] array) {
-        int[] list = new int[array.length * array.length];
-        int k = 0;
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array.length; j++) {
-                list[k] = array[i][j];
-                k++;
-            }
+        //Second, evalueate for every Quuen whether it can still move
+        for(GridCoordinate pos : queenPositions)	{
+            posMoveAt(pos);
+            if(countPosMoves() > 0)
+                return false;
         }
-        return list;
-    }
 
-    public int[][] listToArray(int[] list) {
-        int size = (int) Math.sqrt(list.length);
-        int[][] array = new int[size][size];
-        int k = 0;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                array[i][j] = list[k];
-                k++;
-            }
-        }
-        return array;
-    }
+        return true;
 
-    public String listToString(int[] list) {
-        String string = "";
-        for (int i = 0; i < list.length; i++) {
-            string += list[i];
-        }
-        return string;
-    }
 
-    public String toString(int[][] board) {
-        String string = "";
-        int[] list = arrayToList(board);
-        for (int i = 0; i < list.length; i++) {
-            string += list[i];
-        }
-        return string;
     }
 
 

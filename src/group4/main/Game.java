@@ -1,6 +1,6 @@
-package group4.gameoftheamazons.main;
+package group4.main;
 
-import group4.gameoftheamazons.ui.Screen;
+import group4.ui.Screen;
 
 public class Game {
 

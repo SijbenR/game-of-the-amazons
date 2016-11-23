@@ -1,7 +1,7 @@
-package tree;
+package group4.tree;
 
-import group4.gameoftheamazons.*;
-import group4.gameoftheamazons.logic.LogicBoard;
+
+import group4.logic.LogicBoard;
 
 import java.awt.List;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ public class Tree<T> {
 	private Node<T> root;
 	
 	
-public static class Node<T>{
+public class Node<T>{
 	private T data;	
 	private int[][] board;
 	private double score;
@@ -37,7 +37,12 @@ public void AddChild(Node<T> child, Node<T> parent){
 		root= (Node<T>) child;
 	else{
 		parent.children.add(parent.children.size()+1, child);
-		child.board= LogicBoard.getCurrentBoard();
+
+		//Possible way without static?
+		//child.board= LogicBoard.getBoard();
+
+
+
 		// this needs to be changed to our new ways
 		child.parent= parent;
 		child.visits=0; //this gets updated each time the node is visited

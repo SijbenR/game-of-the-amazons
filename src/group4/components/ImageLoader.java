@@ -1,4 +1,4 @@
-package group4.gameoftheamazons.components;
+package group4.components;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
