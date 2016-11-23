@@ -13,7 +13,7 @@ public class Player {
 
     //Bot relevant values
     private boolean isBot;
-
+    private boolean isThinking;
 
 
 
@@ -47,7 +47,7 @@ public class Player {
     }
 
     //Function Overload in Bot classes
-    public void nextMove(int[][] Grid, boolean isQueenMove, ArrayList<GridCoordinate> posMoves)	{
+    public void giveInput(int[][] Grid, boolean isQueenMove)	{
 
     }
 
@@ -56,7 +56,9 @@ public class Player {
         return null;
     }
 
-
+    public boolean isThinking() {
+        return isThinking;
+    }
 
 
 
@@ -96,6 +98,14 @@ public class Player {
 
     public GridCoordinate[] getAmazonsPosistions() {
         return amazonPositions;
+    }
+
+    public GridCoordinate getOrigin()	{
+        return null;
+    }
+
+    public GridCoordinate getDestination()	{
+        return null;
     }
 
 }

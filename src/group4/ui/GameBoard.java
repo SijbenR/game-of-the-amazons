@@ -22,6 +22,7 @@ import javax.swing.Timer;
 import group4.Players.Player;
 import group4.components.ImageLoader;
 import group4.logic.LogicBoard;
+import group4.randomAI.Bobby;
 
 public class GameBoard extends JPanel implements MouseMotionListener, MouseListener, ActionListener {
 
@@ -76,9 +77,9 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         System.out.println("New timer");
 
         Player player1 = new Player(true);
-        Player player2 = new Player(false);
+        Player Bobby = new Bobby(false);
 
-        logicBoard = new LogicBoard(player1, player2);
+        logicBoard = new LogicBoard(player1, Bobby);
         boardArray = logicBoard.getBoard();
         System.out.println("\nInitial board:");
         //logicBoard.printBoard(boardArray);
@@ -141,6 +142,8 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
             if (DEBUG) {
                 System.out.println(xStart + "," + yStart + " - " + xEnd + "," + yEnd);
             }
+
+
             move(xStart, yStart, xEnd, yEnd);
         }
 
@@ -159,6 +162,31 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                 g2.draw(marker.get(i));
             }
             g2.drawImage(piece[currentPiece - 1], x, y, width, height, this);
+        }
+
+
+        if(logicBoard.getCurrent().isBot() && !logicBoard.getCurrent().isThinking()) {
+
+            logicBoard.getCurrent().giveInput(logicBoard.getBoard(), !logicBoard.arrowSpotSelect);
+            GridCoordinate origin = logicBoard.getCurrent().getOrigin();
+
+            if(!logicBoard.arrowSpotSelect && origin != null) {
+                GridCoordinate empty = origin;
+                System.out.println("Trying to set to empty");
+                logicBoard.setEmpty(empty);
+
+            }
+            GridCoordinate dest = logicBoard.getCurrent().getDestination();
+
+            updateBoard(dest.y - 1, dest.x - 1, logicBoard.getCurrent().getVal());
+
+            logicBoard.arrowSpotSelect = true;
+
+            if(logicBoard.arrowSpotSelect && dest != null) {
+                logicBoard.getCurrent().giveInput(logicBoard.getBoard(), !logicBoard.arrowSpotSelect);
+                dest = logicBoard.getCurrent().getDestination();
+                updateBoard(dest.y - 1, dest.x - 1, 3);
+            }
         }
 
     }
@@ -253,6 +281,8 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         //System.out.println("Currentpiece: " + currentPiece);
         updateBoard(yEnd - 1, xEnd - 1, currentPiece);
 
+
+
     }
 
 
@@ -260,9 +290,11 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
     // Updates the movement of the current board piece and calculates possible arrow moves when needed
     public void updateBoard(int row, int column, int value) {
         //System.out.println("Value: " + value);
+        if(logicBoard.getCurrent().isBot())
+            System.out.println("Bot is playing");
+
+
         if(value == 3)	{
-
-
 
             logicBoard.setArrowOn(column, row);
 
@@ -313,8 +345,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         logicBoard.printAllMoves();
     }
 
-    public void actionPerformed(ActionEvent e) {
-        repaint();
+    public void actionPerformed(ActionEvent e) {repaint();
     }
 
     public void undo() {

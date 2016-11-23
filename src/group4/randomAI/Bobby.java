@@ -4,6 +4,7 @@ package group4.randomAI;
 import group4.Players.Player;
 import group4.logic.LogicBoard;
 import group4.ui.GridCoordinate;
+import org.omg.PortableInterceptor.ObjectReferenceFactory;
 
 import java.util.ArrayList;
 
@@ -28,39 +29,49 @@ public class Bobby extends Player {
 			super(isFirst, true);
 	}
 
-	public GridCoordinate getNextMove(int[][] Grid, boolean isQueenMove)	{
+	public void giveInput(int[][] Grid, boolean isQueenMove)	{
 
 		this.Grid = Grid;
 		this.isQueenMove = isQueenMove;
 
 		thinking = true;
 
-		return  null;
+		queenPos = new ArrayList<>();
+		posMoves = new ArrayList<>();
+
+		chooseMove();
 	}
 
 	//This Bot does random decisions
 	public void chooseMove() {
 
-		updateOpPosQueens();
-		int ran = (int)(Math.random() * 4);
-		GridCoordinate choosenQueen = queenPos.get(ran);
+		//Two kinds of move, either a QueenMove or an Arrow Shot
 
-		if(isQueenMove == false)
+		//QueenMove
+		if(isQueenMove)	{
+			updatePosQueens();
+			int ran = (int)(Math.random() * 4);
+			GridCoordinate choosenQueen = queenPos.get(ran);
 			setOrigin(choosenQueen);
-		else
-			setOrigin(null);
+			System.out.println("Choosen Queen at: " + choosenQueen);
+			updatePossibleMoves(choosenQueen, true);
+			ran = (int)(Math.random() * posMoves.size());
+			GridCoordinate dest = posMoves.get(ran);
+			System.out.println("Choosen Destination at: " + dest);
+			setDestination(dest);
+		}
+		else	{
+			System.out.println("Shooting arrow from: " + origin);
+			updatePossibleMoves(origin, false);
+			int ran = (int)(Math.random() * posMoves.size());
+			GridCoordinate dest = posMoves.get(ran);
+			System.out.println("Shooting Arrow at: " + dest);
+			setDestination(dest);
+		}
 
-
-
-		updatePossibleMoves(choosenQueen, isQueenMove);
-		ran = (int)(Math.random() * posMoves.size());
-		GridCoordinate dest = queenPos.get(ran);
-
-		setDestination(dest);
-
-
+		posMoves.clear();
+		queenPos.clear();
 	}
-
 
 
 
@@ -74,6 +85,11 @@ public class Bobby extends Player {
 				if(queenPos.size() == 4)
 					break;
 			}
+		}
+
+		System.out.println("Possible Positions:");
+		for(GridCoordinate position : queenPos)	{
+			System.out.println(position);
 		}
 	}
 
@@ -181,14 +197,14 @@ public class Bobby extends Player {
 		}
 
 		for(int k = 0; k < Grid.length; k++)    {
-			for(int m = 0; m < Grid[m].length; m++)    {
+			for(int m = 0; m < Grid[0].length; m++)    {
 				if(Grid[k][m] == 4 || Grid[k][m] == 5)  {
 					posMoves.add(new GridCoordinate(m+1, k+1));
 				}
 			}
 		}
-
-
+		System.out.println("Amount of Possible moves for Queen: " + isQueenMove + "\n is = " + posMoves.size());
+		removePossibleMoves();
 	}
 
 
@@ -222,9 +238,27 @@ public class Bobby extends Player {
 		}
 	}
 
+	//First used as Indication from where the Queen was placed from, after that saves from where Arrow is shot from
+	public GridCoordinate getOrigin()	{
+		if(origin != null) {
 
+			GridCoordinate retuner = new GridCoordinate(origin.x, origin.y);
+			origin = new GridCoordinate(destination.x, destination.y);
+			System.out.println("Get Origin Returning: " + retuner + "New Origin set to: " + origin);
+			return retuner;
+		}
+		else
+			return null;
+	}
 
-
-
+	public GridCoordinate getDestination()	{
+		if(destination != null) {
+			GridCoordinate retuner = new GridCoordinate(destination.x, destination.y);
+			destination = null;
+			return retuner;
+		}
+		else
+			return null;
+	}
 }
 

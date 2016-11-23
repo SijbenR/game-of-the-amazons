@@ -10,4 +10,8 @@ public class GridCoordinate {
         this.y = y;
     }
 
+    public String toString()    {
+        return new String("X = " + x + " | Y = " + y + "\n");
+    }
+
 }
