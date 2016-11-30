@@ -25,6 +25,8 @@ public class Screen {
     public int gridX;
     public int gridY;
 
+    public boolean gamepaused=false;
+
     public Screen(int sizeX, int sizeY, int gridX, int gridY) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -93,6 +95,12 @@ public class Screen {
                 gameBoard.setMode(true, false, false, false);
             }
         });
+        button4.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                gameBoard.activateBot();
+
+            }
+            });
         button5.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //gameBoard.setMode(false, false, false, true);

@@ -14,6 +14,7 @@ public class Player {
     //Bot relevant values
     private boolean isBot;
     private boolean isThinking;
+    private boolean status;
 
 
 
@@ -35,6 +36,8 @@ public class Player {
     }
 
     public boolean isBot()	{
+        if(isBot)
+            System.out.println("Player: " + toString());
         return isBot;
     }
 
@@ -46,10 +49,18 @@ public class Player {
         isFirst = false;
     }
 
-    //Function Overload in Bot classes
-    public void giveInput(int[][] Grid, boolean isQueenMove)	{
+    public void giveInput(int[][] Board) {
 
     }
+
+    //Function Overload in Bot classes
+    public GridCoordinate[] chooseQueenMove()   {
+        return null;
+    }
+    public GridCoordinate chooseArrowMove()   {
+        return null;
+    }
+
 
     //Function Overload in Bot classes
     public GridCoordinate nextMove()	{
@@ -107,5 +118,11 @@ public class Player {
     public GridCoordinate getDestination()	{
         return null;
     }
+
+    public void setActive(boolean value)   {
+        status = value;
+    }
+
+    public boolean getStatus() {return true;}
 
 }

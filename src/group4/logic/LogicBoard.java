@@ -183,7 +183,7 @@ public class LogicBoard {
     public void printAllMoves()	{
         int i = 0;
         while(i < Moves.size())	{
-            System.out.println("Move: " + i);
+            System.out.println("Move: " + i + " MoveIndex: " + currentMoveIndex);
             Moves.get(i).print();
             System.out.println("\n");
             i++;
@@ -263,11 +263,13 @@ public class LogicBoard {
 
         }
 
-        printAllMoves();
+
 
         System.out.println("Last State");
         printBoard(Moves.get(Moves.size() - 1).getMomentaryBoard());
         currentMoveIndex++;
+        printAllMoves();
+
 
 
     }
@@ -327,7 +329,6 @@ public class LogicBoard {
     }
 
 
-    //SOMETHING DOES NOT WORK HERE
     public void undoMove()	{
 
         System.out.println("\nBefore Undo:\nCURRENT INDEX: " + currentMoveIndex + "\nSize: " + Moves.size() + "\nCurrent Player: " + getCurrent() + "\nqueenSelect: " + queenSelect + "\narrowSpotSelect: " + arrowSpotSelect + "\n");
@@ -335,16 +336,12 @@ public class LogicBoard {
 		/*
 		First case:			Queen has NOT been chosen for move
 			->	When goimg back possible go to previous state and allow opposite player to chose where to place Arrow
-
 		Second case:		Queen has been chosen for move but you wanna chosse a differnt queen
 			->	Remove possible options
-
 		Third case:			Queen has been placed and you are about to place the Arrow
 			->	Revert to previous state where queen was not yet moved
-
 		Fourth case:		Queen has been placed and you are about to place the Arrow
 			->	Revert to previous state where queen was not yet moved
-
 		 */
 
         if(!arrowSpotSelect && !queenSelect)	{
@@ -676,6 +673,8 @@ public class LogicBoard {
                 System.out.print("player 1 turn now\n");
             current = player1;
         }
+
+
     }
 
     public Player getCurrent()	{

@@ -77,9 +77,9 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         System.out.println("New timer");
 
         Player player1 = new Player(true);
-        Player Bobby = new Bobby(false);
+        Player player2 = new Bobby(false);
 
-        logicBoard = new LogicBoard(player1, Bobby);
+        logicBoard = new LogicBoard(player1, player2);
         boardArray = logicBoard.getBoard();
         System.out.println("\nInitial board:");
         //logicBoard.printBoard(boardArray);
@@ -165,29 +165,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         }
 
 
-        if(logicBoard.getCurrent().isBot() && !logicBoard.getCurrent().isThinking()) {
 
-            logicBoard.getCurrent().giveInput(logicBoard.getBoard(), !logicBoard.arrowSpotSelect);
-            GridCoordinate origin = logicBoard.getCurrent().getOrigin();
-
-            if(!logicBoard.arrowSpotSelect && origin != null) {
-                GridCoordinate empty = origin;
-                System.out.println("Trying to set to empty");
-                logicBoard.setEmpty(empty);
-
-            }
-            GridCoordinate dest = logicBoard.getCurrent().getDestination();
-
-            updateBoard(dest.y - 1, dest.x - 1, logicBoard.getCurrent().getVal());
-
-            logicBoard.arrowSpotSelect = true;
-
-            if(logicBoard.arrowSpotSelect && dest != null) {
-                logicBoard.getCurrent().giveInput(logicBoard.getBoard(), !logicBoard.arrowSpotSelect);
-                dest = logicBoard.getCurrent().getDestination();
-                updateBoard(dest.y - 1, dest.x - 1, 3);
-            }
-        }
 
     }
 
@@ -300,15 +278,20 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
 
             logicBoard.removePossibleMoves();
             logicBoard.addMove();
-            //logicBoard.printAllMoves();
-            //logicBoard.printBoard();
+
+
+
             //logicBoard.queenSelect = false;
             //logicBoard.arrowSpotSelect = false;
         }
         else	{
 
             logicBoard.setQueenOfCurrentOn(column, row);
+            if(logicBoard.getCurrent().isBot()) {
+                updateNeeded = true;
 
+
+            }
 
         }
         boardArray = logicBoard.getBoard();
@@ -329,13 +312,25 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         boardArray = logicBoard.getBoard();
         //System.out.println("\nRemoved possible moves:");
         //logicBoard.printBoard(boardArray);
+
+        if(logicBoard.getCurrent().isBot() && value == 3)   {
+            System.out.println("ENTERED update changer");
+            updateNeeded = false;
+        }
+
+        System.out.println("Update needed: " + updateNeeded);
+        logicBoard.printBoard();
+
         if (updateNeeded) {
+
+            //if((logicBoard.getCurrent().isBot() && !logicBoard.arrowSpotSelect) || !logicBoard.getCurrent().isBot())
             logicBoard.calcPosMoves(point, false);
             logicBoard.addMove();
             boardArray = logicBoard.getBoard();
             //System.out.println("Board updated:");
             //logicBoard.printBoard(boardArray);
             marker.add(new Rectangle2D.Double(gridXCor * width + 2, gridYCor * height + 2, width - 4, height - 4));
+            updateNeeded = false;
         }
 
         counter++;
@@ -447,6 +442,10 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         xCor = e.getX();
         yCor = e.getY();
 
+
+
+
+
         //only executed when Animation is done and current player isnÂ´t a bot
         if(!startAnimation && !logicBoard.getCurrent().isBot())		{
 
@@ -543,6 +542,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
 
 
 
+
         }
 
 
@@ -593,6 +593,45 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
 
     public void mouseDragged(MouseEvent e) {
 
+    }
+
+    //Bot is ACTIVATED HERE
+    public void activateBot()   {
+        if(logicBoard.getCurrent().isBot()) {
+
+            Player Bot = logicBoard.getCurrent();
+            Bot.giveInput(logicBoard.getBoard());
+
+            //QueenMove
+            if(!logicBoard.arrowSpotSelect) {
+                GridCoordinate[] queenMove = Bot.chooseQueenMove();
+                GridCoordinate origin = queenMove[0];
+
+                System.out.println("Trying to set to empty: " + origin);
+                logicBoard.setEmpty(origin);
+
+                GridCoordinate dest = queenMove[1];
+
+                updateBoard(dest.y - 1, dest.x - 1, Bot.getVal());
+                logicBoard.arrowSpotSelect = true;
+            }
+            else{
+                logicBoard.getCurrent().giveInput(logicBoard.getBoard());
+                GridCoordinate dest = Bot.chooseArrowMove();
+                updateBoard(dest.y - 1, dest.x - 1, 3);
+            }
+
+
+            boardArray = logicBoard.getBoard();
+            repaint();
+
+            try {
+                Thread.sleep(500);
+            } catch(InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+
+        }
     }
 
 }
