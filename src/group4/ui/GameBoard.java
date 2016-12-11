@@ -23,6 +23,7 @@ import group4.Players.Player;
 import group4.components.ImageLoader;
 import group4.logic.LogicBoard;
 import group4.randomAI.Bobby;
+import group4.utilities.BoardOperations;
 
 public class GameBoard extends JPanel implements MouseMotionListener, MouseListener, ActionListener {
 
@@ -77,7 +78,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         System.out.println("New timer");
 
         Player player1 = new Player(true);
-        Player player2 = new Bobby(false);
+        Player player2 = new Player(false);
 
         logicBoard = new LogicBoard(player1, player2);
         boardArray = logicBoard.getBoard();
@@ -553,6 +554,19 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         repaint();
     }
 
+    public int[][] listToArray(int[] list) {
+        return logicBoard.listToArray(list);
+    }
+
+    public void setBoard(int[][] Array) {
+        logicBoard.setBoard(Array);
+        logicBoard.printBoard();
+
+        boardArray = logicBoard.getBoard();
+        int val = BoardOperations.countArrow(boardArray);
+        if(val % 2 != 0)
+            logicBoard.toggleTurn();
+    }
 
 
 

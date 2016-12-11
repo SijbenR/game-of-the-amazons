@@ -34,19 +34,20 @@ public class MinMax {
     }
 
 
-    /**
-     * Returns the best move found using the minmax algorithm
-     *
-     * @param board
-     *            the board to analyse
-     * @return the coordinates of the squares.
-     * [0] contains the square of the queen that moves,
-     * [1] contains where the queen moves to,
-     * [2] contains where the arrow is thrown to.
-     */
+
+
+    public class MinMaxResult{
+        private GridCoordinate queenFrom, queenMove, arrowMove;
+        public MinMaxResult(GridCoordinate[] r)
+        {
+            //queenFrom=r
+        }
+    }
+
     public GridCoordinate[] getMove(int[][] board) {
         GridCoordinate[] move = new GridCoordinate[3];
         minmax(board, 3, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true, move);
+
         return move;
 
     }

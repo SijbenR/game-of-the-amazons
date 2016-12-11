@@ -285,12 +285,15 @@ public class LogicBoard {
 
     }
 
-    private void setBoard(int[][] newBoard)	{
+    public void setBoard(int[][] newBoard)	{
         for (int i = 0; i < Grid.length; i++) {
             System.arraycopy(newBoard[i], 0, Grid[i], 0, newBoard[i].length);
         }
 
+
     }
+
+
 
     public void redoMove()	{
 
@@ -477,16 +480,6 @@ public class LogicBoard {
     // Checks if a queens move is possible and takes board boundaries into
     // account to prevent out of boundary issues
     public void calcPosMoves(GridCoordinate position, boolean amazonMove) {
-        origin = position;
-        removePossibleMoves();
-
-        //Since GridCordinates start at 1,1 instead of 0,0
-        int x = position.x - 1;
-        int y = position.y - 1;
-
-
-        //System.out.println("Position: X = " + x + " Y= " + y);
-
 
         int val;
 
@@ -496,6 +489,18 @@ public class LogicBoard {
         else	{
             val = arrowPosVal;
         }
+
+
+        removePossibleMoves();
+        //Since GridCordinates start at 1,1 instead of 0,0
+        int x = position.x - 1;
+        int y = position.y - 1;
+
+
+        //System.out.println("Position: X = " + x + " Y= " + y);
+
+
+
 
         int i, j;
         int tempX, tempY;

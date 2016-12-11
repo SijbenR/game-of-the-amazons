@@ -32,7 +32,7 @@ public Tree(T rootData) {
     root.data = rootData;
     root.children = new ArrayList<Node<T>>();
 }	
-public void AddChild(Node<T> child, Node<T> parent){
+public void AddChild(Node<T> child, Node<T> parent,boolean white, boolean flag){
 	if(root==null)
 		root= (Node<T>) child;
 	else{

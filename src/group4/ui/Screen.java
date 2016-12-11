@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -158,7 +160,7 @@ public class Screen {
     }
 
     public void loadFileDialog() {
-		/*
+
 		JFrame parentFrame = new JFrame();
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setDialogTitle("Select a board to load");
@@ -182,14 +184,18 @@ public class Screen {
 		}
 		if (success) {
 			int[] list = new int[stringArray.length];
+            System.out.println();
 			for (int i = 0; i < stringArray.length; i++) {
 				list[i] = Integer.parseInt(stringArray[i]);
+                System.out.print(list[i] + " ");
 			}
+
+
 			int[][] board = gameBoard.listToArray(list);
-			gameBoard.boardArray = board.clone();
+			gameBoard.setBoard(board);
 			frame.repaint();
 		}
-		*/
+
     }
 
     public void writeFileTo(File output) throws IOException {
@@ -198,6 +204,11 @@ public class Screen {
         String string = gameBoard.toString();
         fw.write(string);
         fw.close();
+    }
+
+    public String readFileFrom(String input) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(input));
+        return new String(encoded);
     }
 
     public void print() {
