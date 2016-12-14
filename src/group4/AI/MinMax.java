@@ -6,6 +6,8 @@ package group4.AI;
         import java.util.TreeMap;
 
         import group4.ui.GridCoordinate;
+        import group4.utilities.BoardOperations;
+
         import java.util.LinkedList;
         import java.util.ArrayList;
         import java.util.Arrays;
@@ -16,8 +18,10 @@ public class MinMax {
 
     public static void main(String[] args) {
         int[][] board = new int[10][10];
-        board[3][0]= board[0][3] = board[0][6] =board[3][9]  = 1;
-        board[6][0]= board[9][3] = board[9][6] =board[6][9]  = 2;
+        int[] list=  new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,3,3,0,0,0,0,0,0,0,3,3,3,0,0,0,2,3,3,3,3,2,3,3,0,0,3,3,1,0,3,3,3,3,2,0,3,0,3,0,3,0,0,3,3,0,0,3,0,3,0,0,1,0,3,3,1,3,0,0,2,0,0,0,0,0,3,3,0,0,3,0,0,0,0,0,0,0,3,1,0,0,0,0,0,0};
+        board= BoardOperations.listToArray(list);
+       // board[3][0]= board[0][3] = board[0][6] =board[3][9]  = 1;
+        //board[6][0]= board[9][3] = board[9][6] =board[6][9]  = 2;
         System.out.println(getBoardAsString(board));
         MinMax m=new MinMax(1,new MobilityEval());
         System.out.println(m.getMove(board));
@@ -28,7 +32,7 @@ public class MinMax {
     private Comparator<int[][]> maxSort;
     private Comparator<int[][]> minSort;
     public GridCoordinate[] lastMove;
-    private int depth=1;
+    private int depth=3;
     private int maxstep=100;
     private int maxfinal=400;
     /**

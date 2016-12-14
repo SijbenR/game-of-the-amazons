@@ -23,6 +23,7 @@ public class Bobby extends Player {
 	private ArrayList<GridCoordinate> queenPos;
 	private ArrayList<GridCoordinate> posMoves;
 
+
 	private ArrayList<GridCoordinate> opQueenPos;
 
 
@@ -31,6 +32,20 @@ public class Bobby extends Player {
 	}
 
 
+	public void territory(){
+
+	}
+
+	public void checkBoard(int val)	{
+		for(int k = 0; k < Grid.length; k++)    {
+			for(int m = 0; m < Grid[0].length; m++)    {
+				if(Grid[k][m] == 0)  {
+					posMoves.add(new GridCoordinate(m+1, k+1));
+				}
+			}
+		}
+
+	}
 
 
 	public GridCoordinate[] chooseQueenMove()	{
