@@ -35,10 +35,11 @@ public class Maximus extends Player {
     private ArrayList<GridCoordinate> opQueenPos;
 
 
-    public Maximus(boolean isFirst)   {
+    public Maximus(boolean isFirst, int depth)   {
         super(isFirst, true);
+
         calculate = new MinMax(super.getVal(), new MobilityEval());
-        calculate.setDepth(2);
+        calculate.setDepth(depth);
     }
 
 
