@@ -36,6 +36,7 @@ public class MinMax {
     private Comparator<int[][]> maxSort;
     private Comparator<int[][]> minSort;
     public GridCoordinate[] lastMove;
+    public int[][] bestBoard;
     private int depth=3;
     private int maxstep=100;
     private int maxfinal=400;
@@ -98,6 +99,7 @@ public class MinMax {
             }
             if (moves != null)
             {
+                bestBoard=bmax;
                 deduceMoves(board, bmax, playerIndex, moves);
                 lastMove=moves;
             }
