@@ -15,26 +15,13 @@ public class tempBoard {
         origin = null;
     }
 
-    public tempBoard(int[][] momentaryBoard, GridCoordinate origin)	{
-        this.momentaryBoard = momentaryBoard;
-        this.origin = origin;
-    }
-
-
-
-    public GridCoordinate getOrigin()	{
-        return origin;
-    }
 
 
     public int[][] getMomentaryBoard() {
         return momentaryBoard;
     }
 
-	/*
-	public int[][] setMomentaryBoard(int[][] ) {
-		return momentaryBoard;
-	}*/
+
 
     public void print()	{
         String s;

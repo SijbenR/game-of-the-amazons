@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class BoardOperations {
 
 
-    public void moveQueen(int[][] Array, GridCoordinate origin, GridCoordinate dest, int val) {
+    public static void moveQueen(int[][] Array, GridCoordinate origin, GridCoordinate dest, int val) {
 
         int originX = origin.x - 1;
         int originY = origin.y - 1;
@@ -82,11 +82,11 @@ public class BoardOperations {
     }
 
 
-    public void setEmpty(int[][] Grid, GridCoordinate position){
+    public static void setEmpty(int[][] Grid, GridCoordinate position){
         setEmpty(Grid, position.y, position.x);
     }
 
-    public void setEmpty(int[][] Grid, int y, int x){
+    public static void setEmpty(int[][] Grid, int y, int x){
         if(checkBound(Grid, y, x) && Grid[y][x] != 0)   {
             Grid[y][x] = 0;
         }
@@ -230,6 +230,29 @@ public class BoardOperations {
             }
             System.out.println("");
         }
+    }
+
+    public static int[][] getCopy(int[][] Board)     {
+        int length = Board.length;
+        int[][] target = new int[length][Board[0].length];
+        for (int i = 0; i < length; i++) {
+            System.arraycopy(Board[i], 0, target[i], 0, Board[i].length);
+        }
+        return target;
+    }
+
+
+    public int[][] listToArray(int[] list) {
+        int size = (int) Math.sqrt(list.length);
+        int[][] array = new int[size][size];
+        int k = 0;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                array[i][j] = list[k];
+                k++;
+            }
+        }
+        return array;
     }
 
 
