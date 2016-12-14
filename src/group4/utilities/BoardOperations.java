@@ -1,7 +1,7 @@
 package group4.utilities;
 
 import group4.ui.GridCoordinate;
-
+import java.util.StringJoiner;
 import java.util.ArrayList;
 
 /**
@@ -240,6 +240,29 @@ public class BoardOperations {
         }
         return target;
     }
+    public static String board2CSV(int[][] board, String delim) {
+        StringJoiner b = new StringJoiner(delim);
+        for (int i = 0; i < board.length; i++)
+            for (int j = 0; j < board[0].length; j++)
+                b.add(board[i][j] + "");
+        return b.toString();
+    }
+
+    public static int[][] reverse(int[][] b) {
+        int[][] b2=new int[b.length][b[0].length];
+        int n=b.length-1;
+        for (int i = 0; i < b.length; i++)
+            for (int j = 0; j < b[0].length; j++) {
+                if (b[i][j] == 1)
+                    b2[n-i][j] = 2;
+                else if (b[i][j] == 2)
+                    b2[n-i][j] = 1;
+                else
+                    b2[n-i][j]=b[i][j];
+            }
+        return b2;
+    }
+
 
     public int[][] listToArray(int[] list) {
         int size = (int) Math.sqrt(list.length);
