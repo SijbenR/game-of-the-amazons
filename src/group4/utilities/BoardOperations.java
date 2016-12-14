@@ -1,6 +1,9 @@
 package group4.utilities;
 
+import group4.AI.MinMax;
 import group4.ui.GridCoordinate;
+
+import java.util.List;
 import java.util.StringJoiner;
 import java.util.ArrayList;
 
@@ -49,6 +52,8 @@ public class BoardOperations {
         return queens;
     }
 
+
+
     public static boolean queenOn(int[][] Array, GridCoordinate position, int val){
         return queenOn(Array, position.y - 1, position.x - 1, val);
     }
@@ -90,6 +95,33 @@ public class BoardOperations {
         if(checkBound(Grid, y, x) && Grid[y][x] != 0)   {
             Grid[y][x] = 0;
         }
+    }
+
+
+    public static ArrayList<GridCoordinate> ranQueenMove(int[][] Board, int val)  {
+        ArrayList<GridCoordinate> queens = posQueens(Board, val);
+        boolean choosen = false;
+        int ran = 0;
+
+        while(!choosen) {
+            ran = (int)(Math.random() * 4);
+            calcPosMoves(Board, queens.get(ran), val);
+            if(countPosMove(Board) >= 1)
+                choosen = true;
+        }
+
+        GridCoordinate origin = queens.get(ran);
+
+        List<GridCoordinate> moves = MinMax.getPossibleMoves(Board, origin);
+
+        ran = (int)(Math.random() * moves.size());
+        GridCoordinate dest = moves.get(ran);
+
+        ArrayList<GridCoordinate> Move = new ArrayList<>();
+        Move.add(origin);
+        Move.add(dest);
+        return Move;
+
     }
 
     public static void calcPosMoves(int[][] Array, GridCoordinate position, int val){

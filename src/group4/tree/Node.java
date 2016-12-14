@@ -12,64 +12,27 @@ import java.util.ArrayList;
  */
 public class Node {
 
-    private Node parent;
-    private tempBoard currentBoard;
-    boolean queenMove;
-    private ArrayList<Node> Children;
-    private GridCoordinate origin, dest;
+    boolean fullyExplored;
 
-    //Is only set when setBoard is triggered
+    protected Node parent;
+    protected ArrayList<Node> Children;
 
+    protected int score;
+    protected GridCoordinate origin, dest;
 
+    private int playerVal;
+
+    int[][] Board = new int[10][10];
+
+    //root
     public Node(int[][] Board)   {
-        this.parent = null;
-        currentBoard = new tempBoard(Board);
-
-        /*
-        Explanation:
-        We try to distinguish between a Board where you can either choose whiwhc queen you can move or where you can already shoot an arrow
-        in the second case zou will find at least 1 possible position - without calculatingb them first
-         */
-        if(BoardOperations.countPosMove(Board) != 0)    {
-            queenMove = false;
-        }
-        else
-            queenMove = true;
-
-
+        this.Board = Board;
     }
+
 
     public Node(Node parent, GridCoordinate origin, GridCoordinate dest)   {
 
     }
-
-    protected void takeParentBoard()    {
-        if(parent != null)  {
-            int[][] pBoard = parent.getBoard();
-            int[][] newCurrent = BoardOperations.getCopy(pBoard);
-            currentBoard = new tempBoard(newCurrent);
-        }
-    }
-
-    protected int[][] getBoard()    {
-        return currentBoard.getMomentaryBoard();
-    }
-
-
-    public boolean isSame()  {
-        return false;
-    }
-
-    public void isQueenMove()    {
-        if(origin == null) {
-            queenMove = false;
-        }
-        else {
-            queenMove = true;
-        }
-    }
-
-
 
 
 

@@ -2,6 +2,9 @@ package group4.tree;
 
 
 import group4.logic.LogicBoard;
+import group4.logic.tempBoard;
+import group4.ui.GridCoordinate;
+import group4.utilities.BoardOperations;
 
 import java.awt.List;
 import java.util.ArrayList;
@@ -10,9 +13,15 @@ import javax.swing.tree.TreeNode;
 
 public class Tree<T> {
 	private Node<T> root;
-	
-	
-public class Node<T>{
+	private int depth = 1;
+
+	private int minChildren = 2;
+	private int maxChildren = 60 / depth;
+
+
+
+
+	public class Node<T>{
 	private T data;	
 	private int[][] board;
 	private double score;
@@ -23,6 +32,12 @@ public class Node<T>{
 	public ArrayList<Node<T>> children;
 	private int visits;
 	private int wins;
+
+	private GridCoordinate origin;
+	private GridCoordinate destination;
+
+
+	private tempBoard Board;
 	// the number of wins this node leads to 
 	
 }
@@ -66,30 +81,51 @@ public class Node<T>{
 
 	//end of mcts stuff
 
-public Tree(T rootData) {
+public Tree(T rootData, int[][] board) {
+
     root = new Node<T>();
+    root.board = board;
     root.data = rootData;
     root.children = new ArrayList<Node<T>>();
-}	
-public void AddChild(Node<T> child, Node<T> parent,boolean white, boolean flag){
+}
+
+/*
+public void generateTree(int val,)	{
+
+}
+*/
+
+public void AddChild(Node<T> child, Node<T> parent,boolean white, boolean flag, GridCoordinate origin, GridCoordinate destination){
 	if(root==null)
 		root= (Node<T>) child;
 	else{
+		boolean same= false;
+		for(int i = 0; i < parent.children.size(); i++)	{
+			if (parent.children.get(i).origin==origin && parent.children.get(i).destination==destination)
+				same=true;
+			if(!same){
+
+			}
+		}
+
 		parent.children.add(parent.children.size()+1, child);
 
 		//Possible way without static?
-		//child.board= LogicBoard.getBoard();
+		child.board = BoardOperations.getCopy(parent.board);
 
 
-
+		if(!flag) {
+			child.origin =origin;
+		}
+		child.destination=destination;
 		// this needs to be changed to our new ways
 		child.parent= parent;
 		child.visits=0; //this gets updated each time the node is visited
 		child.wins=0; //this gets updated each time the game ends
 		
 		//TODO
-		child.player= true; //true for white, false for black
-		child.flag = true; // true for flag move, false for queen move 
+		child.player= white; //true for white, false for black
+		child.flag = flag; // true for flag move, false for queen move
 		//child.score= Algorithm.setscore; //need to implement our scoring system to add this
 		
 	}

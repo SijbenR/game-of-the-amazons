@@ -16,6 +16,7 @@ package group4.AI;
 
 public class MinMax {
 
+    /*
     public static void main(String[] args) {
         int[][] board = new int[10][10];
         int[] list=  new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,3,3,0,0,0,0,0,0,0,3,3,3,0,0,0,2,3,3,3,3,2,3,3,0,0,3,3,1,0,3,3,3,3,2,0,3,0,3,0,3,0,0,3,3,0,0,3,0,3,0,0,1,0,3,3,1,3,0,0,2,0,0,0,0,0,3,3,0,0,3,0,0,0,0,0,0,0,3,1,0,0,0,0,0,0};
@@ -30,6 +31,7 @@ public class MinMax {
         long totaltime=endtime-starttime;
         //System.out.println("time taken = " + totaltime);
     }
+    */
 
     private int playerIndex;
     private EvaluationFunction evalF;
