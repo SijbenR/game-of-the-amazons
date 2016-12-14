@@ -4,6 +4,7 @@ import group4.Players.Player;
 import group4.ui.GridCoordinate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by jonty on 14/12/2016.
@@ -60,7 +61,7 @@ public class Maximus extends Player {
         posMoves = new ArrayList<>();
         GridCoordinate[] returner = new GridCoordinate[2];
 
-        fullMove = calculate.getMove(Grid);
+        fullMove = calculate.getMove(Arrays.copyOf(Grid, Grid.length));
 
         returner[0] = fullMove[0];
         returner[1] = fullMove[1];
