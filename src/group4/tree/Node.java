@@ -14,7 +14,7 @@ public class Node {
 
     private Node parent;
     private tempBoard currentBoard;
-    private boolean queenMove;
+    boolean queenMove;
     private ArrayList<Node> Children;
     private GridCoordinate origin, dest;
 
@@ -25,7 +25,18 @@ public class Node {
         this.parent = null;
         currentBoard = new tempBoard(Board);
 
-        //Determine if it's a queenMove or an ArrowMove
+        /*
+        Explanation:
+        We try to distinguish between a Board where you can either choose whiwhc queen you can move or where you can already shoot an arrow
+        in the second case zou will find at least 1 possible position - without calculatingb them first
+         */
+        if(BoardOperations.countPosMove(Board) != 0)    {
+            queenMove = false;
+        }
+        else
+            queenMove = true;
+
+
     }
 
     public Node(Node parent, GridCoordinate origin, GridCoordinate dest)   {
