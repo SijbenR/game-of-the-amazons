@@ -301,7 +301,7 @@ public class MinMax {
             for (int j = 0; j < B1[0].length; j++) {
                 if (B1[i][j] != B2[i][j]) {
                    // System.out.println(B1[i][j] + " " + B2[i][j]);
-                    GridCoordinate pos = new GridCoordinate(i + 1, j + 1);
+                    GridCoordinate pos = new GridCoordinate(j + 1, i + 1);
                     if (B1[i][j] == player) {
                         moves[0] = pos;
                         if (B2[i][j] == 3)
@@ -319,12 +319,13 @@ public class MinMax {
             }
     }
 
-    public static void deduceMoves2(int[][] B1, int[][] B2, int player, GridCoordinate[] moves) {
+    public static GridCoordinate[] deduceMoves2(int[][] B1, int[][] B2, int player) {
+        GridCoordinate[] moves=new GridCoordinate[3];
         for (int i = 0; i < B1.length; i++)
             for (int j = 0; j < B1[0].length; j++) {
                 if (B1[i][j] != B2[i][j]) {
                     // System.out.println(B1[i][j] + " " + B2[i][j]);
-                    GridCoordinate pos = new GridCoordinate(i + 1, j + 1);
+                    GridCoordinate pos = new GridCoordinate(j+1, i+1 );
                     if (B1[i][j] == player) {
                         moves[0] = pos;
                         if (B2[i][j] == 3)
@@ -340,6 +341,7 @@ public class MinMax {
                         break;
                 }
             }
+        return moves;
     }
 
 }
