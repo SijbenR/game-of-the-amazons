@@ -241,7 +241,7 @@ public class BoardOperations {
         return target;
     }
 
-    public int[][] listToArray(int[] list) {
+    public static int[][] listToArray(int[] list) {
         int size = (int) Math.sqrt(list.length);
         int[][] array = new int[size][size];
         int k = 0;
