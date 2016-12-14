@@ -13,6 +13,7 @@ public class Bobby extends Player {
 
 	//bot relevant values when thinking of a next move
 	private boolean thinking;
+	public boolean active;
 	private boolean isQueenMove;
 	private GridCoordinate nextMove;
 	private int[][] Grid;
@@ -25,52 +26,61 @@ public class Bobby extends Player {
 	private ArrayList<GridCoordinate> opQueenPos;
 
 
-    public Bobby(boolean isFirst)   {
-			super(isFirst, true);
+	public Bobby(boolean isFirst)   {
+		super(isFirst, true);
 	}
 
-	public void giveInput(int[][] Grid, boolean isQueenMove)	{
 
-		this.Grid = Grid;
-		this.isQueenMove = isQueenMove;
 
-		thinking = true;
+
+	public GridCoordinate[] chooseQueenMove()	{
 
 		queenPos = new ArrayList<>();
 		posMoves = new ArrayList<>();
+		GridCoordinate[] returner = new GridCoordinate[2];
 
-		chooseMove();
+
+		updatePosQueens();
+		int ran = (int)(Math.random() * 4);
+		GridCoordinate chosenQueen = queenPos.get(ran);
+
+
+		System.out.println("Choosen Queen at: " + chosenQueen);
+		returner[0] = chosenQueen;
+
+		updatePossibleMoves(chosenQueen);
+		printBoard();
+		countPosMoves(4);
+		removePossibleMoves();
+		System.out.println("Amount of Possible moves for Queen: " + isQueenMove + "\n is = " + posMoves.size());
+
+		ran = (int)(Math.random() * posMoves.size());
+		GridCoordinate dest = posMoves.get(ran);
+		System.out.println("Choosen Destination at: " + dest);
+
+		returner[1] = dest;
+
+		return returner;
 	}
 
-	//This Bot does random decisions
-	public void chooseMove() {
+	public GridCoordinate chooseArrowMove()	{
 
-		//Two kinds of move, either a QueenMove or an Arrow Shot
+		posMoves= new ArrayList<>();
 
-		//QueenMove
-		if(isQueenMove)	{
-			updatePosQueens();
-			int ran = (int)(Math.random() * 4);
-			GridCoordinate choosenQueen = queenPos.get(ran);
-			setOrigin(choosenQueen);
-			System.out.println("Choosen Queen at: " + choosenQueen);
-			updatePossibleMoves(choosenQueen, true);
-			ran = (int)(Math.random() * posMoves.size());
-			GridCoordinate dest = posMoves.get(ran);
-			System.out.println("Choosen Destination at: " + dest);
-			setDestination(dest);
+		System.out.println("Possible Moves");
+		printBoard();
+		countPosMoves(5);
+
+		int ran = (int)(Math.random() * posMoves.size());
+		GridCoordinate dest = posMoves.get(ran);
+		System.out.println("Shooting Arrow at: " + dest);
+
+
+		if(posMoves.size() > 0) {
+			return dest;
 		}
-		else	{
-			System.out.println("Shooting arrow from: " + origin);
-			updatePossibleMoves(origin, false);
-			int ran = (int)(Math.random() * posMoves.size());
-			GridCoordinate dest = posMoves.get(ran);
-			System.out.println("Shooting Arrow at: " + dest);
-			setDestination(dest);
-		}
-
-		posMoves.clear();
-		queenPos.clear();
+		else
+			return null;
 	}
 
 
@@ -91,6 +101,12 @@ public class Bobby extends Player {
 		for(GridCoordinate position : queenPos)	{
 			System.out.println(position);
 		}
+
+		try {
+			Thread.sleep(500);
+		} catch(InterruptedException ex) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	//Calculates the position of all OPPONENT Queens
@@ -106,22 +122,42 @@ public class Bobby extends Player {
 		}
 	}
 
-	public void updatePossibleMoves(GridCoordinate position, boolean amazonMove)   {
+
+	public void printBoard() {
+		System.out.println("");
+		String s;
+		for (int i = 0; i < Grid.length; i++) {
+			for (int j = 0; j < Grid[0].length; j++) {
+				if (Grid[i][j] < 10) {
+					s = "";
+				} else {
+					s = "0";
+				}
+				System.out.print(s + Grid[i][j] + " ");
+			}
+			System.out.println("");
+		}
+		System.out.println("");
+	}
+
+
+	private void setGrid(int[][] newBoard)	{
+		Grid = new int[newBoard.length][newBoard[0].length];
+		for (int i = 0; i < Grid.length; i++) {
+			System.arraycopy(newBoard[i], 0, Grid[i], 0, newBoard[i].length);
+		}
+	}
+
+	public void updatePossibleMoves(GridCoordinate position)   {
 		int x = position.x - 1;
 		int y = position.y - 1;
-
 
 		//System.out.println("Position: X = " + x + " Y= " + y);
 
 
-		int val;
+		int val = 4;
 
-		if(amazonMove)	{
-			val = 4;
-		}
-		else	{
-			val = 5;
-		}
+
 
 		int i, j;
 		int tempX, tempY;
@@ -196,17 +232,24 @@ public class Bobby extends Player {
 
 		}
 
+
+
+	}
+
+	public void countPosMoves(int val)	{
 		for(int k = 0; k < Grid.length; k++)    {
 			for(int m = 0; m < Grid[0].length; m++)    {
-				if(Grid[k][m] == 4 || Grid[k][m] == 5)  {
+				if(Grid[k][m] == val)  {
 					posMoves.add(new GridCoordinate(m+1, k+1));
 				}
 			}
 		}
-		System.out.println("Amount of Possible moves for Queen: " + isQueenMove + "\n is = " + posMoves.size());
-		removePossibleMoves();
+
 	}
 
+	public void giveInput(int[][] Board)	{
+		setGrid(Board);
+	}
 
 
 
@@ -241,10 +284,8 @@ public class Bobby extends Player {
 	//First used as Indication from where the Queen was placed from, after that saves from where Arrow is shot from
 	public GridCoordinate getOrigin()	{
 		if(origin != null) {
-
 			GridCoordinate retuner = new GridCoordinate(origin.x, origin.y);
-			origin = new GridCoordinate(destination.x, destination.y);
-			System.out.println("Get Origin Returning: " + retuner + "New Origin set to: " + origin);
+			origin = null;
 			return retuner;
 		}
 		else
@@ -260,5 +301,11 @@ public class Bobby extends Player {
 		else
 			return null;
 	}
+
+
+	public void active(boolean value)	{
+		active = value;
+	}
+
 }
 
