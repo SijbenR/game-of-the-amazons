@@ -1,27 +1,36 @@
 package group4.AI;
 
         import java.util.List;
+        import java.util.Map;
+        import java.util.Map.Entry;
+        import java.util.TreeMap;
+
         import group4.ui.GridCoordinate;
         import java.util.LinkedList;
+        import java.util.ArrayList;
         import java.util.Arrays;
         import java.util.Comparator;
+        import java.util.TreeSet;
 
 public class MinMax {
 
     public static void main(String[] args) {
         int[][] board = new int[10][10];
-        board[0][0] = 1;
-        board[3][3] = 2;
-        board[3][2] = 3;
-
-        MinMax cpu = new MinMax(1, new MobilityEval());
-        System.out.println(Arrays.toString(cpu.getMove(board)));
-
+        board[3][0]= board[0][3] = board[0][6] =board[3][9]  = 1;
+        board[6][0]= board[9][3] = board[9][6] =board[6][9]  = 2;
+        System.out.println(getBoardAsString(board));
+        MinMax m=new MinMax(1,new MobilityEval());
+        System.out.println(m.getMove(board));
     }
 
     private int playerIndex;
     private EvaluationFunction evalF;
-
+    private Comparator<int[][]> maxSort;
+    private Comparator<int[][]> minSort;
+    public GridCoordinate[] lastMove;
+    private int depth=1;
+    private int maxstep=100;
+    private int maxfinal=400;
     /**
      * Prepares the MinMax algorithm setting the index of the player.
      *
@@ -31,22 +40,26 @@ public class MinMax {
     public MinMax(int index, EvaluationFunction evalF) {
         playerIndex = index;
         this.evalF = evalF;
+        maxSort = (b1, b2) -> {
+            return (evalF.evaluate(b2, playerIndex) > evalF.evaluate(b1, playerIndex))  ? 1 : -1;
+        };
+        minSort = (b1, b2) -> {
+            return (evalF.evaluate(b2, playerIndex) > evalF.evaluate(b1, playerIndex))  ? -1 : 1;
+        };
     }
-
 
     /**
      * Returns the best move found using the minmax algorithm
      *
      * @param board
      *            the board to analyse
-     * @return the coordinates of the squares.
-     * [0] contains the square of the queen that moves,
-     * [1] contains where the queen moves to,
-     * [2] contains where the arrow is thrown to.
+     * @return the coordinates of the squares. [0] contains the square of the
+     *         queen that moves, [1] contains where the queen moves to, [2]
+     *         contains where the arrow is thrown to.
      */
     public GridCoordinate[] getMove(int[][] board) {
         GridCoordinate[] move = new GridCoordinate[3];
-        minmax(board, 3, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true, move);
+        minmax(board, depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true, move);
         return move;
 
     }
@@ -57,8 +70,7 @@ public class MinMax {
         if (depth <= 0 || value == 1.0 || value == 0.0)
             return value;
 
-        List<int[][]> boards = getPossibleBoards(board, playerIndex,
-                value-0.1, value+0.1, evalF, isMax);
+        List<int[][]> boards = getPossibleBoards(board, playerIndex, evalF, isMax, minSort, maxSort, maxstep, maxfinal);
         // MAX is playing
         if (isMax) {
             int[][] bmax = null;
@@ -75,7 +87,11 @@ public class MinMax {
                     break;
 
             }
-            if(moves!=null) deduceMoves(board, bmax, playerIndex, moves);
+            if (moves != null)
+            {
+                deduceMoves(board, bmax, playerIndex, moves);
+                lastMove=moves;
+            }
             System.out.println(Arrays.toString(moves));
             System.out.println(getBoardAsString(bmax));
             return vmax;
@@ -84,7 +100,7 @@ public class MinMax {
         else {
             double vmin = Double.POSITIVE_INFINITY;
             for (int[][] i : boards) {
-                double v = minmax(i, depth - 1, alpha, beta, false, null);
+                double v = minmax(i, depth - 1, alpha, beta, true, null);
                 if (v < vmin)
                     vmin = v;
                 if (v < beta)
@@ -95,8 +111,6 @@ public class MinMax {
             return vmin;
         }
     }
-
-
 
     public static List<GridCoordinate> getQueensPositions(int[][] board, int player) {
         List<GridCoordinate> queens = new LinkedList<>();
@@ -133,50 +147,53 @@ public class MinMax {
             for (GridCoordinate k : getPossibleMoves(queenBoards.get(i), queenTo.get(i)))
                 finalBoards.add(moveToBoard(queenBoards.get(i), player, queenTo.get(i), k, true));
 
-
         return finalBoards;
     }
 
     /**
-     *Returns the possible boards
-     * @param board the board
-     * @param player the player index
-     * @param min the minimum value of the board in order to be considered
-     * @param max the maximum value of the board in order to be considered
-     * @param evalF the evaluation function that we use
+     * Returns the possible boards
+     *
+     * @param board
+     *            the board
+     * @param player
+     *            the player index
+     * @param evalF
+     *            the evaluation function that we use
+     * @param isMax
+     *            whether the player is
+     * @param maxSort comparator for max
+     * @param minSort comparator for min
+     * @param maxStepSize max number of the intermediate boards
+     * @param maxFinalSize max number of the final boards
      * @return the list of the possible boards that can be generated by a move
      */
-    public static List<int[][]> getPossibleBoards(int[][] board, int player, double min, double max,
-                                                  EvaluationFunction evalF, boolean isMax) {
-        //
-        List<int[][]> queenBoards = new LinkedList<>();
-        List<GridCoordinate> queenTo = new LinkedList<>();
-        //
-        List<int[][]> finalBoards = new LinkedList<>();
+    public static List<int[][]> getPossibleBoards(int[][] board, int player,
+                                                  EvaluationFunction evalF, boolean isMax, Comparator<int[][]> maxSort, Comparator<int[][]> minSort,
+                                                  int maxStepSize, int maxFinalSize) {
+
+        TreeSet<int[][]> finalBoards = new TreeSet<>(isMax ? maxSort : minSort);
+        Map<int[][], GridCoordinate> queenStuff=new TreeMap<>(isMax ? maxSort : minSort);
 
         // First we compute all the possible boards according to the queen moves
         for (GridCoordinate i : getQueensPositions(board, player))
-            for (GridCoordinate j : getPossibleMoves(board, i)) {
-                int[][] b = moveToBoard(board, player, i, j, false);
-                double e = evalF.evaluate(b, player);
-                if ( (isMax && e>min) || (!isMax && e<max)) {
-                    queenBoards.add(moveToBoard(board, player, i, j, false));
-                    queenTo.add(j);
-                }
-            }
+            for (GridCoordinate j : getPossibleMoves(board, i))
+                queenStuff.put(moveToBoard(board, player, i, j, false), j);
 
+        int count=0;
+        for(Entry<int[][], GridCoordinate> e: queenStuff.entrySet())
+        {
+            if(count>=maxStepSize)
+                break;
+            for (GridCoordinate k : getPossibleMoves(e.getKey(),e.getValue()))
+                finalBoards.add(moveToBoard(e.getKey(), player, e.getValue(), k, true));
+            count++;
+        }
         // Now we compute the boards according to the arrow moves
-        for (int i = 0; i < queenBoards.size(); i++)
-            for (GridCoordinate k : getPossibleMoves(queenBoards.get(i), queenTo.get(i)))
-                finalBoards.add(moveToBoard(queenBoards.get(i), player, queenTo.get(i), k, true));
-        Comparator<int[][]> c= (isMax) ?
-                (b1, b2) ->{
-            return ((int)( evalF.evaluate(b2, player) - evalF.evaluate(b1, player))*1000);}
-                : (b1, b2)->{
-            return ((int)( evalF.evaluate(b1, player) - evalF.evaluate(b2, player))*1000);};
-        finalBoards.sort(c);
-        return finalBoards;
+        List<int[][]> finalB=new ArrayList<>(finalBoards);
+        return (finalB.size() > maxFinalSize) ?
+                finalB.subList(0, maxFinalSize) : finalB;
     }
+
 
     /**
      * Translates a move to a new board
@@ -197,7 +214,7 @@ public class MinMax {
                                       boolean isArrow) {
         int[][] nBoard = new int[board.length][];
         for (int i = 0; i < board.length; i++)
-            nBoard[i] = Arrays.copyOf(board[i], board.length);
+            nBoard[i] = Arrays.copyOf(board[i], board[0].length);
         if (!isArrow)
             nBoard[from.x][from.y] = 0;
         nBoard[to.x][to.y] = (isArrow) ? 3 : player;
@@ -234,6 +251,8 @@ public class MinMax {
         return to;
     }
 
+
+
     public static String getBoardAsString(int[][] b) {
         StringBuilder builder = new StringBuilder();
         for (int[] i : b) {
@@ -243,6 +262,7 @@ public class MinMax {
         }
         return builder.toString();
     }
+
     /**
      * Deduce the move (queen and arrow) applied to the board to get from B1 to
      * B2
@@ -258,7 +278,6 @@ public class MinMax {
      *         position
      */
     public static void deduceMoves(int[][] B1, int[][] B2, int player, GridCoordinate[] moves) {
-        System.out.println("hello");
         for (int i = 0; i < B1.length; i++)
             for (int j = 0; j < B1[0].length; j++) {
                 if (B1[i][j] != B2[i][j]) {
@@ -275,10 +294,11 @@ public class MinMax {
                             moves[2] = pos;
                     }
 
-                    if (moves[0] != null && moves[1] != null && moves[2] != null)
+                    if (moves[0] != null && moves[1] != null && moves[2]!=null)
                         break;
                 }
             }
     }
 
 }
+
