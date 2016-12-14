@@ -301,7 +301,7 @@ public class MinMax {
             for (int j = 0; j < B1[0].length; j++) {
                 if (B1[i][j] != B2[i][j]) {
                    // System.out.println(B1[i][j] + " " + B2[i][j]);
-                    GridCoordinate pos = new GridCoordinate(i, j);
+                    GridCoordinate pos = new GridCoordinate(i + 1, j + 1);
                     if (B1[i][j] == player) {
                         moves[0] = pos;
                         if (B2[i][j] == 3)
