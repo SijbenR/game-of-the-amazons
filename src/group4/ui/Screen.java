@@ -47,6 +47,7 @@ public class Screen implements ActionListener{
         frame.setVisible(true);
 
         timer = new Timer(5000, this);
+
         timer.start();
     }
 
