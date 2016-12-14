@@ -33,6 +33,7 @@ public class Test {
         int count=1;
         PrintWriter logFile = new PrintWriter("test.log");
         double temp=eval.evaluate(board, 1);
+        long t1=System.nanoTime();
         while(temp < 1.0 && temp > 0.0)
         {
 
@@ -52,12 +53,14 @@ public class Test {
             logFile.println(count+"\tPlayer "+((player) ? "1" : "2") +" Value for pl1: "+temp);
             logFile.println(getBoardAsString(board));
             logFile.flush();
+            System.out.println(count);
             count++;
-
         }
+        long t2=System.nanoTime();
         logFile.close();
-        System.out.println((temp==1.0) ? "Player 1 wins" : "Player 2 wins");
 
+        System.out.println((temp==1.0) ? "Player 1 wins" : "Player 2 wins");
+        System.out.println("Time: "+(t2-t1)/1000000000.0);
 
 
     }
