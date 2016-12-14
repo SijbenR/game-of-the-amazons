@@ -2,9 +2,12 @@ package group4.AI;
 
 import group4.Players.Player;
 import group4.ui.GridCoordinate;
+import group4.utilities.BoardOperations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static group4.utilities.BoardOperations.filterBoard;
 
 /**
  * Created by jonty on 14/12/2016.
@@ -32,10 +35,11 @@ public class Maximus extends Player {
     private ArrayList<GridCoordinate> opQueenPos;
 
 
-    public Maximus(boolean isFirst)   {
+    public Maximus(boolean isFirst, int depth)   {
         super(isFirst, true);
+
         calculate = new MinMax(super.getVal(), new MobilityEval());
-        calculate.setDepth(2);
+        calculate.setDepth(depth);
     }
 
 
@@ -61,7 +65,13 @@ public class Maximus extends Player {
         posMoves = new ArrayList<>();
         GridCoordinate[] returner = new GridCoordinate[2];
 
-        fullMove = calculate.getMove(Arrays.copyOf(Grid, Grid.length));
+        System.out.println("RIGHT BEFORE CALCULATING A MOVE");
+        printBoard();
+
+        fullMove = calculate.getMove(filterBoard(Grid));
+
+        System.out.println("BEST MOVE");
+        BoardOperations.printArrayint(calculate.bestBoard);
 
         returner[0] = fullMove[0];
         returner[1] = fullMove[1];

@@ -9,12 +9,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
-public class Screen {
+public class Screen implements ActionListener{
 
     private JFrame frame;
     private ControlPanel controlPanel;
@@ -26,6 +23,8 @@ public class Screen {
     public int sizeY;
     public int gridX;
     public int gridY;
+
+    private Timer timer;
 
     public boolean gamepaused=false;
 
@@ -46,6 +45,10 @@ public class Screen {
         addListeners();
         frame.setTitle("The Game Of The Amazons");
         frame.setVisible(true);
+
+        timer = new Timer(5000, this);
+
+        timer.start();
     }
 
     public void addButtons() {
@@ -215,4 +218,8 @@ public class Screen {
         System.out.println(gameBoard.toString());
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        gameBoard.activateBot();
+    }
 }

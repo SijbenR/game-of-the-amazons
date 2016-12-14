@@ -241,7 +241,7 @@ public class BoardOperations {
 
     public static void removePosMoves(int[][] Array) {
         for(int i = 0; i < Array.length; i++)   {
-            for(int j = 0; j < Array.length; i++)   {
+            for(int j = 0; j < Array.length; j++)   {
                 if(Array[i][j] == 4 || Array[i][j] == 5)    {
                     Array[i][j] = 0;
                 }
@@ -249,6 +249,17 @@ public class BoardOperations {
         }
     }
 
+    public static int[][] filterBoard(int[][] Array) {
+        int[][] n=new int[10][10];
+        for(int i = 0; i < Array.length; i++)   {
+            for(int j = 0; j < Array[0].length; j++)   {
+                if(Array[i][j] == 4 || Array[i][j] == 5)    {
+                    n[i][j] = 0;
+                } else n[i][j]=Array[i][j];
+            }
+        }
+        return n;
+    }
     public static void printArrayint(int [][] array) {
         String s;
         for (int i = 0; i < array.length; i++) {
