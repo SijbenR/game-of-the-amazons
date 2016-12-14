@@ -78,7 +78,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         timer = new Timer(delay, this);
         System.out.println("New timer");
 
-        Player player1 = new Player(true);
+        Player player1 = new Bobby(true);
         Player player2 = new Maximus(false);
 
         logicBoard = new LogicBoard(player1, player2);
@@ -163,6 +163,9 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
             for (int i = 0; i < marker.size(); i++) {
                 g2.draw(marker.get(i));
             }
+            //System.out.println("Piece: " + (currentPiece - 1) + "/tx: " + x + "/ty: " + y);
+            if(currentPiece == 0)
+                currentPiece = 1;
             g2.drawImage(piece[currentPiece - 1], x, y, width, height, this);
         }
 
@@ -321,7 +324,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         }
 
         System.out.println("Update needed: " + updateNeeded);
-        logicBoard.printBoard();
+        //logicBoard.printBoard();
 
         if (updateNeeded) {
 
@@ -561,7 +564,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
 
     public void setBoard(int[][] Array) {
         logicBoard.setBoard(Array);
-        logicBoard.printBoard();
+        //logicBoard.printBoard();
 
         boardArray = logicBoard.getBoard();
         int val = BoardOperations.countArrow(boardArray);
@@ -615,6 +618,8 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         if(logicBoard.getCurrent().isBot()) {
 
             Player Bot = logicBoard.getCurrent();
+            System.out.println("Before passing to bot");
+            //logicBoard.printBoard();
             Bot.giveInput(logicBoard.getBoard());
 
             //QueenMove
@@ -631,7 +636,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                 logicBoard.arrowSpotSelect = true;
             }
             else{
-                logicBoard.getCurrent().giveInput(logicBoard.getBoard());
+                //logicBoard.getCurrent().giveInput(logicBoard.getBoard());
                 GridCoordinate dest = Bot.chooseArrowMove();
                 updateBoard(dest.y - 1, dest.x - 1, 3);
             }

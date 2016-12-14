@@ -268,7 +268,7 @@ public class LogicBoard {
         System.out.println("Last State");
         printBoard(Moves.get(Moves.size() - 1).getMomentaryBoard());
         currentMoveIndex++;
-        printAllMoves();
+        //printAllMoves();
 
         System.out.println("Territory for " + getCurrent() + " player: " );
         for(int i = 0; i < 4; i++ ) {
