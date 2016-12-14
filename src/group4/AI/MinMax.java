@@ -23,8 +23,12 @@ public class MinMax {
        // board[3][0]= board[0][3] = board[0][6] =board[3][9]  = 1;
         //board[6][0]= board[9][3] = board[9][6] =board[6][9]  = 2;
         System.out.println(getBoardAsString(board));
+        long  starttime = System.currentTimeMillis();
         MinMax m=new MinMax(1,new MobilityEval());
+        long  endtime = System.currentTimeMillis();
         System.out.println(m.getMove(board));
+        long totaltime=endtime-starttime;
+        System.out.println("time taken = " + totaltime);
     }
 
     private int playerIndex;
@@ -35,6 +39,7 @@ public class MinMax {
     private int depth=3;
     private int maxstep=100;
     private int maxfinal=400;
+    private int count=0;
     /**
      * Prepares the MinMax algorithm setting the index of the player.
      *
@@ -96,8 +101,10 @@ public class MinMax {
                 deduceMoves(board, bmax, playerIndex, moves);
                 lastMove=moves;
             }
-            System.out.println(Arrays.toString(moves));
-            System.out.println(getBoardAsString(bmax));
+            count++;
+            System.out.println(count);
+            //System.out.println(Arrays.toString(moves));
+         //   System.out.println(getBoardAsString(bmax));
             return vmax;
         }
         // MIN is playing
@@ -285,7 +292,7 @@ public class MinMax {
         for (int i = 0; i < B1.length; i++)
             for (int j = 0; j < B1[0].length; j++) {
                 if (B1[i][j] != B2[i][j]) {
-                    System.out.println(B1[i][j] + " " + B2[i][j]);
+                   // System.out.println(B1[i][j] + " " + B2[i][j]);
                     GridCoordinate pos = new GridCoordinate(i, j);
                     if (B1[i][j] == player) {
                         moves[0] = pos;
