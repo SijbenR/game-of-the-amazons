@@ -58,6 +58,10 @@ public class MinMax {
         };
     }
 
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
     /**
      * Returns the best move found using the minmax algorithm
      *
