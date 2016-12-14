@@ -22,13 +22,13 @@ public class MinMax {
         board= BoardOperations.listToArray(list);
        // board[3][0]= board[0][3] = board[0][6] =board[3][9]  = 1;
         //board[6][0]= board[9][3] = board[9][6] =board[6][9]  = 2;
-        System.out.println(getBoardAsString(board));
+        //System.out.println(getBoardAsString(board));
         long  starttime = System.currentTimeMillis();
         MinMax m=new MinMax(1,new MobilityEval());
         long  endtime = System.currentTimeMillis();
-        System.out.println(m.getMove(board));
+        //System.out.println(m.getMove(board));
         long totaltime=endtime-starttime;
-        System.out.println("time taken = " + totaltime);
+        //System.out.println("time taken = " + totaltime);
     }
 
     private int playerIndex;
@@ -107,8 +107,8 @@ public class MinMax {
                 deduceMoves(board, bmax, playerIndex, moves);
                 lastMove=moves;
             }
-            count++;
-            System.out.println(count);
+            //count++;
+            //System.out.println(count);
             //System.out.println(Arrays.toString(moves));
          //   System.out.println(getBoardAsString(bmax));
             return vmax;

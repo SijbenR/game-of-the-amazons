@@ -30,10 +30,12 @@ public class Test {
         MinMax pl2=new MinMax(2,eval);
         pl1.setDepth(2);
         pl2.setDepth(1);
+        int count=1;
         PrintWriter logFile = new PrintWriter("test.log");
         double temp=eval.evaluate(board, 1);
         while(temp < 1.0 && temp > 0.0)
         {
+
 
             if(player)
             {
@@ -47,9 +49,10 @@ public class Test {
             }
             player=!player;
             temp=eval.evaluate(board, 1);
-            logFile.println("Player "+((player) ? "1" : "2") +" Value for pl1: "+temp);
+            logFile.println(count+"\tPlayer "+((player) ? "1" : "2") +" Value for pl1: "+temp);
             logFile.println(getBoardAsString(board));
             logFile.flush();
+            count++;
 
         }
         logFile.close();
