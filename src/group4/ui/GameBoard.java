@@ -164,9 +164,8 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                 g2.draw(marker.get(i));
             }
             //System.out.println("Piece: " + (currentPiece - 1) + "/tx: " + x + "/ty: " + y);
-            if(currentPiece == 0)
-                currentPiece = 1;
-            g2.drawImage(piece[currentPiece - 1], x, y, width, height, this);
+            if(currentPiece != 0)
+                g2.drawImage(piece[currentPiece - 1], x, y, width, height, this);
         }
 
 
