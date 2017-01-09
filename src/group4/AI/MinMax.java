@@ -109,8 +109,8 @@ public class MinMax {
                 deduceMoves(board, bmax, playerIndex, moves);
                 lastMove=moves;
             }
-            //count++;
-            //System.out.println(count);
+            count++;
+            System.out.println(count);
             //System.out.println(Arrays.toString(moves));
          //   System.out.println(getBoardAsString(bmax));
             return vmax;

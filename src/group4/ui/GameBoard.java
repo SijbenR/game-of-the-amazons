@@ -49,7 +49,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
     private boolean updateNeeded;
     private boolean DEBUG = false;
     public Image[] piece, letter, figure;
-    public int x, y, dx, dy, speed, delay = 1000 / 60;
+    public int x, y, dx, dy, speed, delay = 50 / 60;
     public int sizeX, sizeY;
 
     public int width;
@@ -78,8 +78,8 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         timer = new Timer(delay, this);
         System.out.println("New timer");
 
-        Player player1 = new Maximus(true, 1);
-        Player player2 = new Maximus(false,2);
+        Player player1 = new Player(true);
+        Player player2 = new Player(false);
 
         logicBoard = new LogicBoard(player1, player2);
         boardArray = logicBoard.getBoard();

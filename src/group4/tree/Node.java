@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 /**
  * Created by Robins on 10.12.2016.
+ *
+ * WORK IN PROGRESS - DO NOT USE YET!
  */
 public class Node {
 
@@ -20,20 +22,80 @@ public class Node {
     protected int score;
     protected GridCoordinate origin, dest;
 
-    private int playerVal;
 
-    int[][] Board = new int[10][10];
+    public int playerVal;
+
+    public boolean ownMove, arrowMove;
+    String BoardCompressed;
+
 
     //root
-    public Node(int[][] Board)   {
-        this.Board = Board;
+    public Node(String BoardCompressed, boolean ownMove, int startVal)   {
+        this.BoardCompressed = BoardCompressed;
+        this.Children = new ArrayList<>();
+        this.ownMove = ownMove;
+        this.playerVal = startVal;
+
+        this.parent = null;
+        this.origin = null;
+        this.dest = null;
     }
 
 
     public Node(Node parent, GridCoordinate origin, GridCoordinate dest)   {
 
+        this.parent = parent;
+        this.Children = new ArrayList<>();
+
+        this.origin = origin;
+        this.dest = dest;
+
     }
 
 
+    public void addChild(Node Child)   {
+
+        Children.add(Child);
+
+    }
+
+    public void setScore(int score)   {
+        this.score = score;
+    }
+
+    public int getScore()   {
+        return score;
+    }
+
+    public GridCoordinate getOrigin()   {
+        return origin;
+    }
+
+    public GridCoordinate getDest()   {
+        return dest;
+    }
+
+    public boolean isSame(Node toCompare) {
+        if(origin.isSame(toCompare.getOrigin()) && dest.isSame(toCompare.getDest()))    {
+            return true;
+        }
+        else    {
+            return false;
+        }
+    }
+
+    public boolean validAmongChildren(Node toCompare)    {
+        for(Node child: Children)   {
+            if(isSame(toCompare)) {
+                //to compare already amongs children
+                return false;
+            }
+        }
+        return  true;
+    }
+
+    public ArrayList<Node> getChildren()    {
+        return Children;
+    }
 
 }

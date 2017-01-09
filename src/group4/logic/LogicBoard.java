@@ -768,8 +768,8 @@ public class LogicBoard {
         int[] returnStatement = new int[4];
 
         //First get Positons of all Queens, should use better method for this
-        for(int i = 1; i < 11; i++) {
-            for (int j = 1; j < 11; j++) {
+        for(int i = 1; i < Grid.length + 1; i++) {
+            for (int j = 1; j < Grid.length + 1; j++) {
                 if (amazonOfCurrentPlayer(new GridCoordinate(i, j), inQuestion)) {
                     queenPositions.add(new GridCoordinate(i, j));
                 }

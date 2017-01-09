@@ -29,7 +29,7 @@ public class BoardOperations {
         }
         else    {
             setEmpty(Array, origin);
-
+            setQueenOn(Array, dest,val);
         }
     }
 
@@ -65,11 +65,11 @@ public class BoardOperations {
         return true;
     }
 
-    public void setQueenOn(int[][] Grid, GridCoordinate position, int val){
-        setQueenOn(Grid, position.y, position.x, val);
+    public static void setQueenOn(int[][] Grid, GridCoordinate position, int val){
+        setQueenOn(Grid, position.y - 1, position.x - 1, val);
     }
 
-    public void setQueenOn(int[][] Grid, int y, int x, int val){
+    public static void setQueenOn(int[][] Grid, int y, int x, int val){
         if(checkBound(Grid, y, x) && Grid[y][x] == 0 && (val == 2 || val == 3))   {
             Grid[y][x] = val;
         }
@@ -78,9 +78,19 @@ public class BoardOperations {
         }
     }
 
+    public static void setArrow(int[][] Grid, GridCoordinate position){
+        setArrow(Grid, position.y - 1, position.x - 1);
+    }
+
+    public static void setArrow(int[][] Grid, int y, int x){
+        if(checkBound(Grid, y, x) && Grid[y][x] != 0)   {
+            Grid[y][x] = 3;
+        }
+    }
+
 
     public static int evalMobility(int[][] Array, GridCoordinate position)    {
-        calcPosMoves(Array, position, 5);
+        calcPosMoves(Array, position, false);
         int val = countPosMove(Array);
         removePosMoves(Array);
         return val;
@@ -88,7 +98,7 @@ public class BoardOperations {
 
 
     public static void setEmpty(int[][] Grid, GridCoordinate position){
-        setEmpty(Grid, position.y, position.x);
+        setEmpty(Grid, position.y - 1, position.x - 1);
     }
 
     public static void setEmpty(int[][] Grid, int y, int x){
@@ -105,7 +115,7 @@ public class BoardOperations {
 
         while(!choosen) {
             ran = (int)(Math.random() * 4);
-            calcPosMoves(Board, queens.get(ran), val);
+            calcPosMoves(Board, queens.get(ran), false);
             if(countPosMove(Board) >= 1)
                 choosen = true;
         }
@@ -124,13 +134,20 @@ public class BoardOperations {
 
     }
 
-    public static void calcPosMoves(int[][] Array, GridCoordinate position, int val){
-        calcPosMoves(Array, position.x, position.y, val);
+    public static void calcPosMoves(int[][] Array, GridCoordinate position, boolean arrowMove){
+        calcPosMoves(Array, position.x - 1, position.y - 1, arrowMove);
     }
 
-    public static void calcPosMoves(int[][] Array, int x, int y, int val)    {
+    public static void calcPosMoves(int[][] Array, int x, int y, boolean arrowMove)    {
         removePosMoves(Array);
 
+
+        int val;
+        if(arrowMove)   {
+            val = 5;
+        }
+        else
+            val = 4;
 
         int i, j;
         int tempX, tempY;
@@ -204,6 +221,30 @@ public class BoardOperations {
             tempX--;
 
         }
+    }
+
+    public static ArrayList<GridCoordinate> listPosDest(int[][] Array, GridCoordinate start)  {
+        ArrayList<GridCoordinate> posMoves = new ArrayList<GridCoordinate>();
+
+        calcPosMoves(Array, start, false);
+        GridCoordinate pos;
+        for(int k = 1; k < 11; k++) {
+            for(int l = 1; l < 11; l++) {
+                pos = new GridCoordinate(k,l);
+                if(getValAt(Array, pos) == 4 || getValAt(Array, pos) == 4)  {
+                    posMoves.add(pos);
+                }
+            }
+        }
+        return posMoves;
+    }
+
+    public static int getValAt(int[][] Board, GridCoordinate pos)    {
+        return getValAt(Board, pos.x - 1, pos.y - 1);
+    }
+
+    public static int getValAt(int[][] Board, int x, int y)    {
+        return Board[y][x];
     }
 
     public static int countPosMove(int[][] Array)    {
@@ -306,6 +347,18 @@ public class BoardOperations {
         return b2;
     }
 
+    public int[][] stringToBoard(String board)
+    {
+        String[] stringArray = board.split("");
+        int[] list = new int[stringArray.length];
+        System.out.println();
+        for (int i = 0; i < stringArray.length; i++) {
+            list[i] = Integer.parseInt(stringArray[i]);
+            //System.out.print(list[i] + " ");
+        }
+
+        return listToArray(list);
+    }
 
     public static int[][] listToArray(int[] list) {
         int size = (int) Math.sqrt(list.length);
@@ -319,6 +372,23 @@ public class BoardOperations {
         }
         return array;
     }
+
+
+    public static String getBoardAsString(int[][] Grid)    {
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < Grid.length; i++)   {
+            for(int j = 0; j < Grid[0].length; j++) {
+                builder.append(Grid[i][j]);
+            }
+        }
+        return builder.toString();
+    }
+
+
+
+
+
+
 
 
 }

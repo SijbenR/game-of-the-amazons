@@ -93,17 +93,17 @@ public class Player {
     public void setUpQueens() {
         int startY1, startY2;
         if (isFirst) {
-            startY1 = 6;
+            startY1 = 7;
             startY2 = 9;
         } else {
-            startY1 = 3;
+            startY1 = 2;
             startY2 = 0;
         }
         int i = 0;
 
         amazonPositions[i++] = new GridCoordinate(0, startY1);
-        amazonPositions[i++] = new GridCoordinate(3, startY2);
-        amazonPositions[i++] = new GridCoordinate(6, startY2);
+        amazonPositions[i++] = new GridCoordinate(2, startY2);
+        amazonPositions[i++] = new GridCoordinate(7, startY2);
         amazonPositions[i++] = new GridCoordinate(9, startY1);
     }
 
