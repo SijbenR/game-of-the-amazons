@@ -62,7 +62,7 @@ public class TreeTraverse {
         }
         //System.out.println("\n\nAFTER: ");
         //printBoard();
-        System.out.println("\n");
+        //System.out.println("\n");
 
     }
 

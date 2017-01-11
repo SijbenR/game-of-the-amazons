@@ -88,6 +88,9 @@ public class NodeTree {
             if(limit > branch)  {
                 limit = branch;
             }
+            else {
+
+            }
 
             //System.out.println("limit: " + limit);
 
@@ -113,7 +116,7 @@ public class NodeTree {
                 limit = branch;
             }
 
-            while(parent.getChildren().size() <= limit) {
+            while(parent.getChildren().size() < limit) {
                 childNode = nodePointer.createChild(parent);
                 parent.addChild(childNode);
             }
@@ -127,7 +130,7 @@ public class NodeTree {
             if(limit > branch)  {
                 limit = branch;
             }
-            while(parent.getChildren().size() <= limit) {
+            while(parent.getChildren().size() < limit) {
                 childNode = nodePointer.createChild(parent);
                 parent.addChild(childNode);
             }
@@ -144,6 +147,7 @@ public class NodeTree {
         ArrayList<Node> children = root.getChildren();
        // System.out.println("Size: " + children.size());
         nodePointer.evaluateChildren(root);
+        nodePointer.printBoard();
 
 
 
