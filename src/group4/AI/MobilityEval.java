@@ -5,6 +5,8 @@ package group4.AI;
 
 public class MobilityEval extends EvaluationFunction {
 
+
+
     @Override
     public double evaluate(int[][] board, int player) {
         double pl1=0;

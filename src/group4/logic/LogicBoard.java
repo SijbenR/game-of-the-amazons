@@ -112,7 +112,8 @@ public class LogicBoard {
         currentMoveIndex = -1;
         addMove();
 
-        System.out.println("CURRENT INDEX: " + currentMoveIndex + "\nCurrent Player: " + getCurrent() + "\nqueenSelect: " + queenSelect + "\narrowSpotSelect: " + arrowSpotSelect + "\n");
+        //TODO Put back in???
+        //System.out.println("CURRENT INDEX: " + currentMoveIndex + "\nCurrent Player: " + getCurrent() + "\nqueenSelect: " + queenSelect + "\narrowSpotSelect: " + arrowSpotSelect + "\n");
     }
 
     public int[][] getBoard() {
@@ -249,8 +250,8 @@ public class LogicBoard {
     public void addMove()	{
         int[][] t = copyBoard();
         tempBoard tBoard = new tempBoard(t);
-
-        System.out.println("AddMove:\nMoveIndex: " + currentMoveIndex + "\nSize: " + Moves.size());
+        //TODO put back in ???
+        //System.out.println("AddMove:\nMoveIndex: " + currentMoveIndex + "\nSize: " + Moves.size());
 
         if(Moves.size() - 1 == currentMoveIndex)
             Moves.add(tBoard);
@@ -265,15 +266,15 @@ public class LogicBoard {
 
 
 
-        System.out.println("Last State");
-        printBoard(Moves.get(Moves.size() - 1).getMomentaryBoard());
+        //System.out.println("Last State");
+       // printBoard(Moves.get(Moves.size() - 1).getMomentaryBoard());
         currentMoveIndex++;
         //printAllMoves();
-
-        System.out.println("Territory for " + getCurrent() + " player: " );
+//TODO HERE REDO TERRITORY STUFF
+       // System.out.println("Territory for " + getCurrent() + " player: " );
         for(int i = 0; i < 4; i++ ) {
 
-            System.out.println("\n" + checkTerritory(getBoard(), getCurrent())[i]);
+          //  System.out.println("\n" + checkTerritory(getBoard(), getCurrent())[i]);
         }
 
     }
@@ -338,7 +339,8 @@ public class LogicBoard {
 
     public void undoMove()	{
 
-        System.out.println("\nBefore Undo:\nCURRENT INDEX: " + currentMoveIndex + "\nSize: " + Moves.size() + "\nCurrent Player: " + getCurrent() + "\nqueenSelect: " + queenSelect + "\narrowSpotSelect: " + arrowSpotSelect + "\n");
+        //TODO put back in???
+        //System.out.println("\nBefore Undo:\nCURRENT INDEX: " + currentMoveIndex + "\nSize: " + Moves.size() + "\nCurrent Player: " + getCurrent() + "\nqueenSelect: " + queenSelect + "\narrowSpotSelect: " + arrowSpotSelect + "\n");
 
 		/*
 		First case:			Queen has NOT been chosen for move

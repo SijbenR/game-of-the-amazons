@@ -10,10 +10,15 @@ public class GridCoordinate {
         this.y = y;
     }
 
-    public boolean isSame(GridCoordinate comp) {
-        if(comp.x == x && comp.y == y)
-            return true;
+    public boolean isSameGridcoordinate(GridCoordinate comp) {
 
+
+        if(comp.x == x && comp.y == y) {
+            //System.out.println("returning true");
+            return true;
+        }
+
+        //System.out.println("returning false");
         return false;
     }
 

@@ -48,7 +48,7 @@ public class Screen implements ActionListener{
 
         timer = new Timer(5000, this);
 
-        timer.start();
+       // timer.start();
     }
 
     public void addButtons() {
@@ -103,7 +103,7 @@ public class Screen implements ActionListener{
         button4.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 gameBoard.activateBot();
-
+                timer.start();
             }
             });
         button5.addActionListener(new ActionListener() {

@@ -1,7 +1,9 @@
 package group4.utilities;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import group4.tree.Node;
 import group4.ui.GridCoordinate;
+import org.omg.CORBA.PERSIST_STORE;
 
 import java.util.ArrayList;
 
@@ -22,6 +24,11 @@ public class TreeTraverse {
 
 
     public void performMove(GridCoordinate origin, GridCoordinate dest, boolean arrowMove)   {
+        removePosMoves(Board);
+        //System.out.println("BEFORE: ");
+        //printBoard();
+
+
 
 
         if(getValAt(origin) == 3 && arrowMove)   {
@@ -30,7 +37,13 @@ public class TreeTraverse {
         }
         else if((getValAt(origin) == 1 || getValAt(origin) == 2) && arrowMove && getValAt(dest) == 0)   {
             //Set Arrow
+            //System.out.println("ENTERED!!!!");
             setArrow(Board, dest);
+        }
+        else if((getValAt(origin) == 1 || getValAt(origin) == 2) && arrowMove && getValAt(dest) == 3)   {
+            //Set Arrow
+            //TODO Possible error here in the future
+            setEmpty(Board, dest);
         }
         else if((getValAt(origin) == 1 || getValAt(origin) == 2) && !arrowMove && getValAt(dest) == 0)   {
             //Move Queen
@@ -47,6 +60,10 @@ public class TreeTraverse {
         else    {
             System.out.println("invalid Exception:\nOrigin = " + getValAt(origin) + "\nDestination = " + getValAt(dest) + "\nArrowMove = " + arrowMove);
         }
+        //System.out.println("\n\nAFTER: ");
+        //printBoard();
+        System.out.println("\n");
+
     }
 
     private int getValAt(GridCoordinate position) {
@@ -82,10 +99,11 @@ public class TreeTraverse {
 
             //Filter out all queens that can't move anymore
             int count = 0;
-            for(GridCoordinate queen : queens)  {
-                count = countPosOptions(queen);
+            for(int i = 0; i < queens.size(); i++)  {
+                count = countPosQueenOptions(queens.get(i));
                 if(count == 0)  {
-                    queens.remove(queen);
+                    queens.remove(i);
+                    i = 0;
                 }
                 removePosMoves(Board);
             }
@@ -100,18 +118,28 @@ public class TreeTraverse {
                 posDest = listPosDest(Board, origin);
                 ran = (int) (posDest.size() * Math.random());
                 GridCoordinate tar = posDest.get(ran);
-
+                //System.out.println("QueenSize: " + queens.size());
                 Node newNode = new Node(parent, origin, tar);
+                //System.out.println("NewNode: " + newNode);
 
-                while(!parent.validAmongChildren(newNode))  {
-                    ran = (int) (queens.size() * Math.random());
-                    origin = queens.get(ran);
 
-                    posDest = listPosDest(Board, origin);
-                    ran = (int) (posDest.size() * Math.random());
-                    tar = posDest.get(ran);
+                if(parent.getChildren().size() > 0) {
+                    //parent.getChildren().get(0).printNode();
+                    //System.out.println("Size: " + parent.getChildren().size());
 
-                    newNode = new Node(parent, origin, tar);
+
+                    while (!parent.validAmongChildren(newNode)) {
+                        //System.out.println("NOT VALID = " + newNode);
+
+                        ran = (int) (queens.size() * Math.random());
+                        origin = queens.get(ran);
+
+                        posDest = listPosDest(Board, origin);
+                        ran = (int) (posDest.size() * Math.random());
+                        tar = posDest.get(ran);
+
+                        newNode = new Node(parent, origin, tar);
+                    }
                 }
 
                 return newNode;
@@ -218,8 +246,10 @@ public class TreeTraverse {
 
     //For Arrow shots
     public int countPosOptions(GridCoordinate Origin)    {
-
-        return 0;
+        calcPosMoves(Board, Origin, true);
+        int count = countPosMove(Board);
+        removePosMoves(Board);
+        return count;
     }
 
     //Queens
@@ -247,6 +277,32 @@ public class TreeTraverse {
        return generateRanMove(parent);
     }
 
+    public void printBoard()    {
+        printArrayint(Board);
+    }
+
+    public void evaluateChildren(Node parent)   {
+
+        GridCoordinate origin, dest;
+        boolean arrowMove;
+        for(Node child: parent.getChildren())   {
+            origin = child.getOrigin();
+            dest = child.getDest();
+            arrowMove = child.arrowMove;
+            performMove(origin, dest, arrowMove);
+            //System.out.println("For Node: " + child);
+            //printBoard();
+
+
+            child.setScore(evaluate(Board, child.playerVal));
+            System.out.println("Score: " + child.getScore());
+            //printBoard();
+            //Revert the move
+            performMove(origin, dest, arrowMove);
+
+        }
+
+    }
 
 
 

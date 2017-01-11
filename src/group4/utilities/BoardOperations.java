@@ -1,11 +1,16 @@
 package group4.utilities;
 
 import group4.AI.MinMax;
+import group4.tree.Node;
+import group4.tree.Tree;
 import group4.ui.GridCoordinate;
 
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.ArrayList;
+
+import static group4.AI.MinMax.getQueensPositions;
+import static group4.AI.MobilityEval.getNumPossibleMoves;
 
 /**
  * Created by robin on 08.12.2016.
@@ -70,11 +75,11 @@ public class BoardOperations {
     }
 
     public static void setQueenOn(int[][] Grid, int y, int x, int val){
-        if(checkBound(Grid, y, x) && Grid[y][x] == 0 && (val == 2 || val == 3))   {
+        if(checkBound(Grid, y, x) && Grid[y][x] == 0 && (val == 1 || val == 2))   {
             Grid[y][x] = val;
         }
         else    {
-            System.out.println("SetQueenOn() Invalid inputs");
+            System.out.println("SetQueenOn() Invalid inputs\nChecxkBopund: " + checkBound(Grid, y, x) + "\tX: " + x + "\tY: " + y + "\tVal at Coordiunate: " + Grid[y][x] + "\tVal: " + val);
         }
     }
 
@@ -83,7 +88,7 @@ public class BoardOperations {
     }
 
     public static void setArrow(int[][] Grid, int y, int x){
-        if(checkBound(Grid, y, x) && Grid[y][x] != 0)   {
+        if(checkBound(Grid, y, x) && Grid[y][x] == 0)   {
             Grid[y][x] = 3;
         }
     }
@@ -95,6 +100,41 @@ public class BoardOperations {
         removePosMoves(Array);
         return val;
     }
+
+    public static double evaluate(int[][] board, int player) {
+        double pl1=0;
+        double pl2=0;
+        for(GridCoordinate i: getQueensPositions(board, player))
+            pl1+=getNumPossibleMoves(board, i);
+        for(GridCoordinate i: getQueensPositions(board, 3-player))
+            pl2+=getNumPossibleMoves(board, i);
+		/*I thought would be better to return the
+		 *ratio of the mobility of the first player
+		 *over the total mobility of both
+		 */
+		removePosMoves(board);
+        return pl1/(pl1+pl2);
+    }
+
+
+    public static void bubbleSortNodesByScore(ArrayList<Node> children)   {
+        Node temp;
+        if (children.size()>1) // check if the number of orders is larger than 1
+        {
+            for (int x=0; x<children.size(); x++) // bubble sort outer loop
+            {
+                for (int i=0; i < children.size() - x - 1; i++) {
+                    if (children.get(i).getScore() < children.get(i + 1).getScore()) {
+                        temp = children.get(i);
+                        children.set(i, children.get(i + 1));
+                        children.set(i + 1, temp);
+                    }
+                }
+
+            }
+        }
+    }
+
 
 
     public static void setEmpty(int[][] Grid, GridCoordinate position){
@@ -231,7 +271,7 @@ public class BoardOperations {
         for(int k = 1; k < 11; k++) {
             for(int l = 1; l < 11; l++) {
                 pos = new GridCoordinate(k,l);
-                if(getValAt(Array, pos) == 4 || getValAt(Array, pos) == 4)  {
+                if(getValAt(Array, pos) == 4 || getValAt(Array, pos) == 5)  {
                     posMoves.add(pos);
                 }
             }

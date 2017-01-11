@@ -6,6 +6,7 @@ import group4.utilities.BoardOperations;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Robins on 10.12.2016.
@@ -19,7 +20,7 @@ public class Node {
     protected Node parent;
     protected ArrayList<Node> Children;
 
-    protected int score;
+    protected double score;
     protected GridCoordinate origin, dest;
     protected int depthOfNode;
 
@@ -32,7 +33,7 @@ public class Node {
     //root
     public Node(String BoardCompressed, boolean ownMove, int startVal)   {
         this.BoardCompressed = BoardCompressed;
-        this.Children = new ArrayList<>();
+        this.Children = new ArrayList<Node>();
         this.ownMove = ownMove;
         this.playerVal = startVal;
 
@@ -46,7 +47,7 @@ public class Node {
     public Node(Node parent, GridCoordinate origin, GridCoordinate dest)   {
 
         this.parent = parent;
-        this.Children = new ArrayList<>();
+        this.Children = new ArrayList<Node>();
 
         this.origin = origin;
         this.dest = dest;
@@ -87,21 +88,30 @@ public class Node {
         else    {
             System.out.println("Exception caught");
         }
+
+        //System.out.println("Adding child: " + Child);
         Children.add(Child);
 
     }
 
-    public void setScore(int score)   {
+    public void setScore(double score)   {
         this.score = score;
     }
 
-    public int getScore()   {
+    public double getScore()   {
         return score;
     }
+
+
 
     public void setOwnMove(boolean ownMove) {
         this.ownMove = ownMove;
     }
+
+    public void setChildren(ArrayList<Node> newChildren) {
+        Collections.copy(this.Children, newChildren);
+    }
+
 
     public void setArrowMove(boolean arrowMove) {
         this.arrowMove = arrowMove;
@@ -124,7 +134,9 @@ public class Node {
 
 
     public boolean isSame(Node toCompare) {
-        if(origin.isSame(toCompare.getOrigin()) && dest.isSame(toCompare.getDest()))    {
+        //System.out.println("Origin: " + origin + "\tDestination: " + dest);
+
+        if(origin.isSameGridcoordinate(toCompare.getOrigin()) && dest.isSameGridcoordinate(toCompare.getDest()))    {
             return true;
         }
         else    {
@@ -133,8 +145,9 @@ public class Node {
     }
 
     public boolean validAmongChildren(Node toCompare)    {
+        //System.out.println("ToCompare: " + toCompare);
         for(Node child: Children)   {
-            if(isSame(toCompare)) {
+            if(child.isSame(toCompare)) {
                 //to compare already amongs children
                 return false;
             }
@@ -145,5 +158,15 @@ public class Node {
     public ArrayList<Node> getChildren()    {
         return Children;
     }
+
+
+    public String toString()   {
+        return new String("Node depth = " + depthOfNode + "\tOrigin: " + origin + "\tDestination: " + dest + "\tOwnmove: " + ownMove + "\tArrowMove: " + arrowMove);
+    }
+
+    public void printNode() {
+        System.out.println(toString());
+    }
+
 
 }
