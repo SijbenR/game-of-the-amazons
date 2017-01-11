@@ -54,7 +54,38 @@ public class Node {
 
 
     public void addChild(Node Child)   {
+        if(ownMove == true && arrowMove == true)  {
+            Child.setOwnMove(false);
+            Child.setArrowMove(false);
 
+            if(playerVal == 1)
+                Child.setPlayerVal(2);
+            else
+                Child.setPlayerVal(1);
+        }
+        else if(ownMove == true && arrowMove == false) {
+            Child.setOwnMove(true);
+            Child.setArrowMove(true);
+
+            Child.setPlayerVal(playerVal);
+        }
+        else if(ownMove == false && arrowMove == false)  {
+            Child.setOwnMove(false);
+            Child.setArrowMove(true);
+            Child.setPlayerVal(playerVal);
+        }
+        else if(ownMove == false && arrowMove == true)  {
+            Child.setOwnMove(true);
+            Child.setArrowMove(false);
+
+            if(playerVal == 1)
+                Child.setPlayerVal(2);
+            else
+                Child.setPlayerVal(1);
+        }
+        else    {
+            System.out.println("Exception caught");
+        }
         Children.add(Child);
 
     }
@@ -67,6 +98,18 @@ public class Node {
         return score;
     }
 
+    public void setOwnMove(boolean ownMove) {
+        this.ownMove = ownMove;
+    }
+
+    public void setArrowMove(boolean arrowMove) {
+        this.arrowMove = arrowMove;
+    }
+
+    public void setPlayerVal(int val) {
+        this.playerVal = val;
+    }
+
     public GridCoordinate getOrigin()   {
         return origin;
     }
@@ -74,6 +117,8 @@ public class Node {
     public GridCoordinate getDest()   {
         return dest;
     }
+
+
 
     public boolean isSame(Node toCompare) {
         if(origin.isSame(toCompare.getOrigin()) && dest.isSame(toCompare.getDest()))    {

@@ -27,13 +27,30 @@ public class NodeTree {
 
 
     //Tree where Arrow and queen move are separate steps
-    public NodeTree(int[][] Board, int ownVal, int depth, int branch)   {
+    public NodeTree(int[][] Board, int ownVal, boolean arrowMove, int depth, int branch)   {
         arrowMoveSeperate = true;
         this.ownVal = ownVal;
 
         String board = BoardOperations.getBoardAsString(Board);
 
-        //root = new Node(board, ownVal);
+        int rootVal;
+        boolean startBool;
+
+
+        if(arrowMove == true)   {
+            rootVal = ownVal;
+            startBool = false;
+        }
+        else    {
+            if(ownVal == 1)
+                rootVal = 2;
+            else
+                rootVal = 1;
+            startBool = true;
+        }
+
+
+        root = new Node(board, startBool, rootVal);
 
         this.depth = depth;
         this.branch = branch;
@@ -48,23 +65,44 @@ public class NodeTree {
     public void addChildren(Node parent)    {
         //We know the current Tree from tree traverse, so tahts where we need to ask for the possible moves for the parent Node´s possible moves
         int queens;
-        ArrayList<GridCoordinate> queenLoc;
+
+        //First check if the number of Possible moves is lesser than the Branch, because then we need to adjust the limit of Child
+        // -> But for that we first need to know whether WE are supposed to move OR the OPPONENT
+        int queenVal;
+        int limit;
+        Node childNode;
 
 
-        //Just moving own Queen
-        if(parent.ownMove && !parent.arrowMove)  {
-            //queenLoc = nodePointer.generat
+        if(!parent.ownMove && !parent.arrowMove) {      //This means WE are supposed to move a Queen
 
+            //Check limit of options
+            //limit = nodePointer.countPosOptions(queenVal);
+
+        }
+        else if(parent.ownMove && parent.arrowMove)  {  //This means the opponent is supposed to move
+
+            //We set the value we are going to look for the Queens of the opponent
+            if(parent.playerVal == 1)
+                queenVal = 2;
+            else
+                queenVal = 1;
+
+            limit = nodePointer.countPosOptions(queenVal);
+
+            //in case we have more options than we need
+            if(limit > branch)  {
+                limit = branch;
+            }
+
+            while(parent.getChildren().size() <= limit) {
+                childNode = nodePointer.createChild(parent);
+                parent.addChild(childNode);
+            }
 
         }
 
 
-       while(parent.getChildren().size() < branch)  {
 
-
-
-
-       }
 
     }
 

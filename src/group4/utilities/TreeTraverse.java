@@ -59,18 +59,19 @@ public class TreeTraverse {
         return Board[y][x];
     }
 
-    public GridCoordinate[] generateRanMove(Node parent)    {
+    public Node generateRanMove(Node parent)    {
         int val;
 
         //Position 0 => Origin
         //Position 1 => Destination
         GridCoordinate[] returner = new GridCoordinate[2];
 
+
         ArrayList<GridCoordinate> posDest;
 
+
         //First we check if the now to be computed move is a Queen or an Arow move
-        if(parent.arrowMove)    {
-            val = 3;
+        if(!parent.arrowMove)    {
             //Because the previous queen destination is where we are going to shoot an arrow from
             returner[0] = parent.getDest();
 
@@ -79,11 +80,24 @@ public class TreeTraverse {
             GridCoordinate tar = posDest.get(ran);
             Node newNode = new Node(parent, returner[0], tar);
 
-            //There might only be a limited number of solutions possible - we have to consider the case when this number is smaller than the allowed branch
-            while(!parent.validAmongChildren(newNode))  {
+            while(!parent.validAmongChildren(newNode))   {
                 ran = (int) (posDest.size() * Math.random());
-
+                tar = posDest.get(ran);
+                newNode = new Node(parent, returner[0], tar);
             }
+
+            return newNode;
+        }
+        else if(parent.ownMove && parent.arrowMove)    {
+            //Was your own Move and you just shot an arrow so now it's the opponents turn
+
+            //Want to get all posible Queens from opponent
+            int queenVal = parent.playerVal;
+            ArrayList<GridCoordinate> queens = posQueens(Board, queenVal);
+
+        }
+        else if(!parent.ownMove && !parent.arrowMove)   {
+            //Opponent mpve
         }
 
 
@@ -91,6 +105,30 @@ public class TreeTraverse {
 
 
         return null;
+    }
+
+
+
+    //For Arrow shots
+    public int countPosOptions(GridCoordinate Origin)    {
+
+        return 0;
+    }
+
+    public int countPosOptions(int queenVal)    {
+        ArrayList<GridCoordinate> Queens = posQueens(Board, queenVal);
+        int count = 0;
+        for(GridCoordinate position: Queens)    {
+            calcPosMoves(Board, position, false);
+            count += countPosMove(Board);
+            removePosMoves(Board);
+        }
+        return count;
+    }
+
+    //For QueenMoves
+    public Node createChild(Node parent)   {
+       return generateRanMove(parent);
     }
 
 
