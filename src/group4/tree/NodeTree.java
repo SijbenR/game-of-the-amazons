@@ -73,10 +73,21 @@ public class NodeTree {
         Node childNode;
 
 
-        if(!parent.ownMove && !parent.arrowMove) {      //This means WE are supposed to move a Queen
+        if(!parent.ownMove && parent.arrowMove) {      //This means WE are supposed to move a Queen
 
             //Check limit of options
-            //limit = nodePointer.countPosOptions(queenVal);
+
+            queenVal = ownVal;
+            limit = nodePointer.countPosOptions(queenVal);
+            if(limit > branch)  {
+                limit = branch;
+            }
+
+            //create children
+            while(parent.getChildren().size() <= limit) {
+                childNode = nodePointer.createChild(parent);
+                parent.addChild(childNode);
+            }
 
         }
         else if(parent.ownMove && parent.arrowMove)  {  //This means the opponent is supposed to move
@@ -100,9 +111,9 @@ public class NodeTree {
             }
 
         }
+    }
 
-
-
+    public void buildTree() {
 
     }
 

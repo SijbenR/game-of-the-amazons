@@ -71,8 +71,58 @@ public class TreeTraverse {
 
 
         //First we check if the now to be computed move is a Queen or an Arow move
-        if(!parent.arrowMove)    {
-            //Because the previous queen destination is where we are going to shoot an arrow from
+
+        if(!parent.ownMove && parent.arrowMove)   {
+            //Now we move a Queen
+            //STARTCASE 1
+
+            int queenVal = parent.playerVal;
+            ArrayList<GridCoordinate> queens = posQueens(Board, queenVal);
+
+
+            //Filter out all queens that can't move anymore
+            int count = 0;
+            for(GridCoordinate queen : queens)  {
+                count = countPosOptions(queen);
+                if(count == 0)  {
+                    queens.remove(queen);
+                }
+                removePosMoves(Board);
+            }
+
+            if(queens.size() != 0)  {
+
+                //randomly choose queen
+                int ran = (int) (queens.size() * Math.random());
+                GridCoordinate origin = queens.get(ran);
+
+                //randomly choose destination
+                posDest = listPosDest(Board, origin);
+                ran = (int) (posDest.size() * Math.random());
+                GridCoordinate tar = posDest.get(ran);
+
+                Node newNode = new Node(parent, origin, tar);
+
+                while(!parent.validAmongChildren(newNode))  {
+                    ran = (int) (queens.size() * Math.random());
+                    origin = queens.get(ran);
+
+                    posDest = listPosDest(Board, origin);
+                    ran = (int) (posDest.size() * Math.random());
+                    tar = posDest.get(ran);
+
+                    newNode = new Node(parent, origin, tar);
+                }
+
+                return newNode;
+            }
+            else {System.out.println("EXCEPTION CAUGHT IN TREETRAVERSE - generateRanMove\nOwnMove = " + parent.ownMove + "\tArrowMove = " + parent.arrowMove);}
+
+        }
+        else if(parent.ownMove && !parent.arrowMove)    {
+            //Because the previous queen destination is where WE are going to shoot an arrow from
+            //STARTCASE 2
+
             returner[0] = parent.getDest();
 
             posDest = listPosDest(Board, returner[0]);
@@ -89,20 +139,77 @@ public class TreeTraverse {
             return newNode;
         }
         else if(parent.ownMove && parent.arrowMove)    {
-            //Was your own Move and you just shot an arrow so now it's the opponents turn
+            //Was your own Move and you just shot an arrow so now it's the OPPONENTs turn to MOVE a QUEEN
+            //INTERMEDIATE CASE
+
 
             //Want to get all posible Queens from opponent
             int queenVal = parent.playerVal;
+            if(queenVal == 1)
+                queenVal = 2;
+            else
+                queenVal = 1;
+
             ArrayList<GridCoordinate> queens = posQueens(Board, queenVal);
 
+            //Filter out all queens that can't move anymore
+            int count = 0;
+            for(GridCoordinate queen : queens)  {
+                count = countPosOptions(queen);
+                if(count == 0)  {
+                    queens.remove(queen);
+                }
+                removePosMoves(Board);
+            }
+
+            if(queens.size() != 0)  {
+
+                //randomly choose queen
+                int ran = (int) (queens.size() * Math.random());
+                GridCoordinate origin = queens.get(ran);
+
+                //randomly choose destination
+                posDest = listPosDest(Board, origin);
+                ran = (int) (posDest.size() * Math.random());
+                GridCoordinate tar = posDest.get(ran);
+
+                Node newNode = new Node(parent, origin, tar);
+
+                while(!parent.validAmongChildren(newNode))  {
+                    ran = (int) (queens.size() * Math.random());
+                    origin = queens.get(ran);
+
+                    posDest = listPosDest(Board, origin);
+                    ran = (int) (posDest.size() * Math.random());
+                    tar = posDest.get(ran);
+
+                    newNode = new Node(parent, origin, tar);
+                }
+
+                return newNode;
+            }
+            else {System.out.println("EXCEPTION CAUGHT IN TREETRAVERSE - generateRanMove\nOwnMove = " + parent.ownMove + "\tArrowMove = " + parent.arrowMove);}
         }
-        else if(!parent.ownMove && !parent.arrowMove)   {
-            //Opponent mpve
+        else    {
+            //!parent.ownMove &&  !parent.arrowMove
+            //The Opponent just moved and now the Opponent is supposed to shoot an arrow
+
+            returner[0] = parent.getDest();
+
+            posDest = listPosDest(Board, returner[0]);
+            int ran = (int) (posDest.size() * Math.random());
+            GridCoordinate tar = posDest.get(ran);
+            Node newNode = new Node(parent, returner[0], tar);
+
+            while(!parent.validAmongChildren(newNode))   {
+                ran = (int) (posDest.size() * Math.random());
+                tar = posDest.get(ran);
+                newNode = new Node(parent, returner[0], tar);
+            }
+
+            return newNode;
+
         }
-
-
-       // ArrayList<GridCoordinate> posQueens = posQueens(Board, )
-
 
         return null;
     }
@@ -113,6 +220,15 @@ public class TreeTraverse {
     public int countPosOptions(GridCoordinate Origin)    {
 
         return 0;
+    }
+
+    //Queens
+    public int countPosQueenOptions(GridCoordinate Origin)    {
+        int count;
+        calcPosMoves(Board, Origin, false);
+        count = countPosMove(Board);
+        removePosMoves(Board);
+        return count;
     }
 
     public int countPosOptions(int queenVal)    {

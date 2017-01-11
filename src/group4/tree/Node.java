@@ -21,7 +21,7 @@ public class Node {
 
     protected int score;
     protected GridCoordinate origin, dest;
-
+    protected int depthOfNode;
 
     public int playerVal;
 
@@ -39,6 +39,7 @@ public class Node {
         this.parent = null;
         this.origin = null;
         this.dest = null;
+        this.depthOfNode = 0;
     }
 
 
@@ -49,7 +50,7 @@ public class Node {
 
         this.origin = origin;
         this.dest = dest;
-
+        this.depthOfNode = parent.depthOfNode + 1;
     }
 
 
@@ -117,6 +118,8 @@ public class Node {
     public GridCoordinate getDest()   {
         return dest;
     }
+
+    public int getNodeDepth()   {return depthOfNode;    }
 
 
 
