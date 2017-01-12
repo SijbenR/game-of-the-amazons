@@ -247,16 +247,16 @@ public class LogicBoard {
     }
 
 
-    public void addMove()	{
+    public void addMove() {
         int[][] t = copyBoard();
         tempBoard tBoard = new tempBoard(t);
         //TODO put back in ???
         //System.out.println("AddMove:\nMoveIndex: " + currentMoveIndex + "\nSize: " + Moves.size());
 
-        if(Moves.size() - 1 == currentMoveIndex)
+        if (Moves.size() - 1 == currentMoveIndex)
             Moves.add(tBoard);
-        else	{
-            while(Moves.size() - 1 > currentMoveIndex)	{
+        else {
+            while (Moves.size() - 1 > currentMoveIndex) {
                 Moves.remove(Moves.size() - 1);
             }
             Moves.add(tBoard);
@@ -265,18 +265,32 @@ public class LogicBoard {
         }
 
 
-
         //System.out.println("Last State");
-       // printBoard(Moves.get(Moves.size() - 1).getMomentaryBoard());
+        // printBoard(Moves.get(Moves.size() - 1).getMomentaryBoard());
         currentMoveIndex++;
         //printAllMoves();
-//TODO HERE REDO TERRITORY STUFF
-       // System.out.println("Territory for " + getCurrent() + " player: " );
-        for(int i = 0; i < 4; i++ ) {
 
-          //  System.out.println("\n" + checkTerritory(getBoard(), getCurrent())[i]);
+
+        ArrayList<GridCoordinate> queenPositions = new ArrayList();
+
+        for (int i = 1; i < Grid.length + 1; i++) {
+            for (int j = 1; j < Grid.length + 1; j++) {
+                if (amazonOfCurrentPlayer(new GridCoordinate(i, j), current)) {
+                    queenPositions.add(new GridCoordinate(i - 1, j - 1));
+                }
+
+                if (queenPositions.size() == 4)
+                    break;
+            }
+
+
         }
-
+        //TODO HERE REDO TERRITORY STUFF
+        // System.out.println("Territory for " + getCurrent() + " player: " );
+        for (int i = 0; i < 4; i++) {
+            System.out.println("\n" + "moves for " + current + i + " queen: " + moveCounter(queenPositions.get(i).x, queenPositions.get(i).y, getBoard()));
+            //  System.out.println("\n" + checkTerritory(getBoard(), getCurrent())[i]);
+        }
     }
 
     public int[][] copyBoard()	{
@@ -763,6 +777,127 @@ public class LogicBoard {
 
     }
 
+    //counts the number moves available for a queen
+    public int moveCounter(int queenPositionX, int queenPositionY, int[][] board){
+
+        int counter = 0;
+
+        //south
+        for(int i= 1; i < 11; i++) {
+            if(checkBound(queenPositionY + i,queenPositionX)){
+                if (board[queenPositionX][queenPositionY + i] == 0) {
+                    counter++;
+                }
+                else
+                    break;
+
+            }
+            else
+                break;
+        }
+
+        //north
+        for(int i= 1; i < 11; i++) {
+            if(checkBound(queenPositionY - i,queenPositionX)){
+                if (board[queenPositionX][queenPositionY - i] == 0) {
+                    counter++;
+                }
+                else
+                    break;
+
+            }
+            else
+                break;
+        }
+
+        //west
+        for(int i= 1; i < 11; i++) {
+            if(checkBound(queenPositionY,queenPositionX - i)){
+                if (board[queenPositionX - i][queenPositionY ] == 0) {
+                    counter++;
+                }
+                else
+                    break;
+
+            }
+            else
+                break;
+        }
+
+
+        //east
+        for(int i= 1; i < 11; i++) {
+            if(checkBound(queenPositionY,queenPositionX + i)){
+                if (board[queenPositionX + i][queenPositionY] == 0) {
+                    counter++;
+                }
+                else
+                    break;
+
+            }
+            else
+                break;
+        }
+
+        //south west
+        for(int i= 1; i < 11; i++) {
+            if(checkBound(queenPositionY + i,queenPositionX - i)){
+                if (board[queenPositionX - i][queenPositionY + i] == 0) {
+                    counter++;
+                }
+                else
+                    break;
+
+            }
+            else
+                break;
+        }
+
+        //south east
+        for(int i= 1; i < 11; i++) {
+            if(checkBound(queenPositionY + i,queenPositionX + i)){
+                if (board[queenPositionX + i][queenPositionY + i] == 0) {
+                    counter++;
+                }
+                else
+                    break;
+
+            }
+            else
+                break;
+        }
+
+        //north west
+        for(int i= 1; i < 11; i++) {
+            if(checkBound(queenPositionY - i,queenPositionX - i)){
+                if (board[queenPositionX - i][queenPositionY - i] == 0) {
+                    counter++;
+                }
+                else
+                    break;
+
+            }
+            else
+                break;
+        }
+
+        //north east
+        for(int i= 1; i < 11; i++) {
+            if(checkBound(queenPositionY - i,queenPositionX + i)){
+                if (board[queenPositionX + i][queenPositionY - i] == 0) {
+                    counter++;
+                }
+                else
+                    break;
+
+            }
+            else
+                break;
+        }
+
+        return counter;
+    }
+
     public int[] checkTerritory(int[][] currentBoard, Player inQuestion){
         int[][] tempBoard = new int[10][10];
         ArrayList<GridCoordinate> queenPositions = new ArrayList();
@@ -816,6 +951,7 @@ public class LogicBoard {
             //3. Set the color of node to replacement-color.
             board[currentNodeX][currentNodeY] = replacement;
         }
+        //swap x and y around in checkBound
         if(checkBound(new GridCoordinate(currentNodeX, currentNodeY + 1))){
             // 4. Perform Flood-fill (one step to the south of node, target-color, replacement-color).
             floodFill(board, currentNodeX, currentNodeY + 1, target, replacement, false );}

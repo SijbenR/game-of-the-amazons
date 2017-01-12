@@ -25,7 +25,7 @@ public class Tree<T> {
 	private T data;	
 	private int[][] board;
 	private double score;
-	//score is for a equation determined by machine learning techniques we will imlement later
+	//score is for a equation determined by machine learning techniques we will implement later
 	private Node<T> parent;
 	private boolean player;
 	private boolean flag;
@@ -46,7 +46,6 @@ public class Tree<T> {
 	private int numSimulations = 0;
 
 	//traverse the tree(get children), for every node it visits, calculate UCT, return node where UCT got the highest value
-	//make arraylist of the nodes, add all the nodes from the tree, traverse the tree, if the node you are at is not in arraylist add it
 	//store best node, comparing to prev best node
 	//then at best node, make a new move, unless the game is over, expand, , chose random(or a more optimal) move, add it to tree as a node
 	//node should hold board state, every 2nd node is for opponent? simulate for opponent, chose random/optimal move, win/lose update nodes
@@ -68,10 +67,14 @@ public class Tree<T> {
 		return bestNode;
 	}
 
-	//need expand(new child), simulate(random or more optimal move), backpropagation (update previous nodes)
+
+	//need expand(new child from bestNode), simulate(random or more optimal move), backpropagation (update previous nodes)
+
+
+
 
 	//need simulation for numSimulation
-	//exploration value normally sqr 2, can try with more different values next period
+	//exploration value normally sqr 2, can try with more different values
 	public double UCT(Node<T> thisNode, double explorationConstant){
 		double value;
 		value = (thisNode.wins/ numSimulations)+explorationConstant*Math.sqrt(Math.log(thisNode.visits)/numSimulations);
