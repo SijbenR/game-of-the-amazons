@@ -173,7 +173,7 @@ public class TreeTraverse {
                 //randomly choose queen
                 int ran = (int) (queens.size() * Math.random());
                 GridCoordinate origin = queens.get(ran);
-                //TODO WORK ON THIS ONE - IMMOBILIZED QUEENS STILL IN LIST ???
+                //TODO WORK ON THIS ONE - IMMOBILIZED QUEENS STILL IN LIST ????
                 //randomly choose destination
                 posDest = listPosDest(Board, origin);
                 ran = (int) (posDest.size() * Math.random());
