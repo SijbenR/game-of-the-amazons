@@ -23,6 +23,19 @@ public class TreeTraverse {
     }
 
 
+    public void performMove(Node Move)   {
+
+        //First make sure that you are at the correct parent
+
+
+        GridCoordinate origin = Move.getOrigin();
+        GridCoordinate dest = Move.getDest();
+        boolean arrowMove = Move.arrowMove;
+        performMove(origin, dest, arrowMove);
+
+    }
+
+
     public void performMove(GridCoordinate origin, GridCoordinate dest, boolean arrowMove)   {
         removePosMoves(Board);
         //System.out.println("BEFORE: ");
@@ -93,7 +106,9 @@ public class TreeTraverse {
             //Now we move a Queen
             //STARTCASE 1
 
-            int queenVal = parent.playerVal;
+            int queenVal = parent.getOpVal();
+            //
+
             ArrayList<GridCoordinate> queens = posQueens(Board, queenVal);
 
 
@@ -172,11 +187,8 @@ public class TreeTraverse {
 
 
             //Want to get all posible Queens from opponent
-            int queenVal = parent.playerVal;
-            if(queenVal == 1)
-                queenVal = 2;
-            else
-                queenVal = 1;
+            int queenVal = parent.getOpVal();
+
 
             ArrayList<GridCoordinate> queens = posQueens(Board, queenVal);
 
@@ -279,27 +291,30 @@ public class TreeTraverse {
 
     public void printBoard()    {
         printArrayint(Board);
+        System.out.println("\n");
     }
 
     public void evaluateChildren(Node parent)   {
 
         GridCoordinate origin, dest;
         boolean arrowMove;
+
         for(Node child: parent.getChildren())   {
+            //System.out.println("Perfming for: " + child);
             origin = child.getOrigin();
             dest = child.getDest();
             arrowMove = child.arrowMove;
-            performMove(origin, dest, arrowMove);
+            performMove(child);
             //System.out.println("For Node: " + child);
             //printBoard();
 
 
             child.setScore(evaluate(Board, child.playerVal));
-            System.out.println("Score: " + child.getScore());
+            //System.out.println("Score: " + child.getScore());
             //printBoard();
             //Revert the move
-            performMove(origin, dest, arrowMove);
-
+            performMove(child);
+            //printBoard();
         }
 
     }

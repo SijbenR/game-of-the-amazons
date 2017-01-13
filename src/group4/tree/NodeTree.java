@@ -21,7 +21,7 @@ public class NodeTree {
 
     private int ownVal;
 
-    private Node root;
+    public Node root;
     private int depth,branch;
     private int curdepth;
 
@@ -53,7 +53,7 @@ public class NodeTree {
 
 
         root = new Node(board, startBool, rootVal);
-        root.setArrowMove(arrowMove);
+        root.setArrowMove(!arrowMove);
 
         this.depth = depth;
         this.branch = branch;
@@ -79,7 +79,21 @@ public class NodeTree {
         int limit;
         Node childNode;
 
-        if(!parent.ownMove && parent.arrowMove) {      //This means WE are supposed to move a Queen
+        //System.out.println("OwnVal: " + ownVal);
+        if(!parent.ownMove && !parent.arrowMove) {  //Opponent is supposed to shoot an Arrow
+
+            GridCoordinate origin = parent.getDest();
+
+            limit = nodePointer.countPosOptions(origin);
+            if(limit > branch)  {
+                limit = branch;
+            }
+            while(parent.getChildren().size() < limit) {
+                childNode = nodePointer.createChild(parent);
+                parent.addChild(childNode);
+            }
+        }
+        else if(!parent.ownMove && parent.arrowMove) {      //This means WE are supposed to move a Queen
 
             //Check limit of options
 
@@ -104,10 +118,7 @@ public class NodeTree {
         else if(parent.ownMove && parent.arrowMove)  {  //This means the opponent is supposed to move
 
             //We set the value we are going to look for the Queens of the opponent
-            if(parent.playerVal == 1)
-                queenVal = 2;
-            else
-                queenVal = 1;
+            queenVal = parent.getOpVal();
 
             limit = nodePointer.countPosOptions(queenVal);
 
@@ -138,8 +149,36 @@ public class NodeTree {
         }
     }
 
+    public void partBuild(Node newNode) {
+
+        System.out.println("NewNode = " + newNode);
+        nodePointer.printBoard();
+
+        if(newNode.depthOfNode < depth) {
+            if (newNode.getChildren().size() == 0) {
+                addChildren(newNode);
+
+
+                nodePointer.evaluateChildren(newNode);
+                bubbleSortNodesByScore(newNode.getChildren());
+
+                System.out.println("Size: " + newNode.getChildren().size());
+
+                nodePointer.performMove(newNode.getChildren().get(0));
+                //System.out.println(newNode.getChildren().get(0));
+                //nodePointer.printBoard();
+
+                partBuild(newNode.getChildren().get(0));
+            }
+        }
+
+
+    }
+
+
+
     public void buildTree() {
-        //System.out.println(root);
+        System.out.println("ROOT\n" + root);
         //nodePointer.printBoard();
 
         addChildren(root);
@@ -154,7 +193,7 @@ public class NodeTree {
 
         bubbleSortNodesByScore(root.getChildren());
         for(Node Child: root.getChildren())    {
-            System.out.println(Child.getScore() + "\t");
+            System.out.println(Child);
         }
 
         //System.out.println("Node: " + root.getChildren().get(root.getChildren().size()-1));
@@ -175,9 +214,8 @@ public class NodeTree {
         nodePointer.evaluateChildren(toExpand);
 
         bubbleSortNodesByScore(toExpand.getChildren());
-        System.out.println("REACHED");
         for(Node Child: toExpand.getChildren())    {
-            System.out.println(Child.getScore() + "\t");
+            //System.out.println(Child.getScore() + "\t");
         }
 
         GridCoordinate or2 = toExpand.getChildren().get(0).getOrigin();

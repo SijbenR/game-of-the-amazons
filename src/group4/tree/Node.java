@@ -129,6 +129,13 @@ public class Node {
         return dest;
     }
 
+    public int getOpVal()   {
+        if(playerVal == 1)
+            return 2;
+        else
+            return 1;
+    }
+
     public int getNodeDepth()   {return depthOfNode;    }
 
 
@@ -161,7 +168,7 @@ public class Node {
 
 
     public String toString()   {
-        return new String("Node depth = " + depthOfNode + "\tOrigin: " + origin + "\tDestination: " + dest + "\tOwnmove: " + ownMove + "\tArrowMove: " + arrowMove);
+        return new String("Node depth = " + depthOfNode + "\tOrigin: " + origin + "\tDestination: " + dest + "\tOwnmove: " + ownMove + "\tArrowMove: " + arrowMove + "\tPlayerVal: " + playerVal + "\n");
     }
 
     public void printNode() {

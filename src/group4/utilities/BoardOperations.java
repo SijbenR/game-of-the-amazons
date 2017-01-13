@@ -309,6 +309,8 @@ public class BoardOperations {
 
 
 
+
+
     public static int countArrow(int[][] array)  {
         int count = 0;
         for(int i = 0; i < array.length; i++)   {
