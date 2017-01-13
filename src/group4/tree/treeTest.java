@@ -14,7 +14,7 @@ public class treeTest {
 
         LogicBoard Board = new LogicBoard(player1,player2);
 
-        NodeTree tree = new NodeTree(Board.getBoard(), 1, false, 10, 500);
+        NodeTree tree = new NodeTree(Board.getBoard(), 1, false, 180, 500);
         tree.partBuild(tree.root);
 
 

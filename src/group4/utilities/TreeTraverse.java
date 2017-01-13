@@ -191,13 +191,15 @@ public class TreeTraverse {
 
 
             ArrayList<GridCoordinate> queens = posQueens(Board, queenVal);
-
+            GridCoordinate queen;
             //Filter out all queens that can't move anymore
             int count = 0;
-            for(GridCoordinate queen : queens)  {
+            for(int i = 0; i < queens.size(); i++)  {
+                queen = queens.get(i);
                 count = countPosOptions(queen);
                 if(count == 0)  {
                     queens.remove(queen);
+                    i = 0;
                 }
                 removePosMoves(Board);
             }

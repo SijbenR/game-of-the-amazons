@@ -88,6 +88,9 @@ public class NodeTree {
             if(limit > branch)  {
                 limit = branch;
             }
+
+            System.out.println("Limit for: ArrowMove" + "\t is = " + limit);
+
             while(parent.getChildren().size() < limit) {
                 childNode = nodePointer.createChild(parent);
                 parent.addChild(childNode);
@@ -106,7 +109,7 @@ public class NodeTree {
 
             }
 
-            //System.out.println("limit: " + limit);
+            System.out.println("Limit for: "  + queenVal + "\t is = " + limit);
 
 
             //create children
@@ -127,6 +130,7 @@ public class NodeTree {
                 limit = branch;
             }
 
+            System.out.println("Limit for: "  + queenVal + "\t is = " + limit);
             while(parent.getChildren().size() < limit) {
                 childNode = nodePointer.createChild(parent);
                 parent.addChild(childNode);
@@ -138,6 +142,7 @@ public class NodeTree {
             GridCoordinate origin = parent.getDest();
 
             limit = nodePointer.countPosOptions(origin);
+            System.out.println("Limit for: ArrowMove" + "\t is = " + limit);
             if(limit > branch)  {
                 limit = branch;
             }
