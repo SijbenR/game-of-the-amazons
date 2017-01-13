@@ -262,9 +262,7 @@ public class Bobby extends Player {
 
 	}
 
-	public void giveInput(int[][] Board)	{
-		setGrid(Board);
-	}
+
 
 
 

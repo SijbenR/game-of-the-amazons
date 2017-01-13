@@ -104,6 +104,8 @@ public class BoardOperations {
     public static double evaluate(int[][] board, int player) {
         double pl1=0;
         double pl2=0;
+
+
         for(GridCoordinate i: getQueensPositions(board, player))
             pl1+=getNumPossibleMoves(board, i);
         for(GridCoordinate i: getQueensPositions(board, 3-player))
@@ -113,7 +115,8 @@ public class BoardOperations {
 		 *over the total mobility of both
 		 */
 		removePosMoves(board);
-        return pl1/(pl1+pl2);
+
+		return (pl1-pl2)/(pl1);
     }
 
 
@@ -389,7 +392,7 @@ public class BoardOperations {
         return b2;
     }
 
-    public int[][] stringToBoard(String board)
+    public static int[][] stringToBoard(String board)
     {
         String[] stringArray = board.split("");
         int[] list = new int[stringArray.length];
