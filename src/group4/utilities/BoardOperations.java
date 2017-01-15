@@ -119,6 +119,68 @@ public class BoardOperations {
         return (pl1-pl2)/(pl1);
     }
 
+    public static int getTerritory(int[][] Board, int playerVal) {
+        int[][] tempArray = getCopy(Board);
+
+        //Mark all Enemies as and Arrow as unavailable spaces
+        int enemyVal = 3 - playerVal;
+        for(int i = 0; i < tempArray.length; i++)   {
+            for(int j = 0; j < tempArray[0].length; j++)   {
+                if(tempArray[i][j] == 3 || tempArray[i][j] == enemyVal) {
+                    tempArray[i][j] = 99;
+                }
+            }
+        }
+
+        ArrayList<GridCoordinate> playerQueens  = posQueens(tempArray, playerVal);
+        //Also mark own Queens but with different Value
+        for(GridCoordinate queen: playerQueens) {
+            setValue(tempArray, 66, queen);
+        }
+
+        int[][] newTemp;
+
+        //Now that these are also marked as unavailable
+        for(GridCoordinate queen: playerQueens) {
+            newTemp = getCopy(tempArray);
+            calcPosMoves(newTemp, queen, false);
+
+            int counter = 1;
+            ArrayList<GridCoordinate> posMoves;
+
+            while(chekForEmptySpot(newTemp)) {
+                //TODO apply change here
+                posMoves = listPosDest(newTemp, queen);
+
+                for (GridCoordinate move : posMoves) {
+                    setValue(newTemp, counter, move);
+                }
+
+            }
+
+        }
+
+
+        return  0;
+
+
+    }
+
+
+    public static boolean chekForEmptySpot(int[][] Board)   {
+        for(int i = 0; i < Board.length; i++)   {
+            for(int j = 0; j < Board[0].length; j++)   {
+                if(Board[i][j] == 0)    {
+                    return  true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+
+
 
     public static void bubbleSortNodesByScore(ArrayList<Node> children)   {
         Node temp;
@@ -147,6 +209,16 @@ public class BoardOperations {
     public static void setEmpty(int[][] Grid, int y, int x){
         if(checkBound(Grid, y, x) && Grid[y][x] != 0)   {
             Grid[y][x] = 0;
+        }
+    }
+
+    public static void setValue(int[][] Grid, int specVal, GridCoordinate pos){
+        setValue(Grid, specVal, pos.y - 1, pos.x - 1);
+    }
+
+    public static void setValue(int[][] Grid, int specVal, int y, int x){
+        if(checkBound(Grid, y, x) && Grid[y][x] != 0)   {
+            Grid[y][x] = specVal;
         }
     }
 
