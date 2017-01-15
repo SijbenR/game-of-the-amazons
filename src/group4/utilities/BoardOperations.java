@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.ArrayList;
 
-import static group4.AI.MinMax.getPossibleMoves;
 import static group4.AI.MinMax.getQueensPositions;
 import static group4.AI.MobilityEval.getNumPossibleMoves;
 
@@ -102,8 +101,6 @@ public class BoardOperations {
         return val;
     }
 
-
-
     public static double evaluate(int[][] board, int player) {
         double pl1=0;
         double pl2=0;
@@ -117,9 +114,9 @@ public class BoardOperations {
 		 *ratio of the mobility of the first player
 		 *over the total mobility of both
 		 */
-		removePosMoves(board);
+        removePosMoves(board);
 
-		return (pl1-pl2)/(pl1);
+        return (pl1-pl2)/(pl1);
     }
 
 
@@ -152,18 +149,6 @@ public class BoardOperations {
             Grid[y][x] = 0;
         }
     }
-
-    public static void setValue(int[][] Grid, int specVal, GridCoordinate pos){
-        setValue(Grid, specVal, pos.y - 1, pos.x - 1);
-    }
-
-    public static void setValue(int[][] Grid, int specVal, int y, int x){
-        if(checkBound(Grid, y, x) && Grid[y][x] != 0)   {
-            Grid[y][x] = specVal;
-        }
-    }
-
-
 
 
     public static ArrayList<GridCoordinate> ranQueenMove(int[][] Board, int val)  {
@@ -452,4 +437,3 @@ public class BoardOperations {
 
 
 }
-
