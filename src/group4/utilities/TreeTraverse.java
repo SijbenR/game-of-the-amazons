@@ -6,6 +6,7 @@ import group4.ui.GridCoordinate;
 import org.omg.CORBA.PERSIST_STORE;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import static group4.utilities.BoardOperations.*;
 
@@ -18,14 +19,51 @@ public class TreeTraverse {
 
     private int[][] Board;
 
-    public TreeTraverse(int[][] Board)   {
+    Node currentNode;
+    Node root;
+
+    public TreeTraverse(int[][] Board, Node root)   {
+        this.root = root;
+        currentNode = root;
         this.Board = Board;
     }
 
 
     public void performMove(Node Move)   {
 
+
+
+        /*
         //First make sure that you are at the correct parent
+        if(currentNode != Move.getParent() && Move.getParent() != null) {
+            //ArrayList<Node> path = new ArrayList<>();
+            Stack<Node> path = new Stack<>();
+            Node temp = Move;
+            while(temp.getParent() != null) {
+                temp = Move.getParent();
+                path.push(temp);
+            }
+
+
+            //get Nodepointer back to root
+            while (currentNode != root) {
+                currentNode = currentNode.getParent();
+                performMove(currentNode);
+                if (currentNode == Move.getParent())
+                    break;
+
+            }
+
+            // now go along the path
+
+
+
+
+            //We wanna movbe up
+
+
+        }
+        */
 
 
         GridCoordinate origin = Move.getOrigin();
@@ -34,6 +72,13 @@ public class TreeTraverse {
         performMove(origin, dest, arrowMove);
 
     }
+
+    //TODO Maybe conmtinue here
+    /*
+    public boolean checkStack(Node check, Stack<>) {
+
+    }
+    */
 
 
     public void performMove(GridCoordinate origin, GridCoordinate dest, boolean arrowMove)   {
@@ -128,7 +173,7 @@ public class TreeTraverse {
                 //randomly choose queen
                 int ran = (int) (queens.size() * Math.random());
                 GridCoordinate origin = queens.get(ran);
-
+                //TODO WORK ON THIS ONE - IMMOBILIZED QUEENS STILL IN LIST ????
                 //randomly choose destination
                 posDest = listPosDest(Board, origin);
                 ran = (int) (posDest.size() * Math.random());
@@ -256,6 +301,14 @@ public class TreeTraverse {
         return null;
     }
 
+    public void retToRoot()    {
+        int[][] newBoard = stringToBoard(root.BoardCompressed);
+        currentNode = root;
+        for (int i = 0; i < newBoard.length; i++) {
+            System.arraycopy(newBoard[i], 0, Board[i], 0, newBoard[i].length);
+        }
+    }
+
 
 
     //For Arrow shots
@@ -300,7 +353,9 @@ public class TreeTraverse {
 
         GridCoordinate origin, dest;
         boolean arrowMove;
-
+        if(parent.getChildren().size() == 0) {
+            System.out.println("Exception caught for: " + parent);
+        }
         for(Node child: parent.getChildren())   {
             //System.out.println("Perfming for: " + child);
             origin = child.getOrigin();
@@ -310,8 +365,12 @@ public class TreeTraverse {
             //System.out.println("For Node: " + child);
             //printBoard();
 
-
-            child.setScore(evaluate(Board, child.playerVal));
+            if(!child.ownMove)  {
+                child.setScore(evaluate(Board, child.getOpVal()));
+            }
+            else {
+                child.setScore(evaluate(Board, child.playerVal));
+            }
             //System.out.println("Score: " + child.getScore());
             //printBoard();
             //Revert the move

@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import group4.AI.Maximus;
+import group4.MCTS.James;
 import group4.Players.Player;
 import group4.components.ImageLoader;
 import group4.logic.LogicBoard;
@@ -78,8 +79,8 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         timer = new Timer(delay, this);
         System.out.println("New timer");
 
-        Player player1 = new Player(true);
-        Player player2 = new Maximus(false, 2);
+        Player player1 = new Maximus(true, 2);
+        Player player2 = new James(false);
 
         logicBoard = new LogicBoard(player1, player2);
         boardArray = logicBoard.getBoard();

@@ -27,7 +27,7 @@ public class Node {
     public int playerVal;
 
     public boolean ownMove, arrowMove;
-    String BoardCompressed;
+    public String BoardCompressed;
 
 
     //root
@@ -129,6 +129,8 @@ public class Node {
         return dest;
     }
 
+    public Node getParent() {return parent;}
+
     public int getOpVal()   {
         if(playerVal == 1)
             return 2;
@@ -143,7 +145,7 @@ public class Node {
     public boolean isSame(Node toCompare) {
         //System.out.println("Origin: " + origin + "\tDestination: " + dest);
 
-        if(origin.isSameGridcoordinate(toCompare.getOrigin()) && dest.isSameGridcoordinate(toCompare.getDest()))    {
+        if(origin.isSameGridcoordinate(toCompare.getOrigin()) && dest.isSameGridcoordinate(toCompare.getDest()) && depthOfNode == toCompare.depthOfNode)    {
             return true;
         }
         else    {
@@ -168,7 +170,7 @@ public class Node {
 
 
     public String toString()   {
-        return new String("Node depth = " + depthOfNode + "\tOrigin: " + origin + "\tDestination: " + dest + "\tOwnmove: " + ownMove + "\tArrowMove: " + arrowMove + "\tPlayerVal: " + playerVal + "\n");
+        return new String("Node depth = " + depthOfNode + "\tOrigin: " + origin + "\tDestination: " + dest + "\tOwnmove: " + ownMove + "\tArrowMove: " + arrowMove + "\tPlayerVal: " + playerVal + "\tScore: " + score);
     }
 
     public void printNode() {
