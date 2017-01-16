@@ -202,6 +202,7 @@ public class NodeTree {
 
     public GridCoordinate[] Movethebest(){
         Node best = bestchoice();
+        System.out.println(best.getChildren().get(0));
         Node bestArrow = best.getChildren().get(0);
 
 

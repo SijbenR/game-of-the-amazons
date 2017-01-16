@@ -2,6 +2,7 @@ package group4.utilities;
 
 import com.sun.org.apache.xpath.internal.operations.Or;
 import group4.tree.Node;
+import group4.ui.GameBoard;
 import group4.ui.GridCoordinate;
 import org.omg.CORBA.PERSIST_STORE;
 
@@ -364,6 +365,7 @@ public class TreeTraverse {
             performMove(child);
             //System.out.println("For Node: " + child);
             //printBoard();
+
 
             if(!child.ownMove)  {
                 child.setScore(evaluate(Board, child.getOpVal()));

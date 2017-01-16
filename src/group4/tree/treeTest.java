@@ -19,10 +19,10 @@ public class treeTest {
         LogicBoard Board = new LogicBoard(player1,player2);
         BoardOperations boardOperations= new BoardOperations();
         GridCoordinate gridCoordinate =new GridCoordinate(1,8);
-    //    System.out.println("score for the start is= " + boardOperations.getTerForQueen(gridCoordinate,Board.getBoard()));
+       // System.out.println("score for the start is= " + boardOperations.evaluate(Board.getBoard(),1));
 
-        NodeTree tree = new NodeTree(Board.getBoard(), 1, false, 3, 5);
-        GridCoordinate[] bestMove = tree.Movethebest();
+      //  NodeTree tree = new NodeTree(Board.getBoard(), 1, false, 3, 5);
+        //GridCoordinate[] bestMove = tree.Movethebest();
 
 
 

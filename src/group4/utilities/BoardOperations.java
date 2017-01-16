@@ -107,7 +107,7 @@ public class BoardOperations {
     public static double evaluate(int[][] board, int player) {
         double pl1=0;
         double pl2=0;
-        boolean territoryeval=true;
+       boolean territoryeval=true;
 
         if(!territoryeval){
         for(GridCoordinate i: getQueensPositions(board, player))
@@ -123,10 +123,11 @@ public class BoardOperations {
           //  for(GridCoordinate i: getQueensPositions(board, player))
                 pl1+=getTerritory(board,player);
             //for(GridCoordinate i: getQueensPositions(board, 3-player))
-                pl2+=getTerritory(board,player);
+                pl2+=getTerritory(board,3-player);
 
         }
         removePosMoves(board);
+        //System.out.println("score= " + (pl1-pl2));
 
         return (pl1-pl2)/(pl1);
     }
@@ -137,7 +138,7 @@ public class BoardOperations {
         for(GridCoordinate queen: queens)   {
             wholeTerritory += getTerForQueen(queen, Board);
         }
-
+     //   System.out.println("score= " + wholeTerritory);
         return wholeTerritory;
 
     }
