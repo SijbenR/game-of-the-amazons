@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import group4.AI.Maximus;
+import group4.MCTS.James;
 import group4.Players.Player;
 import group4.components.ImageLoader;
 import group4.logic.LogicBoard;
@@ -49,7 +50,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
     private boolean updateNeeded;
     private boolean DEBUG = false;
     public Image[] piece, letter, figure;
-    public int x, y, dx, dy, speed, delay = 1000 / 60;
+    public int x, y, dx, dy, speed, delay = 50 / 60;
     public int sizeX, sizeY;
 
     public int width;
@@ -78,8 +79,8 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         timer = new Timer(delay, this);
         System.out.println("New timer");
 
-        Player player1 = new Maximus(true, 1);
-        Player player2 = new Maximus(false,2);
+        Player player1 = new Maximus(true, 2);
+        Player player2 = new James(false);
 
         logicBoard = new LogicBoard(player1, player2);
         boardArray = logicBoard.getBoard();
@@ -164,9 +165,8 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                 g2.draw(marker.get(i));
             }
             //System.out.println("Piece: " + (currentPiece - 1) + "/tx: " + x + "/ty: " + y);
-            if(currentPiece == 0)
-                currentPiece = 1;
-            g2.drawImage(piece[currentPiece - 1], x, y, width, height, this);
+            if(currentPiece != 0)
+                g2.drawImage(piece[currentPiece - 1], x, y, width, height, this);
         }
 
 

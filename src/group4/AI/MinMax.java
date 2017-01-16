@@ -41,7 +41,7 @@ public class MinMax {
     public int[][] bestBoard;
     private int depth=3;
     private int maxstep=100;
-    private int maxfinal=400;
+    private int maxfinal=100;
     private int count=0;
     /**
      * Prepares the MinMax algorithm setting the index of the player.
@@ -109,8 +109,8 @@ public class MinMax {
                 deduceMoves(board, bmax, playerIndex, moves);
                 lastMove=moves;
             }
-            //count++;
-            //System.out.println(count);
+            count++;
+            System.out.println(count);
             //System.out.println(Arrays.toString(moves));
          //   System.out.println(getBoardAsString(bmax));
             return vmax;

@@ -10,6 +10,18 @@ public class GridCoordinate {
         this.y = y;
     }
 
+    public boolean isSameGridcoordinate(GridCoordinate comp) {
+
+
+        if(comp.x == x && comp.y == y) {
+            //System.out.println("returning true");
+            return true;
+        }
+
+        //System.out.println("returning false");
+        return false;
+    }
+
     public String toString()    {
         return new String("X = " + x + " | Y = " + y + "\n");
     }

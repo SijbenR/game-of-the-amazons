@@ -24,6 +24,7 @@ public class territory  {
   private int[][] Grid;
   private GridCoordinate origin;
   private GridCoordinate destination;
+  public LogicBoard logicBoard;
 
 
   private ArrayList<GridCoordinate> queenPos;
@@ -34,7 +35,8 @@ public class territory  {
 
 
   public void territory(){
-      
+      logicBoard.checkTerritory(Grid, logicBoard.getCurrent());
+
   }
 
 
