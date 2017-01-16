@@ -144,30 +144,30 @@ public class BoardOperations {
         //Enemy Queens
         ArrayList<GridCoordinate> enemy = posQueens(tempBoard, 3 - ownVal);
         for(GridCoordinate enemQueen: enemy)  {
-            setValue(tempBoard, 9, enemQueen);
+            setValue(tempBoard, -1, enemQueen);
         }
         System.out.println("After marking enemy");
-        printArrayint(tempBoard);
+        printBoard(tempBoard);
 
         //Arrows
         for(int i = 0; i < tempBoard.length; i++)   {
             for(int j = 0; j < tempBoard[0].length; j++)   {
                 if(tempBoard[i][j] == 3)    {
-                    setValue(tempBoard, 9, i, j);
+                    setValue(tempBoard, -1, i, j);
                 }
             }
         }
         System.out.println("After marking Arrows");
-        printArrayint(tempBoard);
+        printBoard(tempBoard);
 
         //OwnQueens
         ArrayList<GridCoordinate> own = posQueens(tempBoard, ownVal);
         for(GridCoordinate ownQeen: own)  {
-            setValue(tempBoard, 6, ownQeen);
+            setValue(tempBoard, -1, ownQeen);
         }
 
         System.out.println("After marking own");
-        printArrayint(tempBoard);
+        printBoard(tempBoard);
 
 
         ArrayList<GridCoordinate> moves;
@@ -178,20 +178,20 @@ public class BoardOperations {
         markPossible(tempBoard, count);
         count++;
         System.out.println("After marking possible");
-        printArrayint(tempBoard);
+        printBoard(tempBoard);
         for(int i = 0; i < Board.length; i++)   {
             for(int j = 0; j < Board[0].length; j++)   {
                 if(Board[i][j] == count - 1)    {
                     calcPosMoves(tempBoard, new GridCoordinate(j+1, i+1), false);
                     markPossible(tempBoard, count);
                     System.out.println("After marking possible again");
-                    printArrayint(tempBoard);
+                    printBoard(tempBoard);
                 }
             }
         }
 
         System.out.println("After marking possible 2");
-        printArrayint(tempBoard);
+        printBoard(tempBoard);
 
         /*
 
@@ -199,7 +199,7 @@ public class BoardOperations {
         while(checkForEmptySpot(tempBoard)) {
             markPossible(tempBoard, count);
             System.out.println("For count: " + count);
-            printArrayint(tempBoard);
+            printBoard(tempBoard);
             moves = new ArrayList<GridCoordinate>();
 
             for(int i = 0; i < 10; i++) {
@@ -514,6 +514,7 @@ public class BoardOperations {
         }
         return n;
     }
+
     public static void printArrayint(int [][] array) {
         String s;
         for (int i = 0; i < array.length; i++) {
@@ -526,6 +527,21 @@ public class BoardOperations {
                 System.out.print(s + array[i][j] + " ");
             }
             System.out.println("");
+        }
+        System.out.println("\n");
+    }
+
+    public static void printBoard(int[][] Board) {
+        for(int i = 0; i < Board.length; i++) {
+            for(int j = 0; j < Board[0].length; j++) {
+                if(Board[i][j] > 0) {
+                    System.out.print(Board[i][j] + " ");
+                }
+                else    {
+                    System.out.print("_ ");
+                }
+            }
+            System.out.println();
         }
         System.out.println("\n");
     }
