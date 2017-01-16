@@ -19,7 +19,7 @@ import static group4.AI.MobilityEval.getNumPossibleMoves;
  */
 public class BoardOperations {
 
-    public static int punishmenttotal=50;
+    public static int punishmenttotal=5000;
 
     public static void moveQueen(int[][] Array, GridCoordinate origin, GridCoordinate dest, int val) {
 
@@ -107,8 +107,9 @@ public class BoardOperations {
     public static double evaluate(int[][] board, int player) {
         double pl1=0;
         double pl2=0;
+        boolean territoryeval=true;
 
-
+        if(!territoryeval){
         for(GridCoordinate i: getQueensPositions(board, player))
             pl1+=getNumPossibleMoves(board, i);
         for(GridCoordinate i: getQueensPositions(board, 3-player))
@@ -116,7 +117,15 @@ public class BoardOperations {
 		/*I thought would be better to return the
 		 *ratio of the mobility of the first player
 		 *over the total mobility of both
-		 */
+		 */}
+        else{
+            //printBoard(board);
+          //  for(GridCoordinate i: getQueensPositions(board, player))
+                pl1+=getTerritory(board,player);
+            //for(GridCoordinate i: getQueensPositions(board, 3-player))
+                pl2+=getTerritory(board,player);
+
+        }
         removePosMoves(board);
 
         return (pl1-pl2)/(pl1);
@@ -136,8 +145,8 @@ public class BoardOperations {
     public static int getTerForQueen(GridCoordinate Queen, int[][] Board)  {
         int ownVal = getValAt(Board, Queen);
         int[][] tempBoard = getCopy(Board);
-        System.out.println("Start: ");
-        printArrayint(tempBoard);
+        //  System.out.println("Start: ");
+        //  printArrayint(tempBoard);
         int visited=0;
         int count = 10;
 
@@ -149,8 +158,8 @@ public class BoardOperations {
             setValue(tempBoard, -1, enemQueen);
             visited++;
         }
-        System.out.println("After marking enemy");
-        printBoard(tempBoard);
+        //  System.out.println("After marking enemy");
+        //   printBoard(tempBoard);
 
         //Arrows
         for(int i = 0; i < tempBoard.length; i++)   {
@@ -161,8 +170,8 @@ public class BoardOperations {
                 }
             }
         }
-        System.out.println("After marking Arrows");
-        printBoard(tempBoard);
+        // System.out.println("After marking Arrows");
+        //  printBoard(tempBoard);
 
         //OwnQueens
         ArrayList<GridCoordinate> own = posQueens(tempBoard, ownVal);
@@ -171,8 +180,8 @@ public class BoardOperations {
             visited++;
         }
 
-        System.out.println("After marking own");
-        printBoard(tempBoard);
+        //  System.out.println("After marking own");
+        // printBoard(tempBoard);
 
 
         ArrayList<GridCoordinate> moves;
@@ -183,7 +192,7 @@ public class BoardOperations {
         setValue(tempBoard,10,Queen);
         while(visited !=100){
             ourqueens.clear();
-            System.out.println("our queens size= "+ ourqueens.size());
+            // System.out.println("our queens size= "+ ourqueens.size());
             for(int i=0; i<tempBoard.length; i++) {
                 for (int j = 0; j < tempBoard[0].length; j++) {
                     if (tempBoard[i][j] ==count) {
@@ -191,7 +200,7 @@ public class BoardOperations {
                     }
                 }
             }
-            System.out.println("our queens size= "+ ourqueens.size());
+            //System.out.println("our queens size= "+ ourqueens.size());
 
             int NoZeros=0;
             count++;
@@ -203,8 +212,8 @@ public class BoardOperations {
                     visited=100;
                 }
             else visited+=NoZeros;
-        System.out.println("here is your board after a certain itteration");
-            printBoard(tempBoard);
+       // System.out.println("here is your board after a certain itteration");
+            //printBoard(tempBoard);
         }
 
         //calulate the score for us
@@ -272,7 +281,6 @@ public class BoardOperations {
             }
         }
         */
-
         return score;
     }
 
@@ -708,7 +716,7 @@ public class BoardOperations {
     public static void removePosMoves(int[][] Array) {
         for(int i = 0; i < Array.length; i++)   {
             for(int j = 0; j < Array.length; j++)   {
-                if(Array[i][j] == 4 || Array[i][j] == 5)    {
+                if(Array[i][j] == 4 || Array[i][j] == 5|| Array[i][j]==99)    {
                     Array[i][j] = 0;
                 }
             }

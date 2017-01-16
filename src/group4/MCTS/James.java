@@ -33,6 +33,8 @@ public class James extends Player {
             queenMove[1] = move[1];
 
             fuckinggreat = move[2];
+
+
         }
 
     }

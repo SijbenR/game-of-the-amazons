@@ -220,6 +220,7 @@ public class NodeTree {
         move[0] = best.origin;
         move[1] = best.dest;
         move[2] = best.getChildren().get(0).dest;
+        System.out.println("best score = " + best.score);
         return move;
     }
 
