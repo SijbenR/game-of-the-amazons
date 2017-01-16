@@ -79,7 +79,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         timer = new Timer(delay, this);
         System.out.println("New timer");
 
-        Player player1 = new Maximus(true, 2);
+        Player player1 = new Player(true);
         Player player2 = new James(false);
 
         logicBoard = new LogicBoard(player1, player2);
