@@ -510,6 +510,7 @@ public class BoardOperations {
 
 
 
+
     public static void calcPosMoves(int[][] Array, int x, int y, boolean arrowMove, boolean territoryeval)    {
         removePosMoves(Array);
 
