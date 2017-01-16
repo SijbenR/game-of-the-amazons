@@ -5,6 +5,7 @@ import group4.tree.Node;
 import group4.tree.Tree;
 import group4.ui.GridCoordinate;
 
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.ArrayList;
@@ -120,54 +121,120 @@ public class BoardOperations {
     }
 
     public static int getTerritory(int[][] Board, int playerVal) {
-        int[][] tempArray = getCopy(Board);
-
-        //Mark all Enemies as and Arrow as unavailable spaces
-        int enemyVal = 3 - playerVal;
-        for(int i = 0; i < tempArray.length; i++)   {
-            for(int j = 0; j < tempArray[0].length; j++)   {
-                if(tempArray[i][j] == 3 || tempArray[i][j] == enemyVal) {
-                    tempArray[i][j] = 99;
-                }
-            }
+        int wholeTerritory = 0;
+        ArrayList<GridCoordinate> queens = posQueens(Board, playerVal);
+        for(GridCoordinate queen: queens)   {
+            wholeTerritory += getTerForQueen(queen, Board);
         }
 
-        ArrayList<GridCoordinate> playerQueens  = posQueens(tempArray, playerVal);
-        //Also mark own Queens but with different Value
-        for(GridCoordinate queen: playerQueens) {
-            setValue(tempArray, 66, queen);
-        }
-
-        int[][] newTemp;
-
-        //Now that these are also marked as unavailable
-        for(GridCoordinate queen: playerQueens) {
-            newTemp = getCopy(tempArray);
-            calcPosMoves(newTemp, queen, false);
-
-            int counter = 1;
-            ArrayList<GridCoordinate> posMoves;
-
-            while(chekForEmptySpot(newTemp)) {
-                //TODO apply change here
-                posMoves = listPosDest(newTemp, queen);
-
-                for (GridCoordinate move : posMoves) {
-                    setValue(newTemp, counter, move);
-                }
-
-            }
-
-        }
-
-
-        return  0;
-
+        return wholeTerritory;
 
     }
 
+    public static int getTerForQueen(GridCoordinate Queen, int[][] Board)  {
+        int ownVal = getValAt(Board, Queen);
+        int[][] tempBoard = getCopy(Board);
+        System.out.println("Start: ");
+        printArrayint(tempBoard);
 
-    public static boolean chekForEmptySpot(int[][] Board)   {
+        int count = 1;
+
+        //Mark all quens and Arrows as unavailable
+
+        //Enemy Queens
+        ArrayList<GridCoordinate> enemy = posQueens(tempBoard, 3 - ownVal);
+        for(GridCoordinate enemQueen: enemy)  {
+            setValue(tempBoard, 9, enemQueen);
+        }
+        System.out.println("After marking enemy");
+        printArrayint(tempBoard);
+
+        //Arrows
+        for(int i = 0; i < tempBoard.length; i++)   {
+            for(int j = 0; j < tempBoard[0].length; j++)   {
+                if(tempBoard[i][j] == 3)    {
+                    setValue(tempBoard, 9, i, j);
+                }
+            }
+        }
+        System.out.println("After marking Arrows");
+        printArrayint(tempBoard);
+
+        //OwnQueens
+        ArrayList<GridCoordinate> own = posQueens(tempBoard, ownVal);
+        for(GridCoordinate ownQeen: own)  {
+            setValue(tempBoard, 6, ownQeen);
+        }
+
+        System.out.println("After marking own");
+        printArrayint(tempBoard);
+
+
+        ArrayList<GridCoordinate> moves;
+        GridCoordinate temp;
+
+        calcPosMoves(tempBoard, Queen, false);
+
+        markPossible(tempBoard, count);
+        count++;
+        System.out.println("After marking possible");
+        printArrayint(tempBoard);
+        for(int i = 0; i < Board.length; i++)   {
+            for(int j = 0; j < Board[0].length; j++)   {
+                if(Board[i][j] == count - 1)    {
+                    calcPosMoves(tempBoard, new GridCoordinate(j+1, i+1), false);
+                    markPossible(tempBoard, count);
+                    System.out.println("After marking possible again");
+                    printArrayint(tempBoard);
+                }
+            }
+        }
+
+        System.out.println("After marking possible 2");
+        printArrayint(tempBoard);
+
+        /*
+
+        //While there is an empty spot
+        while(checkForEmptySpot(tempBoard)) {
+            markPossible(tempBoard, count);
+            System.out.println("For count: " + count);
+            printArrayint(tempBoard);
+            moves = new ArrayList<GridCoordinate>();
+
+            for(int i = 0; i < 10; i++) {
+                for(int j = 0; j < 10; j++) {
+                    if(tempBoard[i][j] == count)    {
+                        moves.add(new GridCoordinate(j+1, i+1));
+                    }
+                }
+            }
+
+            for(GridCoordinate move : moves)    {
+                calcPosMoves(tempBoard, move, false);
+            }
+
+            count++;
+        }
+
+
+        int countAll = 0;
+        for(int i = 0; i < tempBoard.length;i++) {
+            for(int j = 0; j < tempBoard[0].length;j++) {
+                if(tempBoard[i][j] < 6)
+                countAll += tempBoard[i][j];
+            }
+        }
+        */
+
+        return 0;
+    }
+
+
+
+
+
+    public static boolean checkForEmptySpot(int[][] Board)   {
         for(int i = 0; i < Board.length; i++)   {
             for(int j = 0; j < Board[0].length; j++)   {
                 if(Board[i][j] == 0)    {
@@ -176,6 +243,35 @@ public class BoardOperations {
             }
         }
         return false;
+    }
+
+    public static void markPossible(int[][] Board, int val, ArrayList<GridCoordinate> positions)   {
+        for(GridCoordinate pos: positions) {
+            markPossible(Board, val, pos);
+        }
+
+    }
+
+
+    public static void markPossible(int[][] Board, int val, GridCoordinate position)   {
+        calcPosMoves(Board, position, false);
+        for(int i = 0; i < Board.length; i++)   {
+            for(int j = 0; j < Board[0].length; j++)    {
+                if(Board[i][j] == 4)    {
+                    Board[i][j] = val;
+                }
+            }
+        }
+    }
+
+    public static void markPossible(int[][] Board, int val)   {
+        for(int i = 0; i < Board.length; i++)   {
+            for(int j = 0; j < Board[0].length; j++)   {
+                if(Board[i][j] == 4)    {
+                    Board[i][j] = 1;
+                }
+            }
+        }
     }
 
 
@@ -431,6 +527,7 @@ public class BoardOperations {
             }
             System.out.println("");
         }
+        System.out.println("\n");
     }
 
     public static int[][] getCopy(int[][] Board)     {
