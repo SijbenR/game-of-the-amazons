@@ -951,36 +951,36 @@ public class LogicBoard {
             //3. Set the color of node to replacement-color.
             board[currentNodeX][currentNodeY] = replacement;
         }
-        //swap x and y around in checkBound
-        if(checkBound(new GridCoordinate(currentNodeX, currentNodeY + 1))){
+
+        if(checkBound(new GridCoordinate(currentNodeY + 1, currentNodeX))){
             // 4. Perform Flood-fill (one step to the south of node, target-color, replacement-color).
             floodFill(board, currentNodeX, currentNodeY + 1, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX, currentNodeY - 1))){
+        if(checkBound(new GridCoordinate(currentNodeY - 1, currentNodeX))){
             //north
             floodFill(board, currentNodeX , currentNodeY - 1, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX - 1, currentNodeY))){
+        if(checkBound(new GridCoordinate(currentNodeY, currentNodeX - 1))){
             //west
             floodFill(board, currentNodeX - 1, currentNodeY, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX + 1, currentNodeY))){
+        if(checkBound(new GridCoordinate(currentNodeY, currentNodeX + 1))){
             //east
             floodFill(board, currentNodeX + 1, currentNodeY, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX - 1, currentNodeY + 1))){
+        if(checkBound(new GridCoordinate(currentNodeY + 1, currentNodeX - 1))){
             //south west
             floodFill(board, currentNodeX - 1, currentNodeY + 1, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX + 1, currentNodeY + 1))){
+        if(checkBound(new GridCoordinate(currentNodeY + 1, currentNodeX + 1))){
             //south east
             floodFill(board, currentNodeX + 1, currentNodeY + 1, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX - 1, currentNodeY - 1))){
+        if(checkBound(new GridCoordinate(currentNodeY - 1, currentNodeX - 1))){
             //north west
             floodFill(board, currentNodeX - 1, currentNodeY - 1, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX + 1, currentNodeY - 1))){
+        if(checkBound(new GridCoordinate(currentNodeY - 1, currentNodeX + 1))){
             //north east
             floodFill(board, currentNodeX + 1, currentNodeY - 1, target, replacement, false );}
 
@@ -1003,35 +1003,35 @@ public class LogicBoard {
                 board[currentNodeX][currentNodeY] = 99;
             }
         }
-        if(checkBound(new GridCoordinate(currentNodeX, currentNodeY + 1))){
+        if(checkBound(new GridCoordinate(currentNodeY + 1, currentNodeX))){
             // 4. Perform Flood-fill (one step to the south of node, target-color, replacement-color).
-            checkAround(board, currentNodeX, currentNodeY + 1, target, replacement, false, target2 );}
+            floodFill(board, currentNodeX, currentNodeY + 1, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX, currentNodeY - 1))){
+        if(checkBound(new GridCoordinate(currentNodeY - 1, currentNodeX))){
             //north
             floodFill(board, currentNodeX , currentNodeY - 1, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX - 1, currentNodeY))){
+        if(checkBound(new GridCoordinate(currentNodeY, currentNodeX - 1))){
             //west
             floodFill(board, currentNodeX - 1, currentNodeY, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX + 1, currentNodeY))){
+        if(checkBound(new GridCoordinate(currentNodeY, currentNodeX + 1))){
             //east
             floodFill(board, currentNodeX + 1, currentNodeY, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX - 1, currentNodeY + 1))){
+        if(checkBound(new GridCoordinate(currentNodeY + 1, currentNodeX - 1))){
             //south west
             floodFill(board, currentNodeX - 1, currentNodeY + 1, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX + 1, currentNodeY + 1))){
+        if(checkBound(new GridCoordinate(currentNodeY + 1, currentNodeX + 1))){
             //south east
             floodFill(board, currentNodeX + 1, currentNodeY + 1, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX - 1, currentNodeY - 1))){
+        if(checkBound(new GridCoordinate(currentNodeY - 1, currentNodeX - 1))){
             //north west
             floodFill(board, currentNodeX - 1, currentNodeY - 1, target, replacement, false );}
 
-        if(checkBound(new GridCoordinate(currentNodeX + 1, currentNodeY - 1))){
+        if(checkBound(new GridCoordinate(currentNodeY - 1, currentNodeX + 1))){
             //north east
             floodFill(board, currentNodeX + 1, currentNodeY - 1, target, replacement, false );}
 

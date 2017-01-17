@@ -64,6 +64,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
     ArrayList<GridCoordinate> markerCoordinates = new ArrayList();
     ArrayList<GridCoordinate> pieceCoordinates = new ArrayList<>();
 
+
     // Constructor
     public GameBoard(int sizeX, int sizeY, int gridX, int gridY) {
         this.sizeX = sizeX;
@@ -79,8 +80,8 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         timer = new Timer(delay, this);
         System.out.println("New timer");
 
-        Player player1 = new Maximus(true, 2);
-        Player player2 = new James(false);
+        Player player1 = new James( true);
+        Player player2 = new Maximus(false,2);
 
         logicBoard = new LogicBoard(player1, player2);
         boardArray = logicBoard.getBoard();
@@ -89,6 +90,9 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         // logicBoard.calculateQueenDirections(7,10);
         counter = 1;
     }
+
+
+
 
     // Sets the mode
     public void setMode(boolean setPath, boolean setStart, boolean setEnd, boolean startAnimation) {

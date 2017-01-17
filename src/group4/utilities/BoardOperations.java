@@ -13,11 +13,13 @@ import java.util.ArrayList;
 import static group4.AI.MinMax.getQueensPositions;
 import static group4.AI.MobilityEval.getNumPossibleMoves;
 
+
 /**
  * Created by robin on 08.12.2016.
  */
 public class BoardOperations {
 
+    public static int punishmenttotal=5000;
 
     public static void moveQueen(int[][] Array, GridCoordinate origin, GridCoordinate dest, int val) {
 
@@ -105,8 +107,9 @@ public class BoardOperations {
     public static double evaluate(int[][] board, int player) {
         double pl1=0;
         double pl2=0;
+       boolean territoryeval=true;
 
-
+        if(!territoryeval){
         for(GridCoordinate i: getQueensPositions(board, player))
             pl1+=getNumPossibleMoves(board, i);
         for(GridCoordinate i: getQueensPositions(board, 3-player))
@@ -114,8 +117,17 @@ public class BoardOperations {
 		/*I thought would be better to return the
 		 *ratio of the mobility of the first player
 		 *over the total mobility of both
-		 */
+		 */}
+        else{
+            //printBoard(board);
+          //  for(GridCoordinate i: getQueensPositions(board, player))
+                pl1+=getTerritory(board,player);
+            //for(GridCoordinate i: getQueensPositions(board, 3-player))
+                pl2+=getTerritory(board,3-player);
+
+        }
         removePosMoves(board);
+        //System.out.println("score= " + (pl1-pl2));
 
         return (pl1-pl2)/(pl1);
     }
@@ -126,7 +138,7 @@ public class BoardOperations {
         for(GridCoordinate queen: queens)   {
             wholeTerritory += getTerForQueen(queen, Board);
         }
-
+     //   System.out.println("score= " + wholeTerritory);
         return wholeTerritory;
 
     }
@@ -134,10 +146,10 @@ public class BoardOperations {
     public static int getTerForQueen(GridCoordinate Queen, int[][] Board)  {
         int ownVal = getValAt(Board, Queen);
         int[][] tempBoard = getCopy(Board);
-        System.out.println("Start: ");
-        printArrayint(tempBoard);
-
-        int count = 1;
+        //  System.out.println("Start: ");
+        //  printArrayint(tempBoard);
+        int visited=0;
+        int count = 10;
 
         //Mark all quens and Arrows as unavailable
 
@@ -145,38 +157,82 @@ public class BoardOperations {
         ArrayList<GridCoordinate> enemy = posQueens(tempBoard, 3 - ownVal);
         for(GridCoordinate enemQueen: enemy)  {
             setValue(tempBoard, -1, enemQueen);
+            visited++;
         }
-        System.out.println("After marking enemy");
-        printBoard(tempBoard);
+        //  System.out.println("After marking enemy");
+        //   printBoard(tempBoard);
 
         //Arrows
         for(int i = 0; i < tempBoard.length; i++)   {
             for(int j = 0; j < tempBoard[0].length; j++)   {
                 if(tempBoard[i][j] == 3)    {
                     setValue(tempBoard, -1, i, j);
+                    visited++;
                 }
             }
         }
-        System.out.println("After marking Arrows");
-        printBoard(tempBoard);
+        // System.out.println("After marking Arrows");
+        //  printBoard(tempBoard);
 
         //OwnQueens
         ArrayList<GridCoordinate> own = posQueens(tempBoard, ownVal);
         for(GridCoordinate ownQeen: own)  {
             setValue(tempBoard, -1, ownQeen);
+            visited++;
         }
 
-        System.out.println("After marking own");
-        printBoard(tempBoard);
+        //  System.out.println("After marking own");
+        // printBoard(tempBoard);
 
 
         ArrayList<GridCoordinate> moves;
         GridCoordinate temp;
 
-        calcPosMoves(tempBoard, Queen, false);
+        ArrayList<GridCoordinate> ourqueens= new ArrayList<>();
+        //i am resetting the value of our desired queen to 1 before starting
+        setValue(tempBoard,10,Queen);
+        while(visited !=100){
+            ourqueens.clear();
+            // System.out.println("our queens size= "+ ourqueens.size());
+            for(int i=0; i<tempBoard.length; i++) {
+                for (int j = 0; j < tempBoard[0].length; j++) {
+                    if (tempBoard[i][j] ==count) {
+                        ourqueens.add(new GridCoordinate(j + 1, i + 1));
+                    }
+                }
+            }
+            //System.out.println("our queens size= "+ ourqueens.size());
 
-        markPossible(tempBoard, count);
-        count++;
+            int NoZeros=0;
+            count++;
+            for(int i=0; i<ourqueens.size();i++){
+                calcPosMoves(tempBoard,ourqueens.get(i),false,true);
+                NoZeros+=markPossible(tempBoard,count,true);
+            }
+            if (NoZeros==0){
+                    visited=100;
+                }
+            else visited+=NoZeros;
+       // System.out.println("here is your board after a certain itteration");
+            //printBoard(tempBoard);
+        }
+
+        //calulate the score for us
+        int score=0;
+        for(int i = 0; i < Board.length; i++)   {
+            for(int j = 0; j < Board[0].length; j++) {
+                if(tempBoard[i][j]!=-1 && tempBoard[i][j]!=0) {
+                    score += tempBoard[i][j]-10;
+                }else if(tempBoard[i][j]==0){
+                    score+=punishmenttotal;
+                }
+
+            }
+
+            }
+
+
+/*
         System.out.println("After marking possible");
         printBoard(tempBoard);
         for(int i = 0; i < Board.length; i++)   {
@@ -226,8 +282,7 @@ public class BoardOperations {
             }
         }
         */
-
-        return 0;
+        return score;
     }
 
 
@@ -264,14 +319,32 @@ public class BoardOperations {
         }
     }
 
-    public static void markPossible(int[][] Board, int val)   {
+    public static int markPossible(int[][] Board, int val)   {
+        int totalposs=0;
+
         for(int i = 0; i < Board.length; i++)   {
             for(int j = 0; j < Board[0].length; j++)   {
                 if(Board[i][j] == 4)    {
-                    Board[i][j] = 1;
+                    Board[i][j] = val;
+                    totalposs++;
                 }
             }
         }
+        return totalposs;
+    }
+
+    public static int markPossible(int[][] Board, int val,boolean territoryeval)   {
+        int totalposs=0;
+
+        for(int i = 0; i < Board.length; i++)   {
+            for(int j = 0; j < Board[0].length; j++)   {
+                if(Board[i][j] == 99)    {
+                    Board[i][j] = val;
+                    totalposs++;
+                }
+            }
+        }
+        return totalposs;
     }
 
 
@@ -345,6 +418,10 @@ public class BoardOperations {
 
     }
 
+    public static void calcPosMoves(int[][] Array, GridCoordinate position, boolean arrowMove,boolean territoryeval){
+        calcPosMoves(Array, position.x - 1, position.y - 1, arrowMove,territoryeval);
+    }
+
     public static void calcPosMoves(int[][] Array, GridCoordinate position, boolean arrowMove){
         calcPosMoves(Array, position.x - 1, position.y - 1, arrowMove);
     }
@@ -353,12 +430,13 @@ public class BoardOperations {
         removePosMoves(Array);
 
 
-        int val;
-        if(arrowMove)   {
-            val = 5;
-        }
-        else
-            val = 4;
+        int val=0;
+
+            if (arrowMove) {
+                val = 5;
+            } else if (!arrowMove)
+                val = 4;
+
 
         int i, j;
         int tempX, tempY;
@@ -434,6 +512,149 @@ public class BoardOperations {
         }
     }
 
+
+    //todo please god work
+    //use this for when doing territory evaluation
+
+
+
+
+
+    public static void calcPosMoves(int[][] Array, int x, int y, boolean arrowMove, boolean territoryeval)    {
+        removePosMoves(Array);
+
+
+        int val=0;
+
+        if (arrowMove) {
+            val = 5;
+        } else if (!arrowMove)
+            val = 4;
+
+        if(territoryeval) {
+            val = 99;
+        }
+
+        int i, j;
+        int tempX, tempY;
+        int length = Array.length;
+        i = y - 1;
+        j = x - 1;
+
+        // up
+        for (tempY = y - 1; tempY >= 0 && (Array[tempY][x]==0 ||Array[tempY][x]>9); tempY--) {
+            if(Array[tempY][x]==0)
+                Array[tempY][x] = val;
+        }
+
+        // Direction: bottom vertical
+        // down
+        for (tempY = y + 1; tempY < Array.length && (Array[tempY][x]==0 ||Array[tempY][x]>9); tempY++) {
+            if(Array[tempY][x]==0)
+                Array[tempY][x] = val;
+        }
+
+        // Direction: left horizontal
+        for (tempX = x - 1; tempX >= 0 && (Array[y][tempX]==0 ||Array[y][tempX]>9); tempX--) {
+            if(Array[y][tempX]==0)
+                Array[y][tempX] = val;
+        }
+        // Direction: right horizontal
+        for (tempX = x + 1; tempX < Array[0].length && (Array[y][tempX]==0 ||Array[y][tempX]>9); tempX++) {
+            if(Array[y][tempX]==0)
+                Array[y][tempX] = val;
+        }
+        // Direction: top right diagonal
+        tempY = y - 1;
+        tempX = x + 1;
+
+        while (checkBound(Array, tempY, tempX) && (Array[tempY][tempX]==0 ||Array[tempY][tempX]>9)) {
+            //System.out.println("Position:\tY = " + tempY + "\tX = " + tempX +
+            //"\nStill in Bounds? " + checkBound(tempY, tempX));
+            if(Array[tempY][tempX]==0)
+            Array[tempY][tempX] = val;
+            tempY--;
+            tempX++;
+
+        }
+        // Direction: top left diagonal
+        tempY = y - 1;
+        tempX = x - 1;
+
+        while (checkBound(Array, tempY, tempX) && (Array[tempY][tempX]==0 ||Array[tempY][tempX]>9)) {
+            if(Array[tempY][tempX]==0)
+            Array[tempY][tempX] = val;
+            tempY--;
+            tempX--;
+
+        }
+        // Direction: bottom right diagonal
+        tempY = y + 1;
+        tempX = x + 1;
+
+        while (checkBound(Array, tempY, tempX) && (Array[tempY][tempX]==0 ||Array[tempY][tempX]>9)) {
+            // System.out.println("Position:\tY = " + tempY + "\tX = " + tempX +
+            // "\nStill in Bounds? " + checkBound(tempY, tempX));
+            if(Array[tempY][tempX]==0)
+            Array[tempY][tempX] = val;
+            tempY++;
+            tempX++;
+
+        }
+        // Direction: bottom left diagonal
+        tempY = y + 1;
+        tempX = x - 1;
+
+        while (checkBound(Array, tempY, tempX) && (Array[tempY][tempX]==0 ||Array[tempY][tempX]>9)) {
+            if(Array[tempY][tempX]==0)
+            Array[tempY][tempX] = val;
+            tempY++;
+            tempX--;
+
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public static ArrayList<GridCoordinate> listPosDest(int[][] Array, GridCoordinate start)  {
         ArrayList<GridCoordinate> posMoves = new ArrayList<GridCoordinate>();
 
@@ -496,7 +717,7 @@ public class BoardOperations {
     public static void removePosMoves(int[][] Array) {
         for(int i = 0; i < Array.length; i++)   {
             for(int j = 0; j < Array.length; j++)   {
-                if(Array[i][j] == 4 || Array[i][j] == 5)    {
+                if(Array[i][j] == 4 || Array[i][j] == 5|| Array[i][j]==99)    {
                     Array[i][j] = 0;
                 }
             }
@@ -534,7 +755,7 @@ public class BoardOperations {
     public static void printBoard(int[][] Board) {
         for(int i = 0; i < Board.length; i++) {
             for(int j = 0; j < Board[0].length; j++) {
-                if(Board[i][j] > 0) {
+                if(Board[i][j] >= 0) {
                     System.out.print(Board[i][j] + " ");
                 }
                 else    {
