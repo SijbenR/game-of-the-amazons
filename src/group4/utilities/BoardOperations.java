@@ -19,7 +19,8 @@ import static group4.AI.MobilityEval.getNumPossibleMoves;
  */
 public class BoardOperations {
 
-    public static int punishmenttotal=5000;
+    public static int playerpunishment=1000;
+    public static int opPunishment=50;
 
     public static void moveQueen(int[][] Array, GridCoordinate origin, GridCoordinate dest, int val) {
 
@@ -107,9 +108,6 @@ public class BoardOperations {
     public static double evaluate(int[][] board, int player) {
         double pl1=0;
         double pl2=0;
-       boolean territoryeval=true;
-
-        if(!territoryeval){
         for(GridCoordinate i: getQueensPositions(board, player))
             pl1+=getNumPossibleMoves(board, i);
         for(GridCoordinate i: getQueensPositions(board, 3-player))
@@ -117,33 +115,43 @@ public class BoardOperations {
 		/*I thought would be better to return the
 		 *ratio of the mobility of the first player
 		 *over the total mobility of both
-		 */}
-        else{
+		 */
             //printBoard(board);
           //  for(GridCoordinate i: getQueensPositions(board, player))
-                pl1+=getTerritory(board,player);
             //for(GridCoordinate i: getQueensPositions(board, 3-player))
-                pl2+=getTerritory(board,3-player);
 
-        }
+
         removePosMoves(board);
         //System.out.println("score= " + (pl1-pl2));
 
         return (pl1-pl2)/(pl1);
     }
 
-    public static int getTerritory(int[][] Board, int playerVal) {
+    public static double evaluateTer(int[][] board, int player, boolean ownMove) {
+        double pl1=0;
+        double pl2=0;
+        boolean territoryeval=false;
+
+        pl1+=getTerritory(board,player,ownMove);
+        pl2+=getTerritory(board,3-player,!ownMove);
+
+        removePosMoves(board);
+
+        return (pl2-pl1)/(pl2);
+    }
+
+    public static int getTerritory(int[][] Board, int playerVal, boolean ownMove) {
         int wholeTerritory = 0;
         ArrayList<GridCoordinate> queens = posQueens(Board, playerVal);
         for(GridCoordinate queen: queens)   {
-            wholeTerritory += getTerForQueen(queen, Board);
+            wholeTerritory += getTerForQueen(queen, Board,ownMove);
         }
      //   System.out.println("score= " + wholeTerritory);
         return wholeTerritory;
 
     }
 
-    public static int getTerForQueen(GridCoordinate Queen, int[][] Board)  {
+    public static int getTerForQueen(GridCoordinate Queen, int[][] Board, boolean ownMove)  {
         int ownVal = getValAt(Board, Queen);
         int[][] tempBoard = getCopy(Board);
         //  System.out.println("Start: ");
@@ -224,7 +232,10 @@ public class BoardOperations {
                 if(tempBoard[i][j]!=-1 && tempBoard[i][j]!=0) {
                     score += tempBoard[i][j]-10;
                 }else if(tempBoard[i][j]==0){
-                    score+=punishmenttotal;
+                    if(!ownMove)
+                    score+=playerpunishment;
+                    else
+                        score+=opPunishment;
                 }
 
             }
@@ -346,6 +357,109 @@ public class BoardOperations {
         }
         return totalposs;
     }
+
+
+    public static boolean gameOver(int[][] Board)    {
+        boolean gameOverPL1 = true;
+        boolean gameOverPL2 = true;
+        boolean val;
+
+        //Check for player1
+        ArrayList<GridCoordinate> Pl1Queens = posQueens(Board, 1);
+
+        for(GridCoordinate queen: Pl1Queens)    {
+            val = checkGameOver(Board, queen);
+            if(!val) {
+                gameOverPL1 = false;
+            }
+            else     {
+                System.out.println("Game over for: " + queen);
+            }
+        }
+
+        //Check for player2
+        ArrayList<GridCoordinate> Pl2Queens = posQueens(Board, 2);
+        for(GridCoordinate queen: Pl2Queens)    {
+            val = checkGameOver(Board, queen);
+            if(!val) {
+                gameOverPL2 = false;
+            }
+            else     {
+                System.out.println("Game over for: " + queen);
+            }
+        }
+
+
+        if(gameOverPL1 && gameOverPL2)
+            return true;
+        else
+            return false;
+
+    }
+
+    public static boolean checkGameOver(int[][] Board, GridCoordinate position)   {
+        int[][] tempBoard  = getCopy(Board);
+        return checkGameOver(tempBoard, getValAt(Board, position), position.x - 1, position.y -1);
+    }
+
+    public static boolean checkGameOver(int[][] Board, int playerval, int x, int y)   {
+        boolean returnVal = true;
+        //Will return false until completed
+
+        int xStart, xEnd, yStart, yEnd;
+
+        if(x == 0)  {
+            xStart = x;
+        }
+        else    {
+            xStart = x - 1;
+        }
+
+        if(x == Board[0].length)  {
+            xEnd = x;
+        }
+        else    {
+            xEnd = x + 1;
+        }
+
+        if(y == 0)  {
+            yStart = 0;
+        }
+        else    {
+            yStart = y - 1;
+        }
+
+        if(y == Board.length)  {
+            yEnd = 0;
+        }
+        else    {
+            yEnd = y + 1;
+        }
+
+        for(int i = yStart; i <= yEnd; i++) {
+            for(int j = xStart; j <= xEnd; j++) {
+
+
+
+                if(checkBound(Board, i, j) && Board[i][j] == 0)    {
+                    Board[i][j] = 7;
+                    printBoard(Board);
+                    returnVal = checkGameOver(Board, playerval, j, i);
+                }
+                else if(checkBound(Board, i, j) && Board[i][j] == (3 - playerval))    {
+                    return false;
+                }
+                if(!returnVal)  {
+                    return false;
+                }
+            }
+        }
+
+        return returnVal;
+
+
+    }
+
 
 
 

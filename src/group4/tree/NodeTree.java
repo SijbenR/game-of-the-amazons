@@ -22,7 +22,7 @@ public class NodeTree {
     private int ownVal;
 
     public Node root;
-    private int depth, branch;
+    protected int depth, branch;
     private int curdepth;
     int numberofnodesexplored=0;
 
@@ -228,8 +228,6 @@ public class NodeTree {
 
 
     public void buildTree() {
-        //System.out.println("ROOT\n" + root);
-        //nodePointer.printBoard();
 
         addChildren(root);
 

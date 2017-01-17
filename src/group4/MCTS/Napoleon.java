@@ -2,30 +2,33 @@ package group4.MCTS;
 
 import group4.Players.Player;
 import group4.tree.NodeTree;
+import group4.tree.TerritoryTree;
 import group4.ui.GridCoordinate;
 
 import static group4.utilities.BoardOperations.getCopy;
-import static group4.utilities.BoardOperations.printArrayint;
 
 /**
- * Created by jonty on 13/01/2017.
+ * Created by robin on 17.01.2017.
  */
-public class James extends Player {
+
+//Bot which focusses on increasiong territory
+public class Napoleon  extends Player {
 
     NodeTree tree;
     int[][] Grid;
     GridCoordinate[] move;
     GridCoordinate fuckinggreat;
     GridCoordinate[] queenMove = new GridCoordinate[2];
-    public James(boolean isFirst) {
-        super(isFirst, true);
+
+    public Napoleon(boolean isFirst) {
+        super(true, true);
     }
 
     public void giveInput(int[][] Board)	{
         if(fuckinggreat == null) {
             this.Grid = getCopy(Board);
             move = new GridCoordinate[3];
-            tree = new NodeTree(Grid, super.getVal(), false, 5, 100);
+            tree = new TerritoryTree(Grid, super.getVal(), false, 4, 70);
 
             move = tree.Movethebest();
 
@@ -54,6 +57,4 @@ public class James extends Player {
         //System.out.println("ArrowMove: \nOrigin: "  + move[1] + "\tDestination: " + move[2]);
         return temp;
     }
-
-
 }

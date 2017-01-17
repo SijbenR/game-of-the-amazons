@@ -22,11 +22,21 @@ public class TreeTraverse {
 
     Node currentNode;
     Node root;
+    int ownVal, opVal;
+
 
     public TreeTraverse(int[][] Board, Node root)   {
         this.root = root;
         currentNode = root;
         this.Board = Board;
+
+        if(root.ownMove)    {
+            ownVal = root.playerVal;
+        }
+        else    {
+            ownVal = root.getOpVal();
+        }
+
     }
 
 
@@ -348,6 +358,38 @@ public class TreeTraverse {
     public void printBoard()    {
         printArrayint(Board);
         System.out.println("\n");
+    }
+
+    public void evaluateChildrenByTer(Node parent)   {
+
+        GridCoordinate origin, dest;
+        boolean arrowMove;
+        if(parent.getChildren().size() == 0) {
+            System.out.println("Exception caught for: " + parent);
+        }
+        for(Node child: parent.getChildren())   {
+            //System.out.println("Perfming for: " + child);
+            origin = child.getOrigin();
+            dest = child.getDest();
+            arrowMove = child.arrowMove;
+            performMove(child);
+            //System.out.println("For Node: " + child);
+            //printBoard();
+
+
+            if(!child.ownMove)  {
+                child.setScore(evaluateTer(Board, child.getOpVal(), false));
+            }
+            else {
+                child.setScore(evaluateTer(Board, child.playerVal, true));
+            }
+            //System.out.println("Score: " + child.getScore());
+            //printBoard();
+            //Revert the move
+            performMove(child);
+            //printBoard();
+        }
+
     }
 
     public void evaluateChildren(Node parent)   {
