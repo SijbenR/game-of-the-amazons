@@ -782,6 +782,10 @@ public class BoardOperations {
                 }
             }
         }
+        if(posMoves.size() < 10)
+            //printBoard(Array);
+
+        removePosMoves(Array);
         return posMoves;
     }
 
@@ -802,6 +806,7 @@ public class BoardOperations {
                 }
             }
         }
+        //printBoard(Array);
         return count;
     }
 
