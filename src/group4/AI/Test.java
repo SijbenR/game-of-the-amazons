@@ -29,7 +29,9 @@ public class Test {
         MinMax pl1=new MinMax(1,eval);
         MinMax pl2=new MinMax(2,eval);
         pl1.setDepth(2);
-        pl2.setDepth(1);
+        pl2.setDepth(3);
+        pl2.setMaxfinal(30);
+        pl2.setMaxstep(50);
         int count=1;
         PrintWriter logFile = new PrintWriter("test.log");
         double temp=eval.evaluate(board, 1);

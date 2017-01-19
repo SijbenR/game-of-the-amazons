@@ -11,7 +11,7 @@ import static group4.AI.MinMax.deduceMoves2;
  */
 public class Test2 {
     public static void main(String[] args) {
-        int[][] board1 = BoardOperations.listToArray(new int[]
+        int[][] board = BoardOperations.listToArray(new int[]
                 {
                         0, 0, 0, 2, 0, 0, 2, 0, 0, 0,
                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -25,20 +25,19 @@ public class Test2 {
                         0, 0, 0, 1, 0, 0, 1, 0, 0, 0,
                 }
         );
-        int[][] board2 = BoardOperations.listToArray(new int[]
-                {
-                        0, 0, 0, 2, 0, 0, 2, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-                        0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        0, 0, 0, 3, 0, 0, 1, 0, 0, 0,
-                }
-        );
-        System.out.println(Arrays.toString(deduceMoves2(board1,board2,1)));
+       long st,et;
+       TerritoryEval t=new TerritoryEval();
+       MobilityEval m= new MobilityEval();
+       double a;
+       st=System.nanoTime();
+       a=t.evaluate(board,1);
+       et=System.nanoTime();
+       System.out.println(a+", "+(et-st)/1000000000.0);
+
+        st=System.nanoTime();
+        a=m.evaluate(board,1);
+        et=System.nanoTime();
+        System.out.println(a+", "+(et-st)/1000000000.0);
+
     }
 }
