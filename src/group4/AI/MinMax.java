@@ -16,22 +16,25 @@ package group4.AI;
 
 public class MinMax {
 
-    /*
+
     public static void main(String[] args) {
         int[][] board = new int[10][10];
         int[] list=  new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,3,3,0,0,0,0,0,0,0,3,3,3,0,0,0,2,3,3,3,3,2,3,3,0,0,3,3,1,0,3,3,3,3,2,0,3,0,3,0,3,0,0,3,3,0,0,3,0,3,0,0,1,0,3,3,1,3,0,0,2,0,0,0,0,0,3,3,0,0,3,0,0,0,0,0,0,0,3,1,0,0,0,0,0,0};
         board= BoardOperations.listToArray(list);
-       // board[3][0]= board[0][3] = board[0][6] =board[3][9]  = 1;
-        //board[6][0]= board[9][3] = board[9][6] =board[6][9]  = 2;
-        //System.out.println(getBoardAsString(board));
-        long  starttime = System.currentTimeMillis();
-        MinMax m=new MinMax(1,new MobilityEval());
-        long  endtime = System.currentTimeMillis();
-        //System.out.println(m.getMove(board));
+        System.out.println(getBoardAsString(board));
+        MinMax m=new MinMax(1,new MobilityEval())
+                .setDepth(8)
+                .setMaxfinal(5);
+
+        long  starttime = System.nanoTime();
+        GridCoordinate[] moves=m.getMove(board);
+        long  endtime = System.nanoTime();
+        System.out.println(Arrays.toString(moves));
         long totaltime=endtime-starttime;
-        //System.out.println("time taken = " + totaltime);
+        System.out.println("time taken = " + totaltime/1000000000.0);
+        System.out.println(m.alphacut+", "+m.betacut);
     }
-    */
+
 
     private int playerIndex;
     private EvaluationFunction evalF;
@@ -41,8 +44,13 @@ public class MinMax {
     public int[][] bestBoard;
     private int depth=3;
     private int maxstep=100;
-    private int maxfinal=100;
+    private int maxfinal=50;
     private int count=0;
+    public int betacut=0;
+    public int alphacut=0;
+
+    GridCoordinate[][] killerMoves=new GridCoordinate[depth+1][];
+
     /**
      * Prepares the MinMax algorithm setting the index of the player.
      *
@@ -60,8 +68,18 @@ public class MinMax {
         };
     }
 
-    public void setDepth(int depth) {
+    public MinMax setDepth(int depth) {
         this.depth = depth;
+        killerMoves=new GridCoordinate[depth+1][];
+        return this;
+    }
+
+    public MinMax setMaxfinal(int maxfinal) {
+        this.maxfinal = maxfinal; return this;
+    }
+
+    public void setMaxstep(int maxstep) {
+        this.maxstep = maxstep;
     }
 
     /**
@@ -77,7 +95,6 @@ public class MinMax {
         GridCoordinate[] move = new GridCoordinate[3];
         minmax(board, depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true, move);
         return move;
-
     }
 
     private double minmax(int[][] board, int depth, double alpha, double beta, boolean isMax, GridCoordinate[] moves) {
@@ -86,7 +103,7 @@ public class MinMax {
         if (depth <= 0 || value == 1.0 || value == 0.0)
             return value;
 
-        List<int[][]> boards = getPossibleBoards(board, playerIndex, evalF, isMax, minSort, maxSort, maxstep, maxfinal);
+        List<int[][]> boards = getPossibleBoards(board, isMax, depth);
         // MAX is playing
         if (isMax) {
             int[][] bmax = null;
@@ -99,8 +116,11 @@ public class MinMax {
                 }
                 if (v > alpha)
                     alpha = v;
-                if (beta <= alpha)
+                if (beta <= alpha) {
+                    killerMoves[depth]=deduceMoves2(board,i,playerIndex);
+                    alphacut++;
                     break;
+                }
 
             }
             if (moves != null)
@@ -124,8 +144,12 @@ public class MinMax {
                     vmin = v;
                 if (v < beta)
                     beta = v;
-                if (beta <= alpha)
+                if (beta <= alpha) {
+                    killerMoves[depth]=deduceMoves2(board,i,3-playerIndex);
+                    betacut++;
                     break;
+
+                }
             }
             return vmin;
         }
@@ -140,35 +164,41 @@ public class MinMax {
         return queens;
     }
 
-    /**
-     * Version that does not remember the moves Get all the possible boards
-     *
-     * @param board
-     * @param player
-     * @return
-     */
-    public static List<int[][]> getPossibleBoards(int[][] board, int player) {
-        //
-        List<int[][]> queenBoards = new LinkedList<>();
-        List<GridCoordinate> queenTo = new LinkedList<>();
-        //
-        List<int[][]> finalBoards = new LinkedList<>();
+
+    public List<int[][]> getPossibleBoards(int[][] board, boolean isMax, int depth) {
+
+        int player = isMax ? playerIndex : 3- playerIndex;
+        TreeSet<int[][]> finalBoards = new TreeSet<>(isMax ? maxSort : minSort);
+        Map<int[][], GridCoordinate> queenStuff=new TreeMap<>(isMax ? maxSort : minSort);
 
         // First we compute all the possible boards according to the queen moves
         for (GridCoordinate i : getQueensPositions(board, player))
-            for (GridCoordinate j : getPossibleMoves(board, i)) {
-                queenBoards.add(moveToBoard(board, player, i, j, false));
-                queenTo.add(j);
-            }
+            for (GridCoordinate j : getPossibleMoves(board, i))
+                queenStuff.put(moveToBoard(board, player, i, j, false), j);
 
+        int count=0;
+        for(Entry<int[][], GridCoordinate> e: queenStuff.entrySet())
+        {
+            if(count>=maxstep)
+                break;
+            for (GridCoordinate k : getPossibleMoves(e.getKey(),e.getValue()))
+                finalBoards.add(moveToBoard(e.getKey(), player, e.getValue(), k, true));
+            count++;
+        }
         // Now we compute the boards according to the arrow moves
-        for (int i = 0; i < queenBoards.size(); i++)
-            for (GridCoordinate k : getPossibleMoves(queenBoards.get(i), queenTo.get(i)))
-                finalBoards.add(moveToBoard(queenBoards.get(i), player, queenTo.get(i), k, true));
-
-        return finalBoards;
+        List<int[][]> finalB=new ArrayList<>(finalBoards);
+        finalB= (finalB.size() > maxfinal) ?
+                finalB.subList(0, maxfinal) : finalB;
+        if (killerMoves[depth]!= null && isLegalMove(board, killerMoves[depth], player))
+        {
+            finalB.add(0,
+                    moveToBoard(
+                            moveToBoard(board, player, killerMoves[depth][0], killerMoves[depth][1], false),
+                            player, killerMoves[depth][1], killerMoves[depth][2], true)
+            );
+        }
+        return finalB;
     }
-
     /**
      * Returns the possible boards
      *
@@ -270,6 +300,21 @@ public class MinMax {
         return to;
     }
 
+    public static boolean isLegalMove(int[][] board, GridCoordinate[] move, int player)
+    {
+
+        //The origin position is not occupied by the player
+        if(board[move[0].x][move[0].y]!=player) return false;
+        //The destination is already occupied
+        if(board[move[1].x][move[1].y] != 0) return false;
+
+        //If the
+        if(board[move[2].x][move[2].y]!=0 && (move[0].x !=move[2].x || move[0].y != move[2].y))
+            return false;
+
+        return true;
+    }
+
 
 
     public static String getBoardAsString(int[][] b) {
@@ -319,12 +364,13 @@ public class MinMax {
             }
     }
 
-    public static void deduceMoves2(int[][] B1, int[][] B2, int player, GridCoordinate[] moves) {
+    public static GridCoordinate[] deduceMoves2(int[][] B1, int[][] B2, int player) {
+        GridCoordinate[] moves=new GridCoordinate[3];
         for (int i = 0; i < B1.length; i++)
             for (int j = 0; j < B1[0].length; j++) {
                 if (B1[i][j] != B2[i][j]) {
                     // System.out.println(B1[i][j] + " " + B2[i][j]);
-                    GridCoordinate pos = new GridCoordinate(i + 1, j + 1);
+                    GridCoordinate pos = new GridCoordinate(j, i );
                     if (B1[i][j] == player) {
                         moves[0] = pos;
                         if (B2[i][j] == 3)
@@ -340,6 +386,8 @@ public class MinMax {
                         break;
                 }
             }
+
+        return moves;
     }
 
 }
