@@ -204,7 +204,7 @@ public class TreeTraverse {
                 //randomly choose queen
                 int ran = (int) (queens.size() * Math.random());
                 GridCoordinate origin = queens.get(ran);
-                System.out.println("From: " + origin);
+                //System.out.println("From: " + origin);
                 //TODO WORK ON THIS ONE - IMMOBILIZED QUEENS STILL IN LIST ????
                 removePosMoves(Board);
 
@@ -215,8 +215,8 @@ public class TreeTraverse {
                     origin = queens.get(ran);
                     posDest = listPosDest(Board, origin);
                 }
-                System.out.println("From: 2" + origin);
-                BoardOperations.printBoard(Board);
+                //System.out.println("From: 2" + origin);
+                //BoardOperations.printBoard(Board);
                 removePosMoves(Board);
                 ran = (int) (posDest.size() * Math.random());
                 GridCoordinate tar = posDest.get(ran);
@@ -352,7 +352,7 @@ public class TreeTraverse {
 
                     newNode = new Node(parent, origin, tar);
 
-                    System.out.println("Loop 1");
+                    //.out.println("Loop 1");
                     iterations++;
                 }
 
