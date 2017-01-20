@@ -19,6 +19,8 @@ import static group4.AI.MobilityEval.getNumPossibleMoves;
  */
 public class BoardOperations {
 
+    private static int markVal = 7;
+
     public static int playerpunishment=1000;
     public static int opPunishment=50;
 
@@ -359,53 +361,118 @@ public class BoardOperations {
     }
 
 
-    public static boolean gameOver(int[][] Board)    {
-        boolean gameOverPL1 = true;
-        boolean gameOverPL2 = true;
-        boolean val;
 
-        //Check for player1
-        ArrayList<GridCoordinate> Pl1Queens = posQueens(Board, 1);
+/*
+    public static boolean checkGameOver(int[][] Board, GridCoordinate position)   {
+        int[][] tempBoard  = getCopy(Board);
+        return checkGameOver(tempBoard, getValAt(Board, position), position.x - 1, position.y -1);
+    }
 
-        for(GridCoordinate queen: Pl1Queens)    {
-            val = checkGameOver(Board, queen);
-            if(!val) {
-                gameOverPL1 = false;
-            }
-            else     {
-                System.out.println("Game over for: " + queen);
+    public static boolean gameOverCheck(int[][] Board, int playerVal, GridCoordinate position)  {
+        return gameOverCheck(Board, playerVal, position.x, position.y);
+    }
+*/
+    public static boolean gameOverCheck(int[][] Board) {
+        boolean pl1State = true;
+        boolean pl2State = true;
+
+        int[][] tempBoard;
+
+        //Player 1 Queens
+        ArrayList<GridCoordinate> Player1 = posQueens(Board, 1);
+
+        for(GridCoordinate queen : Player1)  {
+            tempBoard = getCopy(Board);
+            markGameOver(tempBoard, queen);
+            printBoard(tempBoard);
+            if(countmarked(tempBoard) > 0)  {
+                if(checkMarkedFor(tempBoard, 2))    {
+                    pl1State = false;
+                }
             }
         }
 
-        //Check for player2
-        ArrayList<GridCoordinate> Pl2Queens = posQueens(Board, 2);
-        for(GridCoordinate queen: Pl2Queens)    {
-            val = checkGameOver(Board, queen);
-            if(!val) {
-                gameOverPL2 = false;
-            }
-            else     {
-                System.out.println("Game over for: " + queen);
+
+        ArrayList<GridCoordinate> Player2 = posQueens(Board, 2);
+
+        for(GridCoordinate queen : Player2)  {
+            tempBoard = getCopy(Board);
+            markGameOver(tempBoard, queen);
+            printBoard(tempBoard);
+            if(countmarked(tempBoard) > 0)  {
+                if(checkMarkedFor(tempBoard, 1))    {
+                    pl2State = false;
+                }
             }
         }
 
-
-        if(gameOverPL1 && gameOverPL2)
+        if(pl2State || pl2State)
             return true;
         else
             return false;
 
     }
 
-    public static boolean checkGameOver(int[][] Board, GridCoordinate position)   {
-        int[][] tempBoard  = getCopy(Board);
-        return checkGameOver(tempBoard, getValAt(Board, position), position.x - 1, position.y -1);
+    public static boolean checkSurroundForVal(int[][] Board, int value, int x, int y)   {
+        int xStart, xEnd, yStart, yEnd;
+        int[] borders = startCoords(Board, x, y);
+        xStart = borders[0];
+        yStart = borders[1];
+        xEnd = borders[2];
+        yEnd = borders[3];
+        //System.out.println("For X = " + x + "\tY = " + y);
+        for(int i = yStart; i < yEnd && i < Board.length && i >= 0; i++) {
+            for(int j = xStart; j < xEnd && j < Board[0].length && j >= 0; j++) {
+                if(Board[i][j] == value)    {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
-    public static boolean checkGameOver(int[][] Board, int playerval, int x, int y)   {
-        boolean returnVal = true;
-        //Will return false until completed
+    public void markSurroundingsWithVal(int[][] Board, int value, int x, int y)   {
+        int xStart, xEnd, yStart, yEnd;
+        int[] borders = startCoords(Board, x, y);
+        xStart = borders[0];
+        yStart = borders[1];
+        xEnd = borders[2];
+        yEnd = borders[3];
+        for(int i = yStart; i < yEnd && i < Board.length && i >= 0; i++) {
+            for(int j = xStart; j < xEnd && j < Board[0].length && j >= 0; j++) {
+                if(Board[i][j] == 0)  {
+                        Board[i][j] = value;
+                }
+            }
+        }
+    }
 
+    public static int countmarked(int[][] Board) {
+        int count = 0;
+        for(int i = 0; i < Board.length; i++)  {
+            for(int j = 0; j < Board[0].length; j++)  {
+                count++;
+            }
+        }
+        return count;
+    }
+
+
+    public static boolean checkMarkedFor(int[][] Board, int val)  {
+        for(int i = 0; i  < Board.length; i++)  {
+            for(int j = 0; j  < Board[0].length; j++)  {
+                if(Board[i][j] == markVal)    {
+                    if(checkSurroundForVal(Board, val, j, i))   {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
+    public static int[] startCoords(int[][] Board, int x, int y) {
         int xStart, xEnd, yStart, yEnd;
 
         if(x == 0)  {
@@ -419,7 +486,7 @@ public class BoardOperations {
             xEnd = x;
         }
         else    {
-            xEnd = x + 1;
+            xEnd = x + 2;
         }
 
         if(y == 0)  {
@@ -430,33 +497,54 @@ public class BoardOperations {
         }
 
         if(y == Board.length)  {
-            yEnd = 0;
+            yEnd = y;
         }
         else    {
-            yEnd = y + 1;
+            yEnd = y + 2;
         }
 
-        for(int i = yStart; i <= yEnd; i++) {
-            for(int j = xStart; j <= xEnd; j++) {
+
+        //System.out.println("Borders:\txStart = " + xStart + "\tyStart = " + yStart + "\txEnd = " + xEnd + "\tyEnd = " + yEnd);
+        int[] returnArray = {xStart, yStart, xEnd, yEnd};
+
+        return returnArray;
+    }
 
 
 
-                if(checkBound(Board, i, j) && Board[i][j] == 0)    {
-                    Board[i][j] = 7;
+
+
+
+
+
+
+
+    public static void markGameOver(int[][] Board, GridCoordinate pos)   {
+        markGameOver(Board, pos.x -1, pos.y - 1);
+    }
+
+    //Alternative GameOver check method
+    public static void markGameOver(int[][] Board, int x, int y)   {
+        boolean returnVal = true;
+        //Will return false until completed
+
+        int xStart, xEnd, yStart, yEnd;
+        int[] startCoords = startCoords(Board, x, y);
+
+        xStart = startCoords[0];
+        yStart = startCoords[1];
+        xEnd = startCoords[2];
+        yEnd = startCoords[3];
+
+        for(int i = yStart; i < yEnd && i >= 0 && i < Board.length; i++) {
+            for(int j = xStart; j < xEnd && j >= 0 && j < Board[0].length; j++) {
+                if(Board[i][j] == 0)    {
+                    Board[i][j] = markVal;
                     printBoard(Board);
-                    returnVal = checkGameOver(Board, playerval, j, i);
-                }
-                else if(checkBound(Board, i, j) && Board[i][j] == (3 - playerval))    {
-                    return false;
-                }
-                if(!returnVal)  {
-                    return false;
+                    markGameOver(Board, j, i);
                 }
             }
         }
-
-        return returnVal;
-
 
     }
 
