@@ -19,6 +19,8 @@ import static group4.AI.MobilityEval.getNumPossibleMoves;
  */
 public class BoardOperations {
 
+    private static int markVal = 7;
+
     public static int playerpunishment=1000;
     public static int opPunishment=50;
 
@@ -359,47 +361,7 @@ public class BoardOperations {
     }
 
 
-    public static boolean gameOver(int[][] Board)    {
-        boolean gameOverPL1 = true;
-        boolean gameOverPL2 = true;
-        boolean val;
 
-        //Check for player1
-        ArrayList<GridCoordinate> Pl1Queens = posQueens(Board, 1);
-
-        for(GridCoordinate queen: Pl1Queens)    {
-            /*
-            val = checkGameOver(Board, queen);
-            if(!val) {
-                gameOverPL1 = false;
-            }
-            else     {
-                System.out.println("Game over for: " + queen);
-            }
-            */
-        }
-
-        //Check for player2
-        ArrayList<GridCoordinate> Pl2Queens = posQueens(Board, 2);
-        for(GridCoordinate queen: Pl2Queens)    {
-            /*
-            val = checkGameOver(Board, queen);
-            if(!val) {
-                gameOverPL2 = false;
-            }
-            else     {
-                System.out.println("Game over for: " + queen);
-            }
-            */
-        }
-
-
-        if(gameOverPL1 && gameOverPL2)
-            return true;
-        else
-            return false;
-
-    }
 /*
     public static boolean checkGameOver(int[][] Board, GridCoordinate position)   {
         int[][] tempBoard  = getCopy(Board);
@@ -410,11 +372,44 @@ public class BoardOperations {
         return gameOverCheck(Board, playerVal, position.x, position.y);
     }
 */
-    public static boolean gameOverCheck(int[][] Board, int playerVal, int x, int y) {
+    public static boolean gameOverCheck(int[][] Board) {
+        boolean pl1State = true;
+        boolean pl2State = true;
 
-        //First Check if there is a free space around
+        int[][] tempBoard;
 
-        return false;
+        //Player 1 Queens
+        ArrayList<GridCoordinate> Player1 = posQueens(Board, 1);
+
+        for(GridCoordinate queen : Player1)  {
+            tempBoard = getCopy(Board);
+            markGameOver(tempBoard, queen);
+            printBoard(tempBoard);
+            if(countmarked(tempBoard) > 0)  {
+                if(checkMarkedFor(tempBoard, 2))    {
+                    pl1State = false;
+                }
+            }
+        }
+
+
+        ArrayList<GridCoordinate> Player2 = posQueens(Board, 2);
+
+        for(GridCoordinate queen : Player2)  {
+            tempBoard = getCopy(Board);
+            markGameOver(tempBoard, queen);
+            printBoard(tempBoard);
+            if(countmarked(tempBoard) > 0)  {
+                if(checkMarkedFor(tempBoard, 1))    {
+                    pl2State = false;
+                }
+            }
+        }
+
+        if(pl2State || pl2State)
+            return true;
+        else
+            return false;
 
     }
 
@@ -452,20 +447,29 @@ public class BoardOperations {
         }
     }
 
-    //Only
-    public void floodFillWithVal(int[][] Board, int value) {
-        for(int i = 0; i < Board.length; i++)   {
-            for(int j = 0; j < Board[0].length; j++)   {
-                if(Board[i][j] == value)    {
-                    markSurroundingsWithVal(Board, value, j, i);
-                    floodFillWithVal(Board, value);
-                }
+    public static int countmarked(int[][] Board) {
+        int count = 0;
+        for(int i = 0; i < Board.length; i++)  {
+            for(int j = 0; j < Board[0].length; j++)  {
+                count++;
             }
         }
+        return count;
     }
 
 
-
+    public static boolean checkMarkedFor(int[][] Board, int val)  {
+        for(int i = 0; i  < Board.length; i++)  {
+            for(int j = 0; j  < Board[0].length; j++)  {
+                if(Board[i][j] == markVal)    {
+                    if(checkSurroundForVal(Board, val, j, i))   {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
 
     public static int[] startCoords(int[][] Board, int x, int y) {
@@ -507,15 +511,12 @@ public class BoardOperations {
     }
 
 
-    public static void markGameOver(int[][] Board, int playerVal)   {
-        ArrayList<GridCoordinate> queens = posQueens(Board, playerVal);
-        int[][] tempBoard;
-        for(GridCoordinate queen : queens)  {
-            tempBoard = getCopy(Board);
-            markGameOver(tempBoard, queen);
-            printBoard(tempBoard);
-        }
-    }
+
+
+
+
+
+
 
 
     public static void markGameOver(int[][] Board, GridCoordinate pos)   {
@@ -538,7 +539,7 @@ public class BoardOperations {
         for(int i = yStart; i < yEnd && i >= 0 && i < Board.length; i++) {
             for(int j = xStart; j < xEnd && j >= 0 && j < Board[0].length; j++) {
                 if(Board[i][j] == 0)    {
-                    Board[i][j] = 7;
+                    Board[i][j] = markVal;
                     printBoard(Board);
                     markGameOver(Board, j, i);
                 }
