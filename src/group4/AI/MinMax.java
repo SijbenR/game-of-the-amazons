@@ -14,7 +14,7 @@ package group4.AI;
         import java.util.Comparator;
         import java.util.TreeSet;
 
-public class MinMax {
+public class MinMax implements MoveProducer{
 
 
     public static void main(String[] args) {
@@ -78,8 +78,8 @@ public class MinMax {
         this.maxfinal = maxfinal; return this;
     }
 
-    public void setMaxstep(int maxstep) {
-        this.maxstep = maxstep;
+    public MinMax setMaxstep(int maxstep) {
+        this.maxstep = maxstep;return this;
     }
 
     /**
@@ -130,7 +130,7 @@ public class MinMax {
                 lastMove=moves;
             }
             count++;
-            System.out.println(count);
+
             //System.out.println(Arrays.toString(moves));
          //   System.out.println(getBoardAsString(bmax));
             return vmax;
@@ -156,10 +156,10 @@ public class MinMax {
     }
 
     public static List<GridCoordinate> getQueensPositions(int[][] board, int player) {
-        List<GridCoordinate> queens = new LinkedList<>();
-        for (int i = 0; i < board.length; i++)
-            for (int j = 0; j < board[0].length; j++)
-                if (board[i][j] == player)
+        List<GridCoordinate> queens = new ArrayList<>();
+        for (int j = 0; j < board.length; j++)
+            for (int i = 0; i < board[0].length; i++)
+                if (board[j][i] == player)
                     queens.add(new GridCoordinate(i, j));
         return queens;
     }
@@ -265,8 +265,8 @@ public class MinMax {
         for (int i = 0; i < board.length; i++)
             nBoard[i] = Arrays.copyOf(board[i], board[0].length);
         if (!isArrow)
-            nBoard[from.x][from.y] = 0;
-        nBoard[to.x][to.y] = (isArrow) ? 3 : player;
+            nBoard[from.y][from.x] = 0;
+        nBoard[to.y][to.x] = (isArrow) ? 3 : player;
         return nBoard;
     }
 
@@ -289,8 +289,8 @@ public class MinMax {
                 int i = from.x + k1;
                 int j = from.y + k2;
 
-                while (i >= 0 && i < board.length && j >= 0 && j < board[0].length) {
-                    if (board[i][j] != 0)
+                while (j >= 0 && j < board.length && i >= 0 && i < board[0].length) {
+                    if (board[j][i] != 0)
                         break;
                     to.add(new GridCoordinate(i, j));
                     i += k1;
@@ -304,12 +304,12 @@ public class MinMax {
     {
 
         //The origin position is not occupied by the player
-        if(board[move[0].x][move[0].y]!=player) return false;
+        if(board[move[0].y][move[0].x]!=player) return false;
         //The destination is already occupied
-        if(board[move[1].x][move[1].y] != 0) return false;
+        if(board[move[1].y][move[1].x] != 0) return false;
 
         //If the
-        if(board[move[2].x][move[2].y]!=0 && (move[0].x !=move[2].x || move[0].y != move[2].y))
+        if(board[move[2].y][move[2].x]!=0 && (move[0].y !=move[2].y || move[0].x != move[2].x))
             return false;
 
         return true;
@@ -346,7 +346,7 @@ public class MinMax {
             for (int j = 0; j < B1[0].length; j++) {
                 if (B1[i][j] != B2[i][j]) {
                    // System.out.println(B1[i][j] + " " + B2[i][j]);
-                    GridCoordinate pos = new GridCoordinate(j + 1, i + 1);
+                    GridCoordinate pos = new GridCoordinate(j , i );
                     if (B1[i][j] == player) {
                         moves[0] = pos;
                         if (B2[i][j] == 3)
