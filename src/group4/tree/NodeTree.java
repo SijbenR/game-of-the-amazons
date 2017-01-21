@@ -26,7 +26,7 @@ public class NodeTree {
     private int curdepth;
     int numberofnodesexplored=0;
 
-    TreeTraverse nodePointer;
+    protected TreeTraverse nodePointer;
 
 
     //Tree where Arrow and queen move are separate steps
@@ -202,7 +202,7 @@ public class NodeTree {
 
     public GridCoordinate[] Movethebest(){
         Node best = bestchoice();
-        System.out.println(best.getChildren().get(0));
+        //System.out.println(best.getChildren().size());
         Node bestArrow = best.getChildren().get(0);
 
 
@@ -221,7 +221,7 @@ public class NodeTree {
         move[0] = best.origin;
         move[1] = best.dest;
         move[2] = best.getChildren().get(0).dest;
-        System.out.println("best score = " + best.score);
+        //System.out.println("best score = " + best.score);
         return move;
     }
 

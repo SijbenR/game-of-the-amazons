@@ -54,27 +54,31 @@ public class TerritoryTree extends NodeTree {
     public GridCoordinate[] Movethebest(){
         System.out.println("ENTERED NEW MOVE BEST");
         Node best = bestchoice();
-        System.out.println(best.getChildren().get(0));
-        Node bestArrow = best.getChildren().get(0);
+        //System.out.println(best.getChildren().get(0));
+        if(best.getChildren().size() != 0) {
+            Node bestArrow = best.getChildren().get(0);
 
 
-        nodePointer.retToRoot();
-        //System.out.println("Root: ");
-        //nodePointer.printBoard();
+            nodePointer.retToRoot();
+            //System.out.println("Root: ");
+            //nodePointer.printBoard();
 
-        //System.out.println("QueenMove: " + best);
-        //   nodePointer.performMove(best);
-        // nodePointer.printBoard();
+            //System.out.println("QueenMove: " + best);
+            //   nodePointer.performMove(best);
+            // nodePointer.printBoard();
 
-        //System.out.println("Best Arrow: " + bestArrow);
-        // nodePointer.performMove(best.getChildren().get(0));
-        //nodePointer.printBoard();
-        GridCoordinate[] move = new GridCoordinate[3];
-        move[0] = best.origin;
-        move[1] = best.dest;
-        move[2] = best.getChildren().get(0).dest;
-        System.out.println("best score = " + best.score);
-        return move;
+            //System.out.println("Best Arrow: " + bestArrow);
+            // nodePointer.performMove(best.getChildren().get(0));
+            //nodePointer.printBoard();
+            GridCoordinate[] move = new GridCoordinate[3];
+            move[0] = best.origin;
+            move[1] = best.dest;
+            move[2] = best.getChildren().get(0).dest;
+            System.out.println("best score = " + best.score);
+            return move;
+        }
+        else
+            return null;
     }
 
 
