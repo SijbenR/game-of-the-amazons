@@ -1,22 +1,18 @@
 package group4.AI;
 
 import group4.ui.GridCoordinate;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.StringJoiner;
 
 import static group4.AI.MinMax.getBoardAsString;
 
-/**
- * Created by Administrator on 20/01/2017.
- */
+
 public class Experiment {
     private int numTest=30;
     private MoveProducer pl1;
     private MoveProducer pl2;
     private int[][] initBoard=null;
     private boolean verbose=false;
+    private boolean randomize=false;
 
     public Experiment setPlayer1(MoveProducer pl1)
     {
@@ -33,6 +29,12 @@ public class Experiment {
     public Experiment setNumTest(int n)
     {
         numTest=n;
+        return this;
+    }
+
+    public Experiment setRandomize(boolean r)
+    {
+        randomize=r;
         return this;
     }
     public Experiment setVerbose(boolean f)
@@ -81,18 +83,26 @@ public class Experiment {
         int vict1=0;
         int vict2=0;
 
+
+
         //Let's test it for numTest times
         for(int i=0;i<numTest;i++)
         {
             long btime;
             long dtime;
-
-            boolean turn=true;
-            double mobRatio=0.5;
-            //We initialise the board
             int[][] board=new int[initBoard.length][];
             for (int j=0;j<initBoard.length;j++)
                 board[j]=initBoard[j].clone();
+
+            if(randomize)
+            {
+                moveToBoard(board, new RandomAI(1).getMove(board),1);
+                moveToBoard(board, new RandomAI(2).getMove(board),2);
+            }
+            boolean turn=true;
+            double mobRatio=0.5;
+            //We initialise the board
+
 
             //The game goes on until one has 0 mobility
             do{
