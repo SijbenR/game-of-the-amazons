@@ -170,11 +170,11 @@ public class TreeTraverse {
 
             //Filter out all queens that can't move anymore
             int count = 0;
-            for(GridCoordinate queen: queens)
-                System.out.println(queen);
+            GridCoordinate queen;
+                //System.out.println(queen);
 
             for(int i = 0; i < queens.size(); i++)  {
-                GridCoordinate queen = queens.get(i);
+                queen = queens.get(i);
                 count = countPosQueenOptions(queen);
                 if(count == 0)  {
                     //Two cases
@@ -183,18 +183,19 @@ public class TreeTraverse {
                     // 2. i == size - 1
 
                     if(i < (queens.size() - 1))  {
-                        while(i < queens.size() - 1)    {
-                            queens.set(i, queens.get(i+1));
-                            i++;
+                        int j=i;
+                        while( j < queens.size() - 1)    {
+                            queens.set(j, queens.get(j+1));
+                            j++;
                         }
                         queens.remove(queens.size() - 1);
-                        i = 0;
+                        j = 0;
                     }else if (i == (queens.size() - 1))   {
                         queens.remove(queens.size() - 1);
                     }
 
                 }
-                System.out.println("Not getting out 1");
+                //System.out.println("Not getting out 1");
 
                 removePosMoves(Board);
             }
@@ -232,6 +233,7 @@ public class TreeTraverse {
 
                     //TODO Temp fix here - if possible, try to solve
                     int iterations = 0;
+                    printBoard();
                     while (!parent.validAmongChildren(newNode) && iterations < 10000) {
                         //System.out.println("NOT VALID = " + newNode);
 
@@ -289,23 +291,28 @@ public class TreeTraverse {
                 queen = queens.get(i);
                 count = countPosQueenOptions(queen);
 
+
+
                 if(count == 0)  {
                     //Two cases
                     //
                     // 1. i < size - 1
                     // 2. i == size - 1
 
+
                     if(i < (queens.size() - 1))  {
-                        while(i < queens.size() - 1)    {
-                            queens.set(i, queens.get(i+1));
-                            queens.remove(queens.size() - 1);
-                            i++;
+                        int j=i;
+                        while( j < queens.size() - 1)    {
+                            queens.set(j, queens.get(j+1));
+                            j++;
                         }
                         queens.remove(queens.size() - 1);
-                        i = 0;
-                    }else if (i == (queens.size() - 1))   {
+                        j = 0;
+                    }
+                    else if (i == (queens.size() - 1))   {
                         queens.remove(queens.size() - 1);
                     }
+
 
                 }
                 //System.out.println("Not getting out 2\ni = " + i + "\tQueen = " + queens.get(i) + "\tCount: " + count);
@@ -332,9 +339,19 @@ public class TreeTraverse {
 
                 //randomly choose destination
                 posDest = listPosDest(Board, origin);
-                BoardOperations.printBoard(Board);
+                //BoardOperations.printBoard(Board);
                 removePosMoves(Board);
                 ran = (int) (posDest.size() * Math.random());
+                //printBoard();
+
+                while(posDest.size() == 0)  {
+                    ran = (int) (queens.size() * Math.random());
+                    origin = queens.get(ran);
+
+                    posDest = listPosDest(Board, origin);
+                }
+                ran = (int) (posDest.size() * Math.random());
+
                 GridCoordinate tar = posDest.get(ran);
 
                 Node newNode = new Node(parent, origin, tar);
@@ -429,7 +446,7 @@ public class TreeTraverse {
     }
 
     public void printBoard()    {
-        printArrayint(Board);
+        BoardOperations.printBoard(Board);
         System.out.println("\n");
     }
 

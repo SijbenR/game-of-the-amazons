@@ -60,6 +60,7 @@ public class BoardOperations {
                 }
             }
         }
+
         return queens;
     }
 
@@ -372,6 +373,26 @@ public class BoardOperations {
         return gameOverCheck(Board, playerVal, position.x, position.y);
     }
 */
+
+    public static void bubbleSortNodesByValue(ArrayList<Node> children)   {
+        Node temp;
+        if (children.size()>1) // check if the number of orders is larger than 1
+        {
+            for (int x=0; x<children.size(); x++) // bubble sort outer loop
+            {
+                for (int i=0; i < children.size() - x - 1; i++) {
+                    if (children.get(i).getValue() < children.get(i + 1).getValue()) {
+                        temp = children.get(i);
+                        children.set(i, children.get(i + 1));
+                        children.set(i + 1, temp);
+                    }
+                }
+
+            }
+        }
+    }
+
+
     public static boolean gameOverCheck(int[][] Board) {
         boolean pl1State = true;
         boolean pl2State = true;
@@ -383,8 +404,9 @@ public class BoardOperations {
 
         for(GridCoordinate queen : Player1)  {
             tempBoard = getCopy(Board);
+            removePosMoves(tempBoard);
             markGameOver(tempBoard, queen);
-            printBoard(tempBoard);
+            //printBoard(tempBoard);
             if(countmarked(tempBoard) > 0)  {
                 if(checkMarkedFor(tempBoard, 2))    {
                     pl1State = false;
@@ -397,8 +419,9 @@ public class BoardOperations {
 
         for(GridCoordinate queen : Player2)  {
             tempBoard = getCopy(Board);
+            removePosMoves(tempBoard);
             markGameOver(tempBoard, queen);
-            printBoard(tempBoard);
+            //printBoard(tempBoard);
             if(countmarked(tempBoard) > 0)  {
                 if(checkMarkedFor(tempBoard, 1))    {
                     pl2State = false;
@@ -451,6 +474,7 @@ public class BoardOperations {
         int count = 0;
         for(int i = 0; i < Board.length; i++)  {
             for(int j = 0; j < Board[0].length; j++)  {
+               if(Board[i][j]== markVal)
                 count++;
             }
         }
@@ -525,7 +549,7 @@ public class BoardOperations {
 
     //Alternative GameOver check method
     public static void markGameOver(int[][] Board, int x, int y)   {
-        boolean returnVal = true;
+
         //Will return false until completed
 
         int xStart, xEnd, yStart, yEnd;
@@ -540,7 +564,7 @@ public class BoardOperations {
             for(int j = xStart; j < xEnd && j >= 0 && j < Board[0].length; j++) {
                 if(Board[i][j] == 0)    {
                     Board[i][j] = markVal;
-                    printBoard(Board);
+                    //printBoard(Board);
                     markGameOver(Board, j, i);
                 }
             }
@@ -569,6 +593,21 @@ public class BoardOperations {
 
             }
         }
+    }
+
+    public static int gameScore(int[][] Board, int playerVal )   {
+        int[][] tempBoard;
+        ArrayList<GridCoordinate> Queens = posQueens(Board,playerVal);
+        int count = 0;
+
+        for(GridCoordinate queen : Queens)  {
+            tempBoard = getCopy(Board);
+            removePosMoves(tempBoard);
+            markGameOver(tempBoard, queen);
+            count += countmarked(tempBoard);
+        }
+
+        return count;
     }
 
 
@@ -962,7 +1001,7 @@ public class BoardOperations {
     public static void printBoard(int[][] Board) {
         for(int i = 0; i < Board.length; i++) {
             for(int j = 0; j < Board[0].length; j++) {
-                if(Board[i][j] >= 0) {
+                if(Board[i][j] > 0) {
                     System.out.print(Board[i][j] + " ");
                 }
                 else    {

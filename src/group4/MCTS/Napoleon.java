@@ -31,11 +31,18 @@ public class Napoleon  extends Player {
             tree = new TerritoryTree(Grid, super.getVal(), false, 4, 70);
 
             move = tree.Movethebest();
+            if(move != null) {
 
-            queenMove[0] = move[0];
-            queenMove[1] = move[1];
+                queenMove[0] = move[0];
+                queenMove[1] = move[1];
 
-            fuckinggreat = move[2];
+                fuckinggreat = move[2];
+
+                System.out.println("Move Queen from: " + move[0] + "\tto: " + move[1] + "\tShoot arrow at: " + move[2]);
+            }
+            else {
+                System.out.println("Out of ideas");
+            }
 
 
         }

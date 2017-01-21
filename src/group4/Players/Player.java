@@ -50,7 +50,6 @@ public class Player {
     }
 
     public void giveInput(int[][] Board) {
-
     }
 
     //Function Overload in Bot classes

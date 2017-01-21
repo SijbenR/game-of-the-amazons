@@ -27,6 +27,7 @@ public class Node {
     public int playerVal;
 
     public boolean ownMove, arrowMove;
+    protected double value;
     public String BoardCompressed;
 
 
@@ -101,6 +102,15 @@ public class Node {
     public double getScore()   {
         return score;
     }
+    public void setValue(double value  )   {
+        this.value = value;
+    }
+
+    public double getValue()   {
+        return value;
+    }
+
+
 
 
 
@@ -170,7 +180,7 @@ public class Node {
 
 
     public String toString()   {
-        return new String("Node depth = " + depthOfNode + "\tOrigin: " + origin + "\tDestination: " + dest + "\tOwnmove: " + ownMove + "\tArrowMove: " + arrowMove + "\tPlayerVal: " + playerVal + "\tScore: " + score);
+        return new String("Node depth = " + depthOfNode + "\tOrigin: " + origin + "\tDestination: " + dest + "\tOwnmove: " + ownMove + "\tArrowMove: " + arrowMove + "\tPlayerVal: " + playerVal + "\tScore: " + score + "\n");
     }
 
     public void printNode() {

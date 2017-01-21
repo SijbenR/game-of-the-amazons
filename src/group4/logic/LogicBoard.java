@@ -9,6 +9,9 @@ import java.util.Arrays;
 import group4.Players.Player;
 import group4.ui.GridCoordinate;
 
+import static group4.utilities.BoardOperations.gameOverCheck;
+import static group4.utilities.BoardOperations.gameScore;
+
 public class LogicBoard {
 
     private final int width = 10;
@@ -936,6 +939,51 @@ public class LogicBoard {
         }
         return returnStatement;
     }
+
+
+    public void runBotGame()    {
+        while(!gameOverCheck(Grid)) {
+            Player Bot = getCurrent();
+            System.out.println("Before passing to bot");
+            //logicBoard.printBoard();
+            Bot.giveInput(getBoard());
+
+            //QueenMove
+            if(!arrowSpotSelect) {
+                GridCoordinate[] queenMove = Bot.chooseQueenMove();
+                GridCoordinate origin = queenMove[0];
+
+                System.out.println("Trying to set to empty: " + origin);
+                setEmpty(origin);
+
+                GridCoordinate dest = queenMove[1];
+                setQueenOfCurrentOn(dest);
+
+                arrowSpotSelect = true;
+                calcPosMoves(dest, false);
+            }
+            else{
+                //logicBoard.getCurrent().giveInput(logicBoard.getBoard());
+                GridCoordinate dest = Bot.chooseArrowMove();
+                setArrowOn(dest);
+                removePossibleMoves();
+                toggleTurn();
+            }
+          // printBoard();
+        }
+
+        System.out.println("Game Over");
+        int scorePl1 = gameScore(Grid, 1);
+        int scorePl2 = gameScore(Grid, 2);
+
+        if(scorePl1 > scorePl2){
+            System.out.println("player 1 wins");
+        }
+        else   {
+            System.out.println("player 2 wins");
+        }
+    }
+
 
     public void floodFill(int[][] board, int currentNodeX,int currentNodeY, int target, int replacement, boolean first){
 
