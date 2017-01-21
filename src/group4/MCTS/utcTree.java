@@ -31,20 +31,21 @@ public class utcTree extends NodeTree{
     double c= Math.sqrt(2);
 
     public utcTree(int[][] Board, int ownVal, boolean arrowMove, double timeToRun) {
+
         super(Board, ownVal, arrowMove, 15, 22);
-        this.TimeToRun = TimeToRun;
+        this.TimeToRun = timeToRun;
     }
 
     public GridCoordinate[] Movethebest(){
         //  System.out.println("entered 1");
         Node best = bestchoice();
-        System.out.println("best choice" + best);
+     //   System.out.println("best choice" + best);
 //        System.out.println(best.getChildren().get(0));
         int pick=0;
-        System.out.print("fuck");
+       // System.out.print("fuck");
         while (best.getChildren().get(pick)==null) {
             pick++;
-            System.out.print("fuck");
+         //   System.out.print("fuck");
         }
 
         Node bestArrow = best.getChildren().get(pick);
@@ -73,22 +74,19 @@ public class utcTree extends NodeTree{
         utcbuild(root);
         int pick=0;
 
-        System.out.println("Amount Children: " + root.getChildren().size());
+       // System.out.println("Amount Children: " + root.getChildren().size());
 
-        for(Node child : root.getChildren())    {
-            System.out.println(child);
-        }
 
 
         bubbleSortNodesByValue(root.getChildren());
-        for(Node child : root.getChildren())    {
+    /*    for(Node child : root.getChildren())    {
             System.out.println(child);
         }
-
+*/
         while(root.getChildren().get(pick).getChildren()==null)
         {
             pick++;
-            System.out.print("printing pick "+ pick);
+            //System.out.print("printing pick "+ pick);
         }
         bubbleSortNodesByValue(root.getChildren().get(pick).getChildren());
         return root.getChildren().get(pick);
@@ -96,22 +94,25 @@ public class utcTree extends NodeTree{
 
     public void utcbuild(Node root){
 
-        // System.out.println("entered 3");
+        System.out.println("entered 3");
 
         double starttime=System.currentTimeMillis();
         double endtime=System.currentTimeMillis();
-        System.out.println("For root: " + root);
+        //System.out.println("For root: " + root);
         addChildren(root);
-        System.out.println(root.getChildren().size());
+       // System.out.println(root.getChildren().size());
         super.nodePointer.evaluateChildren(root);
         allNodes(root);
         selectionscore(root);
         // System.out.println("entered 5");
       //  Node toPick = bestnode(returnAllNodes(root),root);
         //  System.out.println("entered 6");
-        while(endtime-starttime< TimeToRun){
 
-            System.out.println("entered 4");
+     //   System.out.println("Endtime = " + endtime + " Starttime = " + starttime + " TimeToRun = " + TimeToRun);
+
+        while(endtime-starttime < TimeToRun){
+
+          //  System.out.println("entered 4");
             building(ListOfNodes.get(0));
             endtime=System.currentTimeMillis();
         }
@@ -124,10 +125,10 @@ public class utcTree extends NodeTree{
 
     }
     public void building(Node node){
-        //System.out.println("entered 5");
+       // System.out.println("Entered Building with " + node);
         selectionscore(node);
         allNodes(root);
-        System.out.println("Size of AllNodes: " + ListOfNodes.size());
+        //System.out.println("Size of AllNodes: " + ListOfNodes.size());
         bubbleSortNodesByValue(ListOfNodes);
 
         super.nodePointer.retToRoot();
@@ -141,7 +142,7 @@ public class utcTree extends NodeTree{
             super.nodePointer.performMove(stack.pop());
         }
 
-        System.out.println("EXPANDING: " + ListOfNodes.get(0));
+        //System.out.println("EXPANDING: " + ListOfNodes.get(0));
         addChildren(ListOfNodes.get(0));
 
         super.nodePointer.evaluateChildrenByTer(ListOfNodes.get(0));
@@ -230,7 +231,7 @@ public class utcTree extends NodeTree{
     public Node bestnode(ArrayList<Node> allNodes, Node root){
 
         allNodes(root);
-        System.out.println(allNodes.size());
+       // System.out.println(allNodes.size());
         bubbleSortNodesByValue(allNodes);
         return allNodes.get(0);
     }

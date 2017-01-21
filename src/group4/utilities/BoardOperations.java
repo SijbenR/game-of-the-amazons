@@ -898,21 +898,21 @@ public class BoardOperations {
 
     public static ArrayList<GridCoordinate> listPosDest(int[][] Array, GridCoordinate start)  {
         ArrayList<GridCoordinate> posMoves = new ArrayList<GridCoordinate>();
-
-        calcPosMoves(Array, start, false);
+        int[][] tempGrid = getCopy(Array);
+        calcPosMoves(tempGrid, start, false);
         GridCoordinate pos;
         for(int k = 1; k < 11; k++) {
             for(int l = 1; l < 11; l++) {
                 pos = new GridCoordinate(k,l);
-                if(getValAt(Array, pos) == 4 || getValAt(Array, pos) == 5)  {
+                if(getValAt(tempGrid, pos) == 4 || getValAt(tempGrid, pos) == 5)  {
                     posMoves.add(pos);
                 }
             }
         }
-        if(posMoves.size() < 10)
+        //if(posMoves.size() < 10)
             //printBoard(Array);
 
-        removePosMoves(Array);
+        //removePosMoves(Array);
         return posMoves;
     }
 
