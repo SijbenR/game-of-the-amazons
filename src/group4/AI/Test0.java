@@ -10,13 +10,13 @@ public class Test0 {
     {
         Experiment exp=new Experiment()
                 .setBoard()
-                .setNumTest(1000000)
-                //.setPlayer1(new MinMax(1,new MobilityEval()).setMaxfinal(10).setDepth(1))
-                //.setPlayer2(new MinMax(2,new MobilityEval()).setMaxfinal(10).setDepth(1))
-                .setPlayer1(new RandomAI(1))
-                .setPlayer2(new RandomAI(2))
+                .setNumTest(30)
+                .setPlayer1(new MinMax(1,new TerritoryEval()).setMaxfinal(10).setDepth(1))
+                .setPlayer2(new MinMax(2,new MobilityEval()).setMaxfinal(10).setDepth(1))
+                //.setPlayer1(new RandomAI(1))
+                //.setPlayer2(new RandomAI(2))
                 .setVerbose(true)
-                //.setRandomize(true);
+                .setRandomize(true);
                 ;
         exp.run();
 

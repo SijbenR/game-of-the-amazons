@@ -82,7 +82,9 @@ public class Experiment {
         int nTurn2=0;
         int vict1=0;
         int vict2=0;
-
+        int maxTurns=0;
+        int minTurns=Integer.MAX_VALUE;
+        double avgTurns=0;
 
 
         //Let's test it for numTest times
@@ -90,6 +92,7 @@ public class Experiment {
         {
             long btime;
             long dtime;
+            int nTurns=0;
             int[][] board=new int[initBoard.length][];
             for (int j=0;j<initBoard.length;j++)
                 board[j]=initBoard[j].clone();
@@ -147,24 +150,31 @@ public class Experiment {
                     if (dtime > maxTime2) maxTime2=dtime;
                     nTurn2++;
                 }
-                if (verbose) System.out.print("+");
+                nTurns++;
+                if (verbose) System.out.print(".");
                 //Change turn
                 turn=!turn;
                 mobRatio=eval.evaluate(board,1);
             } while(mobRatio < 1 && mobRatio > 0);
             if (verbose) System.out.println( mobRatio==1 ? 1 : 2);
+            if(nTurns > maxTurns) maxTurns=nTurns;
+            if(nTurns < minTurns) minTurns=nTurns;
+            avgTurns += nTurns;
             if (mobRatio==1)
                 vict1++;
             else
                 vict2++;
-
-
         }
         avgTime1=avgTime1/nTurn1;
         avgTime2=avgTime2/nTurn2;
+        avgTurns=avgTurns/numTest;
         StringJoiner msg=new StringJoiner("\n");
         msg
                 .add("Number of tests:\t"+numTest)
+                .add("Max turns per game:\t"+maxTurns)
+                .add("Min turns per game:\t"+minTurns)
+                .add("Avg turns per game:\t"+avgTurns)
+
                 .add("-------Player 1-------")
                 .add("Max Time:\t"+maxTime1/1000.0+" s")
                 .add("Min Time:\t"+minTime1/1000.0+" s")
