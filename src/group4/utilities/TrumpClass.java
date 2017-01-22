@@ -23,16 +23,16 @@ public class TrumpClass {
 
         int[][] Board = new int[][]{
 
-                {3, 0, 1, 3, 3, 3, 0, 3, 3, 3},
-                {1, 0, 0, 0, 3, 2, 0, 0, 0, 3},
-                {3, 0, 3, 3, 3, 3, 0, 3, 2, 3},
-                {3, 3, 3, 3, 3, 3, 3, 0, 3, 3},
-                {3, 2, 0, 3, 0, 3, 3, 0, 3, 3},
-                {3, 0, 3, 3, 0, 3, 3, 0, 3, 3},
-                {3, 3, 3, 3, 3, 3, 0, 3, 3, 1},
-                {3, 3, 3, 3, 3, 2, 3, 3, 3, 3},
-                {0, 3, 1, 0, 3, 3, 3, 0, 3, 3},
-                {3, 0, 0, 0, 0, 3, 0, 3, 3, 3}
+                {0, 0, 1, 3, 3, 3, 0, 0, 0, 0},
+                {0, 2, 1, 0, 3, 3, 0, 0, 0, 0},
+                {0, 3, 1, 3, 3, 0, 3, 3, 3, 0},
+                {3, 3, 3, 3, 0, 0, 0, 1, 0, 0},
+                {3, 0, 3, 3, 3, 0, 0, 0, 0, 3},
+                {0, 3, 0, 0, 0, 0, 2, 0, 3, 3},
+                {3, 3, 0, 0, 2, 0, 3, 0, 0, 0},
+                {3, 0, 3, 2, 0, 0, 0, 0, 0, 3},
+                {3, 0, 0, 0, 3, 0, 0, 3, 0, 3},
+                {0, 0, 0, 3, 3, 3, 3, 0, 0, 0}
 
        /*
                 {3,0,1,0,0,0,2,3,0,0},
@@ -49,31 +49,10 @@ public class TrumpClass {
         */
         };
 
-        System.out.println("Game Over: " + gameOverCheck(Board));
-        printBoard(Board);
-        int scorePl1 = gameScore(Board, 1);
-        int scorePl2 = gameScore(Board, 2);
+        //System.out.println("Game Over: " + gameOverCheck(Board));
+        //printBoard(Board);
 
-        if (scorePl1 > scorePl2) {
-            System.out.println("player 1 wins with = " + scorePl1);
 
-        } else if(scorePl2>scorePl1){
-            System.out.println("player 2 wins with = " + scorePl2);
-        } else if(scorePl2==scorePl1){
-            int threes=0;
-            for(int i=0;i<10;i++){
-                for(int j=0;j<10;j++){
-                    if(Board[i][j]==3){
-                        threes++;
-                    }
-                }
-            }
-            if(threes%2==0){
-                System.out.println("player 2 wins after moving last");
-            }else{
-                System.out.println("player 1 wins after moving last");
-            }
-        }
 
 
         Player player1;
@@ -85,28 +64,85 @@ public class TrumpClass {
         GridCoordinate queen;
 
 
-        /*
-        int count = 0;
-        for (int i = 0; i < 1; i++) {
-            player1 = new Bobby(true);
-            player2 = new Sean(false, 1000);
-            game = new LogicBoard(player1, player2);
-            game.runBotGame();
-            printBoard(Board);
-          //  int scorePl1 = gameScore(game.getBoard(), 1);
-            //int scorePl2 = gameScore(game.getBoard(), 2);
 
+        int count = 0;
+        for (int k = 0; k < 100; k++) {
+            player1 = new Bobby(true);
+            player2 = new Sean(false, 1000, true);
+            game = new LogicBoard(player1, player2);
+            //game.setBoard(Board);
+            game.runBotGame();
+
+           int scorePl1 = gameScore(game.getBoard(), 1);
+            int scorePl2 = gameScore(game.getBoard(), 2);
+            if (scorePl1 > scorePl2) {
+                System.out.println("player 1 wins with = " + scorePl1);
+                    count++;
+            } else if(scorePl2>scorePl1){
+                System.out.println("player 2 wins with = " + scorePl2);
+            } else if(scorePl2==scorePl1){
+                int threes=0;
+                for(int i=0;i<10;i++){
+                    for(int j=0;j<10;j++){
+                        if(game.getBoard()[i][j]==3){
+                            threes++;
+                        }
+                    }
+                }
+                if(threes%2==0){
+                    System.out.println("player 2 wins after moving last");
+                }else{
+                    System.out.println("player 1 wins after moving last");
+                    count++;
+                }
 
             }
+            printBoard(game.getBoard());
+            int count = 0;
+            for (int k = 0; k < 100; k++) {
+                player1 = new Bobby(true);
+                player2 = new Sean(false, 1000, true);
+                game = new LogicBoard(player1, player2);
+                //game.setBoard(Board);
+                game.runBotGame();
 
+                int scorePl1 = gameScore(game.getBoard(), 1);
+                int scorePl2 = gameScore(game.getBoard(), 2);
+                if (scorePl1 > scorePl2) {
+                    System.out.println("player 1 wins with = " + scorePl1);
+                    count++;
+                } else if(scorePl2>scorePl1){
+                    System.out.println("player 2 wins with = " + scorePl2);
+                } else if(scorePl2==scorePl1){
+                    int threes=0;
+                    for(int i=0;i<10;i++){
+                        for(int j=0;j<10;j++){
+                            if(game.getBoard()[i][j]==3){
+                                threes++;
+                            }
+                        }
+                    }
+                    if(threes%2==0){
+                        System.out.println("player 2 wins after moving last");
+                    }else{
+                        System.out.println("player 1 wins after moving last");
+                        count++;
+                    }
 
-            System.out.println("Game Over: " + gameOverCheck(Board));
-
+                }
+                printBoard(game.getBoard());
 
         }
 
-        //System.out.println("player 1 won " + count + " times");
-        */
+
+            System.out.println("Simulation is over: " );
+            System.out.println("player 1 won " + count + " times");
+
+
     }
+
+
+
+
 
 }

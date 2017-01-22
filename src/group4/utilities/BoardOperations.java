@@ -518,21 +518,21 @@ public class BoardOperations {
         for(int i = 0; i < 10; i++) {
             for(int j = 0; j < 10; j++) {
                 if(tempBoard[i][j] == markVal && checkSurroundForVal(tempBoard, queenVal, j, i))    {
-                    System.out.println("Before removing Queen");
-                    printBoard(tempBoard);
+                 //   System.out.println("Before removing Queen");
+                //    printBoard(tempBoard);
 
                     searchAndDestroy(tempBoard, queenVal, j, i);
 
-                    System.out.println("After removing Queen");
-                    printBoard(tempBoard);
+                   // System.out.println("After removing Queen");
+                  //  printBoard(tempBoard);
                     //printBoard(tempBoard);
                     count++;
                 }
             }
         }
-        System.out.println("Found: " + count + " Queens in the marked");
-        System.out.println("");
-        System.out.println("");
+       // System.out.println("Found: " + count + " Queens in the marked");
+      //  System.out.println("");
+      //  System.out.println("");
 
         return count;
     }
@@ -699,7 +699,7 @@ public class BoardOperations {
             //Settin the value of the originQueen differently so it's not considered in the next execution
             setValue(tempBoard, 9, queen);
 
-            System.out.println("For: " + queen);
+           // System.out.println("For: " + queen);
             double  queensInMarked = getQueensinMarked(tempBoard, playerVal);
             if(checkMarkedFor(tempBoard, playerVal))        {
                 count += countmarked(tempBoard) / (queensInMarked + 1);

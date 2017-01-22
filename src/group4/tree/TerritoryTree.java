@@ -74,6 +74,8 @@ public class TerritoryTree extends NodeTree {
             move[0] = best.origin;
             move[1] = best.dest;
             move[2] = best.getChildren().get(0).dest;
+       //     System.out.println("best Move - From = " + best.origin + " To = " + best.dest + " shooting Arrow to = " + best.getChildren().get(0).dest);
+
             //System.out.println("best score = " + best.score);
             return move;
         }
@@ -81,6 +83,24 @@ public class TerritoryTree extends NodeTree {
             return null;
     }
 
+
+    public GridCoordinate[] MoveOtherBest(int pos1){
+
+     //   System.out.println("Position: " + pos1);
+
+        Node best = root.getChildren().get(pos1);
+        if(best.getChildren().size() == 0)  {
+            MoveOtherBest(pos1 + 1);
+        }
+
+
+        GridCoordinate[] move = new GridCoordinate[3];
+        move[0] = best.origin;
+        move[1] = best.dest;
+        move[2] = best.getChildren().get(0).dest;
+     //   System.out.println("best Move - From = " + best.origin + " To = " + best.dest + " shooting Arrow to = " + best.getChildren().get(0).dest);
+        return move;
+    }
 
 
     public void buildTree() {

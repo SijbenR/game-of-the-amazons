@@ -70,17 +70,17 @@ public class Bobby extends Player {
 		}
 
 
-		System.out.println("Choosen Queen at: " + chosenQueen);
+		//System.out.println("Choosen Queen at: " + chosenQueen);
 		returner[0] = chosenQueen;
 
 		updatePossibleMoves(chosenQueen);
-		printBoard();
+		//printBoard();
 		removePossibleMoves();
-		System.out.println("Amount of Possible moves for Queen: " + isQueenMove + "\n is = " + posMoves.size());
+		//System.out.println("Amount of Possible moves for Queen: " + isQueenMove + "\n is = " + posMoves.size());
 
 		ran = (int)(Math.random() * posMoves.size());
 		GridCoordinate dest = posMoves.get(ran);
-		System.out.println("Choosen Destination at: " + dest);
+		//System.out.println("Choosen Destination at: " + dest);
 
 		returner[1] = dest;
 
@@ -91,13 +91,13 @@ public class Bobby extends Player {
 
 		posMoves= new ArrayList<>();
 
-		System.out.println("Possible Moves");
-		printBoard();
+		//System.out.println("Possible Moves");
+		//printBoard();
 		countPosMoves(5);
 
 		int ran = (int)(Math.random() * posMoves.size());
 		GridCoordinate dest = posMoves.get(ran);
-		System.out.println("Shooting Arrow at: " + dest);
+		//System.out.println("Shooting Arrow at: " + dest);
 
 
 		if(posMoves.size() > 0) {
@@ -157,7 +157,7 @@ public class Bobby extends Player {
 		posMoves = new ArrayList<>();
 		calcPosMoves(Grid, position, false);
 		posMoves = listPosDest(Grid, position);
-		System.out.println("Amount of possible moves: " + posMoves.size());
+		//System.out.println("Amount of possible moves: " + posMoves.size());
 
 
 	}

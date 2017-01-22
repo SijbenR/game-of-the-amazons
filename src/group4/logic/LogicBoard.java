@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 import group4.Players.Player;
 import group4.ui.GridCoordinate;
+import group4.utilities.BoardOperations;
 
 import static group4.utilities.BoardOperations.gameOverCheck;
 import static group4.utilities.BoardOperations.gameScore;
@@ -976,7 +977,7 @@ public class LogicBoard {
                 removePossibleMoves();
                 toggleTurn();
             }
-          // printBoard();
+           //BoardOperations.printBoard(getBoard());
         }
 
         System.out.println("Game Over");

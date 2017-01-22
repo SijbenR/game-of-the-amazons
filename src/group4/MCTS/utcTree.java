@@ -22,6 +22,8 @@ import static group4.utilities.BoardOperations.evaluate;
  * Created by I6106804 on 18-1-2017.
  */
 public class utcTree extends NodeTree{
+    boolean useTer = true;
+
     ArrayList<Node> ListOfNodes = new ArrayList<>();
     double TimeToRun;
 
@@ -30,10 +32,11 @@ public class utcTree extends NodeTree{
 
     double c= Math.sqrt(2);
 
-    public utcTree(int[][] Board, int ownVal, boolean arrowMove, double timeToRun) {
+    public utcTree(int[][] Board, int ownVal, boolean arrowMove, double timeToRun, boolean useTer) {
 
         super(Board, ownVal, arrowMove, 15, 22);
         this.TimeToRun = timeToRun;
+        this.useTer = useTer;
     }
 
     public GridCoordinate[] Movethebest(){
@@ -103,7 +106,14 @@ public class utcTree extends NodeTree{
         //System.out.println("For root: " + root);
         addChildren(root);
        // System.out.println(root.getChildren().size());
-        super.nodePointer.evaluateChildren(root);
+
+        if(!useTer) {
+            super.nodePointer.evaluateChildren(root);
+        }
+        else    {
+            super.nodePointer.evaluateChildrenByTer(root);
+        }
+
         allNodes(root);
         selectionscore(root);
         // System.out.println("entered 5");
@@ -147,7 +157,14 @@ public class utcTree extends NodeTree{
         //System.out.println("EXPANDING: " + ListOfNodes.get(0));
         addChildren(ListOfNodes.get(0));
 
-        super.nodePointer.evaluateChildrenByTer(ListOfNodes.get(0));
+
+        if(!useTer) {
+            super.nodePointer.evaluateChildren(ListOfNodes.get(0));
+        }
+        else    {
+            super.nodePointer.evaluateChildrenByTer(ListOfNodes.get(0));
+        }
+
         backpropagate(ListOfNodes.get(0).getChildren().get(0));
         bubbleSortNodesByValue(ListOfNodes);
     }

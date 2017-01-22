@@ -16,17 +16,19 @@ public class Sean extends Player{
     GridCoordinate fuckinggreat;
     GridCoordinate[] queenMove = new GridCoordinate[2];
     double timeToRun;
+    boolean useTer = true;
 
-    public Sean(boolean isFirst, double timeToRun) {
+    public Sean(boolean isFirst, double timeToRun, boolean useTer) {
         super(isFirst,true);
         this.timeToRun=timeToRun;
+        this.useTer = useTer;
 
     }
     public void giveInput(int[][] Board)	{
         if(fuckinggreat == null) {
             this.Grid = getCopy(Board);
             move = new GridCoordinate[3];
-            tree = new utcTree(Grid, super.getVal(), false, timeToRun);
+            tree = new utcTree(Grid, super.getVal(), false, timeToRun, useTer);
 
             move = tree.Movethebest();
 

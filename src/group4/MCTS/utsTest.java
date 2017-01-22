@@ -20,7 +20,7 @@ public static void main(String[] args0) {
       //  GridCoordinate gridCoordinate = new GridCoordinate(1, 8);
         // System.out.println("score for the start is= " + boardOperations.evaluate(Board.getBoard(),1));
 
-        utcTree tree = new utcTree(Board.getBoard(), 1, false, 10000);
+        utcTree tree = new utcTree(Board.getBoard(), 1, false, 10000, true);
         GridCoordinate[] bestMove = tree.Movethebest();
 
         }
