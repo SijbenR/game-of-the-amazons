@@ -19,6 +19,8 @@ import static group4.AI.MobilityEval.getNumPossibleMoves;
  */
 public class BoardOperations {
 
+    static boolean DEBUG = false;
+
     private static int markVal = 7;
 
     public static int playerpunishment=1000;
@@ -392,7 +394,6 @@ public class BoardOperations {
         }
     }
 
-
     public static boolean gameOverCheck(int[][] Board) {
         boolean pl1State = true;
         boolean pl2State = true;
@@ -429,13 +430,70 @@ public class BoardOperations {
             }
         }
 
-        if(pl2State || pl2State)
+        if(pl1State || pl2State)
             return true;
         else
             return false;
 
     }
 
+
+
+
+
+/*
+    public static int gameOverCheck(int[][] Board) {
+        int pl1State = 1;
+        int pl2State = 2;
+
+        int[][] tempBoard;
+
+        //Player 1 Queens
+        ArrayList<GridCoordinate> Player1 = posQueens(Board, 1);
+
+        for(GridCoordinate queen : Player1)  {
+            tempBoard = getCopy(Board);
+            removePosMoves(tempBoard);
+            if(listPosDest(tempBoard,queen).size()>0){
+                pl1State=0;
+            }
+            // markGameOver(tempBoard, queen);
+            //printBoard(tempBoard);
+            /*if(countmarked(tempBoard) > 0)  {
+                if(checkMarkedFor(tempBoard, 2))    {
+                    pl1State = false;
+                }
+            }
+        }
+
+
+        ArrayList<GridCoordinate> Player2 = posQueens(Board, 2);
+
+        for(GridCoordinate queen : Player2)  {
+            tempBoard = getCopy(Board);
+            removePosMoves(tempBoard);
+
+            if(listPosDest(tempBoard,queen).size()>0){
+                pl2State=0;
+            }
+
+            //markGameOver(tempBoard, queen);
+            //printBoard(tempBoard);
+            /*if(countmarked(tempBoard) > 0)  {
+                if(checkMarkedFor(tempBoard, 1))    {
+                    pl2State = false;
+                }
+            }
+        }
+
+        if(pl1State==1)
+            return 1;
+        else if (pl2State==2l)
+            return 2;
+        else return 0;
+
+    }
+*/
     public static boolean checkSurroundForVal(int[][] Board, int value, int x, int y)   {
         int xStart, xEnd, yStart, yEnd;
         int[] borders = startCoords(Board, x, y);
@@ -454,7 +512,36 @@ public class BoardOperations {
         return false;
     }
 
-    public void markSurroundingsWithVal(int[][] Board, int value, int x, int y)   {
+    public static int getQueensinMarked(int[][] Board, int queenVal)   {
+        int[][] tempBoard = getCopy(Board);
+        int count = 0;
+        for(int i = 0; i < 10; i++) {
+            for(int j = 0; j < 10; j++) {
+                if(tempBoard[i][j] == markVal && checkSurroundForVal(tempBoard, queenVal, j, i))    {
+                    System.out.println("Before removing Queen");
+                    printBoard(tempBoard);
+
+                    searchAndDestroy(tempBoard, queenVal, j, i);
+
+                    System.out.println("After removing Queen");
+                    printBoard(tempBoard);
+                    //printBoard(tempBoard);
+                    count++;
+                }
+            }
+        }
+        System.out.println("Found: " + count + " Queens in the marked");
+        System.out.println("");
+        System.out.println("");
+
+        return count;
+    }
+
+
+
+
+
+    public static void searchAndDestroy(int[][] Board, int value, int x, int y)   {
         int xStart, xEnd, yStart, yEnd;
         int[] borders = startCoords(Board, x, y);
         xStart = borders[0];
@@ -463,8 +550,9 @@ public class BoardOperations {
         yEnd = borders[3];
         for(int i = yStart; i < yEnd && i < Board.length && i >= 0; i++) {
             for(int j = xStart; j < xEnd && j < Board[0].length && j >= 0; j++) {
-                if(Board[i][j] == 0)  {
-                        Board[i][j] = value;
+                if(Board[i][j] == value)  {
+                        Board[i][j] = 3;
+                        break;
                 }
             }
         }
@@ -483,6 +571,7 @@ public class BoardOperations {
 
 
     public static boolean checkMarkedFor(int[][] Board, int val)  {
+
         for(int i = 0; i  < Board.length; i++)  {
             for(int j = 0; j  < Board[0].length; j++)  {
                 if(Board[i][j] == markVal)    {
@@ -494,6 +583,8 @@ public class BoardOperations {
         }
         return false;
     }
+
+
 
 
     public static int[] startCoords(int[][] Board, int x, int y) {
@@ -598,16 +689,27 @@ public class BoardOperations {
     public static int gameScore(int[][] Board, int playerVal )   {
         int[][] tempBoard;
         ArrayList<GridCoordinate> Queens = posQueens(Board,playerVal);
-        int count = 0;
+        double count = 0;
 
         for(GridCoordinate queen : Queens)  {
             tempBoard = getCopy(Board);
             removePosMoves(tempBoard);
             markGameOver(tempBoard, queen);
-            count += countmarked(tempBoard);
+
+            //Settin the value of the originQueen differently so it's not considered in the next execution
+            setValue(tempBoard, 9, queen);
+
+            System.out.println("For: " + queen);
+            double  queensInMarked = getQueensinMarked(tempBoard, playerVal);
+            if(checkMarkedFor(tempBoard, playerVal))        {
+                count += countmarked(tempBoard) / (queensInMarked + 1);
+            }
+            else {
+                count += countmarked(tempBoard);
+            }
         }
 
-        return count;
+        return (int) count;
     }
 
 
@@ -983,35 +1085,40 @@ public class BoardOperations {
     }
 
     public static void printArrayint(int [][] array) {
-        String s;
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[0].length; j++) {
-                if (array[i][j] < 10) {
-                    s = "";
-                } else {
-                    s = "0";
+
+        if(DEBUG) {
+            String s;
+            for (int i = 0; i < array.length; i++) {
+                for (int j = 0; j < array[0].length; j++) {
+                    if (array[i][j] < 10) {
+                        s = "";
+                    } else {
+                        s = "0";
+                    }
+                    System.out.print(s + array[i][j] + " ");
                 }
-                System.out.print(s + array[i][j] + " ");
+                System.out.println("");
             }
-            System.out.println("");
+            System.out.println("\n");
         }
-        System.out.println("\n");
     }
 
     public static void printBoard(int[][] Board) {
-        for(int i = 0; i < Board.length; i++) {
-            for(int j = 0; j < Board[0].length; j++) {
-                if(Board[i][j] > 0) {
-                    System.out.print(Board[i][j] + " ");
+        //if(DEBUG) {
+
+            for (int i = 0; i < Board.length; i++) {
+                for (int j = 0; j < Board[0].length; j++) {
+                    if (Board[i][j] > 0) {
+                        System.out.print(Board[i][j] + " ");
+                    } else {
+                        System.out.print("_ ");
+                    }
                 }
-                else    {
-                    System.out.print("_ ");
-                }
+                System.out.println();
             }
-            System.out.println();
+            System.out.println("\n");
         }
-        System.out.println("\n");
-    }
+    //}
 
     public static int[][] getCopy(int[][] Board)     {
         int length = Board.length;
@@ -1046,9 +1153,10 @@ public class BoardOperations {
 
     public static int[][] stringToBoard(String board)
     {
+
         String[] stringArray = board.split("");
         int[] list = new int[stringArray.length];
-        System.out.println();
+        //System.out.println();
         for (int i = 0; i < stringArray.length; i++) {
             list[i] = Integer.parseInt(stringArray[i]);
             //System.out.print(list[i] + " ");

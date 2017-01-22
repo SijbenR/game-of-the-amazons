@@ -204,6 +204,7 @@ public class TreeTraverse {
                 //randomly choose queen
                 int ran = (int) (queens.size() * Math.random());
                 GridCoordinate origin = queens.get(ran);
+
                 //System.out.println("From: " + origin);
                 //TODO WORK ON THIS ONE - IMMOBILIZED QUEENS STILL IN LIST ????
                 removePosMoves(Board);
@@ -231,8 +232,18 @@ public class TreeTraverse {
 
 
                     //TODO Temp fix here - if possible, try to solve
+
                     int iterations = 0;
+                    /*
                     printBoard();
+
+                    int pos = 0;
+                    for(GridCoordinate tempQ: queens)   {
+                        pos += listPosDest(Board, tempQ).size();
+                    }
+
+                    System.out.println("Possbile: " + pos + " Children already existent: " + parent.getChildren().size());
+                    */
                     while (!parent.validAmongChildren(newNode) && iterations < 10000) {
                         //System.out.println("NOT VALID = " + newNode);
 
@@ -241,6 +252,15 @@ public class TreeTraverse {
 
                         posDest = listPosDest(Board, origin);
                         ran = (int) (posDest.size() * Math.random());
+
+                        while(posDest.size()==0){
+                            ran = (int) (queens.size() * Math.random());
+                            origin = queens.get(ran);
+
+                            posDest = listPosDest(Board, origin);
+                            ran = (int) (posDest.size() * Math.random());
+
+                        }
                         tar = posDest.get(ran);
 
                         newNode = new Node(parent, origin, tar);
@@ -291,7 +311,7 @@ public class TreeTraverse {
                 posDest = listPosDest(Board, queen);
                 count = posDest.size();
                 if(count == 0)  {
-                    System.out.println("No options for: " + queen);
+                    //System.out.println("No options for: " + queen);
                     //Two cases
                     //
                     // 1. i < size - 1
@@ -303,15 +323,17 @@ public class TreeTraverse {
                             queens.set(j, queens.get(j+1));
                             j++;
                         }
+                        /*
                         for(GridCoordinate pos : queens)    {
-                            System.out.println(pos);
+                            //System.out.println(pos);
                         }
                         System.out.println("Removing: " + queens.get(queens.size() - 1));
+                        */
                         queens.remove(queens.size() - 1);
-                        System.out.println("New Size: " + queens.size());
+                        //System.out.println("New Size: " + queens.size());
                         i = 0;
                     }else if (i == (queens.size() - 1))   {
-                        System.out.println("REACHED END REMOVING: " + queens.get(queens.size() - 1));
+                        //System.out.println("REACHED END REMOVING: " + queens.get(queens.size() - 1));
                         queens.remove(queens.size() - 1);
                     }
 
@@ -349,11 +371,21 @@ public class TreeTraverse {
 
                 //TODO Temp fix here - if possible, try to solve
                 int iterations = 0;
+//todo was using print
+               // printBoard();
 
-                printBoard();
-                for(GridCoordinate pos : queens)  {
-                    System.out.println("Queen: " + pos);
+//todo was using print
+                /*for(GridCoordinate pos : queens)  {
+                  //  System.out.println("Queen: " + pos);
                 }
+
+                int pos = 0;
+                for(GridCoordinate tempQ: queens)   {
+                    pos += listPosDest(Board, tempQ).size();
+                }
+
+                System.out.println("Possbile: " + pos + " Children already existent: " + parent.getChildren().size());
+*/
 
                 while(!parent.validAmongChildren(newNode) && iterations < 10000)  {
                     ran = (int) (queens.size() * Math.random());
@@ -362,6 +394,14 @@ public class TreeTraverse {
                     posDest = listPosDest(Board, origin);
                     ran = (int) (posDest.size() * Math.random());
 
+                    while(posDest.size()==0){
+                        ran = (int) (queens.size() * Math.random());
+                        origin = queens.get(ran);
+
+                        posDest = listPosDest(Board, origin);
+                        ran = (int) (posDest.size() * Math.random());
+
+                    }
 
                     tar = posDest.get(ran);
 
@@ -445,7 +485,7 @@ public class TreeTraverse {
 
     public void printBoard()    {
         BoardOperations.printBoard(Board);
-        System.out.println("\n");
+        //System.out.println("\n");
     }
 
     public void evaluateChildrenByTer(Node parent)   {

@@ -36,8 +36,9 @@ public class Player {
     }
 
     public boolean isBot()	{
-        if(isBot)
-            System.out.println("Player: " + toString());
+        if(isBot) {
+            //System.out.println("Player: " + toString());
+        }
         return isBot;
     }
 

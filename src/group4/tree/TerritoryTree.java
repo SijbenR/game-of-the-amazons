@@ -52,7 +52,7 @@ public class TerritoryTree extends NodeTree {
     }
 
     public GridCoordinate[] Movethebest(){
-        System.out.println("ENTERED NEW MOVE BEST");
+        //System.out.println("ENTERED NEW MOVE BEST");
         Node best = bestchoice();
         //System.out.println(best.getChildren().get(0));
         if(best.getChildren().size() != 0) {
@@ -74,7 +74,7 @@ public class TerritoryTree extends NodeTree {
             move[0] = best.origin;
             move[1] = best.dest;
             move[2] = best.getChildren().get(0).dest;
-            System.out.println("best score = " + best.score);
+            //System.out.println("best score = " + best.score);
             return move;
         }
         else

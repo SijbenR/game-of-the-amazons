@@ -51,6 +51,7 @@ public class James extends Player {
         fuckinggreat = null;
         //System.out.println("JAMES: right before shooting arrow");
         // printArrayint(Grid);
+
         //System.out.println("ArrowMove: \nOrigin: "  + move[1] + "\tDestination: " + move[2]);
         return temp;
     }

@@ -457,7 +457,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         yCor = e.getY();
 
 
-        if(!gameOverCheck(logicBoard.getBoard())) {
+        if(gameOverCheck(logicBoard.getBoard())) {
 
 
             //only executed when Animation is done and current player isnÂ´t a bot

@@ -69,6 +69,8 @@ public class utcTree extends NodeTree{
         return move;
     }
 
+
+
     public Node bestchoice(){
         //  System.out.println("entered 2");
         utcbuild(root);
@@ -94,7 +96,7 @@ public class utcTree extends NodeTree{
 
     public void utcbuild(Node root){
 
-        System.out.println("entered 3");
+    //    System.out.println("entered 3");
 
         double starttime=System.currentTimeMillis();
         double endtime=System.currentTimeMillis();
@@ -121,7 +123,7 @@ public class utcTree extends NodeTree{
        // nodePointer.performMove(root.getChildren().get(0));
         //nodePointer.performMove(root.getChildren().get(0).getChildren().get(0));
 
-        nodePointer.printBoard();
+      //  nodePointer.printBoard();
 
     }
     public void building(Node node){

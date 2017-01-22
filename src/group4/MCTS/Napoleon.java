@@ -38,10 +38,10 @@ public class Napoleon  extends Player {
 
                 fuckinggreat = move[2];
 
-                System.out.println("Move Queen from: " + move[0] + "\tto: " + move[1] + "\tShoot arrow at: " + move[2]);
+                //System.out.println("Move Queen from: " + move[0] + "\tto: " + move[1] + "\tShoot arrow at: " + move[2]);
             }
             else {
-                System.out.println("Out of ideas");
+                //System.out.println("Out of ideas");
             }
 
 

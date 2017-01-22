@@ -7,6 +7,8 @@ import group4.ui.GridCoordinate;
 
 public class tempBoard {
 
+    boolean DEBUG = false;
+
     int[][] momentaryBoard;
     private GridCoordinate origin;
 
@@ -24,18 +26,22 @@ public class tempBoard {
 
 
     public void print()	{
-        String s;
-        System.out.println("\n");
-        for (int i = 0; i < momentaryBoard.length; i++) {
-            for (int j = 0; j < momentaryBoard[0].length; j++) {
-                if (momentaryBoard[i][j] < 10) {
-                    s = "";
-                } else {
-                    s = "0";
+        if(DEBUG) {
+
+            String s;
+            System.out.println("\n");
+
+            for (int i = 0; i < momentaryBoard.length; i++) {
+                for (int j = 0; j < momentaryBoard[0].length; j++) {
+                    if (momentaryBoard[i][j] < 10) {
+                        s = "";
+                    } else {
+                        s = "0";
+                    }
+                    System.out.print(s + momentaryBoard[i][j] + " ");
                 }
-                System.out.print(s + momentaryBoard[i][j] + " ");
+                System.out.println("");
             }
-            System.out.println("");
         }
     }
 
