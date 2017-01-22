@@ -8,31 +8,30 @@ package group4.AI;
         import group4.ui.GridCoordinate;
         import group4.utilities.BoardOperations;
 
-        import java.util.LinkedList;
         import java.util.ArrayList;
         import java.util.Arrays;
         import java.util.Comparator;
         import java.util.TreeSet;
 
-public class MinMax {
+public class MinMax implements MoveProducer {
 
 
     public static void main(String[] args) {
         int[][] board = new int[10][10];
-        int[] list=  new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,3,3,0,0,0,0,0,0,0,3,3,3,0,0,0,2,3,3,3,3,2,3,3,0,0,3,3,1,0,3,3,3,3,2,0,3,0,3,0,3,0,0,3,3,0,0,3,0,3,0,0,1,0,3,3,1,3,0,0,2,0,0,0,0,0,3,3,0,0,3,0,0,0,0,0,0,0,3,1,0,0,0,0,0,0};
-        board= BoardOperations.listToArray(list);
+        int[] list = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 2, 3, 3, 3, 3, 2, 3, 3, 0, 0, 3, 3, 1, 0, 3, 3, 3, 3, 2, 0, 3, 0, 3, 0, 3, 0, 0, 3, 3, 0, 0, 3, 0, 3, 0, 0, 1, 0, 3, 3, 1, 3, 0, 0, 2, 0, 0, 0, 0, 0, 3, 3, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 1, 0, 0, 0, 0, 0, 0};
+        board = BoardOperations.listToArray(list);
         System.out.println(getBoardAsString(board));
-        MinMax m=new MinMax(1,new MobilityEval())
+        MinMax m = new MinMax(1, new MobilityEval())
                 .setDepth(8)
                 .setMaxfinal(5);
 
-        long  starttime = System.nanoTime();
-        GridCoordinate[] moves=m.getMove(board);
-        long  endtime = System.nanoTime();
+        long starttime = System.nanoTime();
+        GridCoordinate[] moves = m.getMove(board);
+        long endtime = System.nanoTime();
         System.out.println(Arrays.toString(moves));
-        long totaltime=endtime-starttime;
-        System.out.println("time taken = " + totaltime/1000000000.0);
-        System.out.println(m.alphacut+", "+m.betacut);
+        long totaltime = endtime - starttime;
+        System.out.println("time taken = " + totaltime / 1000000000.0);
+        System.out.println(m.alphacut + ", " + m.betacut);
     }
 
 
@@ -42,35 +41,55 @@ public class MinMax {
     private Comparator<int[][]> minSort;
     public GridCoordinate[] lastMove;
     public int[][] bestBoard;
-    private int depth=3;
-    private int maxstep=100;
-    private int maxfinal=50;
-    private int count=0;
-    public int betacut=0;
-    public int alphacut=0;
+    private int depth = 3;
+    private int maxstep = 100;
+    private int maxfinal = 50;
+    public int betacut = 0;
+    public int alphacut = 0;
+    private int nKilMov = 3;
 
-    GridCoordinate[][] killerMoves=new GridCoordinate[depth+1][];
+    //GridCoordinate[][] killerMoves=new GridCoordinate[depth+1][];
+
+    private List<GridCoordinate[]>[] killerMoves = new ArrayList[depth + 1];
 
     /**
      * Prepares the MinMax algorithm setting the index of the player.
      *
-     * @param index
-     *            the player's index
+     * @param index the player's index
      */
     public MinMax(int index, EvaluationFunction evalF) {
         playerIndex = index;
         this.evalF = evalF;
         maxSort = (b1, b2) -> {
-            return (evalF.evaluate(b2, playerIndex) > evalF.evaluate(b1, playerIndex))  ? 1 : -1;
+            return (evalF.evaluate(b2, playerIndex) > evalF.evaluate(b1, playerIndex)) ? 1 : -1;
         };
         minSort = (b1, b2) -> {
-            return (evalF.evaluate(b2, playerIndex) > evalF.evaluate(b1, playerIndex))  ? -1 : 1;
+            return (evalF.evaluate(b2, playerIndex) > evalF.evaluate(b1, playerIndex)) ? -1 : 1;
         };
+        killerConstructor();
+    }
+
+    private void killerConstructor()
+    {
+        killerMoves=new ArrayList[depth + 1];
+        for (int i=0;i<killerMoves.length;i++)
+            killerMoves[i]=new ArrayList<>();
+    }
+    /*************************
+     *
+     *            SETTERS
+     ******************************/
+
+    public MinMax setKillerMoves(int k)
+    {
+        nKilMov=k;
+        return this;
     }
 
     public MinMax setDepth(int depth) {
         this.depth = depth;
-        killerMoves=new GridCoordinate[depth+1][];
+        killerMoves=new ArrayList[depth+1];
+        killerConstructor();
         return this;
     }
 
@@ -78,8 +97,8 @@ public class MinMax {
         this.maxfinal = maxfinal; return this;
     }
 
-    public void setMaxstep(int maxstep) {
-        this.maxstep = maxstep;
+    public MinMax setMaxstep(int maxstep) {
+        this.maxstep = maxstep;return this;
     }
 
     /**
@@ -117,7 +136,9 @@ public class MinMax {
                 if (v > alpha)
                     alpha = v;
                 if (beta <= alpha) {
-                    killerMoves[depth]=deduceMoves2(board,i,playerIndex);
+                    killerMoves[depth].add(0,deduceMoves2(board,i,playerIndex));
+                    if(killerMoves[depth].size()>nKilMov)
+                        killerMoves[depth].remove(nKilMov);
                     alphacut++;
                     break;
                 }
@@ -129,8 +150,7 @@ public class MinMax {
                 deduceMoves(board, bmax, playerIndex, moves);
                 lastMove=moves;
             }
-            count++;
-            System.out.println(count);
+
             //System.out.println(Arrays.toString(moves));
          //   System.out.println(getBoardAsString(bmax));
             return vmax;
@@ -145,7 +165,9 @@ public class MinMax {
                 if (v < beta)
                     beta = v;
                 if (beta <= alpha) {
-                    killerMoves[depth]=deduceMoves2(board,i,3-playerIndex);
+                    killerMoves[depth].add(0,deduceMoves2(board,i,3-playerIndex));
+                    if(killerMoves[depth].size()>nKilMov)
+                        killerMoves[depth].remove(nKilMov);
                     betacut++;
                     break;
 
@@ -156,10 +178,10 @@ public class MinMax {
     }
 
     public static List<GridCoordinate> getQueensPositions(int[][] board, int player) {
-        List<GridCoordinate> queens = new LinkedList<>();
-        for (int i = 0; i < board.length; i++)
-            for (int j = 0; j < board[0].length; j++)
-                if (board[i][j] == player)
+        List<GridCoordinate> queens = new ArrayList<>();
+        for (int j = 0; j < board.length; j++)
+            for (int i = 0; i < board[0].length; i++)
+                if (board[j][i] == player)
                     queens.add(new GridCoordinate(i, j));
         return queens;
     }
@@ -189,13 +211,16 @@ public class MinMax {
         List<int[][]> finalB=new ArrayList<>(finalBoards);
         finalB= (finalB.size() > maxfinal) ?
                 finalB.subList(0, maxfinal) : finalB;
-        if (killerMoves[depth]!= null && isLegalMove(board, killerMoves[depth], player))
+        if (!killerMoves[depth].isEmpty())
         {
-            finalB.add(0,
-                    moveToBoard(
-                            moveToBoard(board, player, killerMoves[depth][0], killerMoves[depth][1], false),
-                            player, killerMoves[depth][1], killerMoves[depth][2], true)
-            );
+            for(GridCoordinate[] k: killerMoves[depth]) {
+                if (isLegalMove(board, k, player))
+                    finalB.add(0,
+                            moveToBoard(
+                                    moveToBoard(board, player, k[0], k[1], false),
+                                    player, k[1], k[2], true)
+                );
+            }
         }
         return finalB;
     }
@@ -265,8 +290,8 @@ public class MinMax {
         for (int i = 0; i < board.length; i++)
             nBoard[i] = Arrays.copyOf(board[i], board[0].length);
         if (!isArrow)
-            nBoard[from.x][from.y] = 0;
-        nBoard[to.x][to.y] = (isArrow) ? 3 : player;
+            nBoard[from.y][from.x] = 0;
+        nBoard[to.y][to.x] = (isArrow) ? 3 : player;
         return nBoard;
     }
 
@@ -280,7 +305,7 @@ public class MinMax {
      * @return all the possible new coordinates
      */
     public static List<GridCoordinate> getPossibleMoves(int[][] board, GridCoordinate from) {
-        LinkedList<GridCoordinate> to = new LinkedList<>();
+        List<GridCoordinate> to = new ArrayList<>();
         for (int k1 = -1; k1 < 2; k1++)
             for (int k2 = -1; k2 < 2; k2++) {
                 if (k1 == 0 && k2 == 0)
@@ -289,8 +314,8 @@ public class MinMax {
                 int i = from.x + k1;
                 int j = from.y + k2;
 
-                while (i >= 0 && i < board.length && j >= 0 && j < board[0].length) {
-                    if (board[i][j] != 0)
+                while (j >= 0 && j < board.length && i >= 0 && i < board[0].length) {
+                    if (board[j][i] != 0)
                         break;
                     to.add(new GridCoordinate(i, j));
                     i += k1;
@@ -304,12 +329,12 @@ public class MinMax {
     {
 
         //The origin position is not occupied by the player
-        if(board[move[0].x][move[0].y]!=player) return false;
+        if(board[move[0].y][move[0].x]!=player) return false;
         //The destination is already occupied
-        if(board[move[1].x][move[1].y] != 0) return false;
+        if(board[move[1].y][move[1].x] != 0) return false;
 
         //If the
-        if(board[move[2].x][move[2].y]!=0 && (move[0].x !=move[2].x || move[0].y != move[2].y))
+        if(board[move[2].y][move[2].x]!=0 && (move[0].y !=move[2].y || move[0].x != move[2].x))
             return false;
 
         return true;
@@ -346,7 +371,7 @@ public class MinMax {
             for (int j = 0; j < B1[0].length; j++) {
                 if (B1[i][j] != B2[i][j]) {
                    // System.out.println(B1[i][j] + " " + B2[i][j]);
-                    GridCoordinate pos = new GridCoordinate(j + 1, i + 1);
+                    GridCoordinate pos = new GridCoordinate(j , i );
                     if (B1[i][j] == player) {
                         moves[0] = pos;
                         if (B2[i][j] == 3)

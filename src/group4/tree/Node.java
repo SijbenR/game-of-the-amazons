@@ -23,10 +23,13 @@ public class Node {
     protected double score;
     protected GridCoordinate origin, dest;
     protected int depthOfNode;
+    protected double winLoss;
+    protected int visited;
 
     public int playerVal;
 
     public boolean ownMove, arrowMove;
+    protected double value;
     public String BoardCompressed;
 
 
@@ -101,6 +104,15 @@ public class Node {
     public double getScore()   {
         return score;
     }
+    public void setValue(double value  )   {
+        this.value = value;
+    }
+
+    public double getValue()   {
+        return value;
+    }
+
+
 
 
 
@@ -170,11 +182,12 @@ public class Node {
 
 
     public String toString()   {
-        return new String("Node depth = " + depthOfNode + "\tOrigin: " + origin + "\tDestination: " + dest + "\tOwnmove: " + ownMove + "\tArrowMove: " + arrowMove + "\tPlayerVal: " + playerVal + "\tScore: " + score);
+        return new String("Node depth = " + depthOfNode + "\tOrigin: " + origin + "\tDestination: " + dest + "\tOwnmove: " + ownMove + "\tArrowMove: " + arrowMove + "\tPlayerVal: " + playerVal + "\tScore: " + score + "\n");
+        //return new String("");
     }
 
     public void printNode() {
-        System.out.println(toString());
+        //System.out.println(toString());
     }
 
 

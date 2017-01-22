@@ -5,27 +5,30 @@ import group4.tree.NodeTree;
 import group4.ui.GridCoordinate;
 
 import static group4.utilities.BoardOperations.getCopy;
-import static group4.utilities.BoardOperations.printArrayint;
 
 /**
- * Created by jonty on 13/01/2017.
+ * Created by jonty on 21/01/2017.
  */
-public class James extends Player {
-
+public class Sean extends Player{
     NodeTree tree;
     int[][] Grid;
     GridCoordinate[] move;
     GridCoordinate fuckinggreat;
     GridCoordinate[] queenMove = new GridCoordinate[2];
-    public James(boolean isFirst) {
-        super(isFirst, true);
-    }
+    double timeToRun;
+    boolean useTer = true;
 
+    public Sean(boolean isFirst, double timeToRun, boolean useTer) {
+        super(isFirst,true);
+        this.timeToRun=timeToRun;
+        this.useTer = useTer;
+
+    }
     public void giveInput(int[][] Board)	{
         if(fuckinggreat == null) {
             this.Grid = getCopy(Board);
             move = new GridCoordinate[3];
-            tree = new NodeTree(Grid, super.getVal(), false, 2, 10);
+            tree = new utcTree(Grid, super.getVal(), false, timeToRun, useTer);
 
             move = tree.Movethebest();
 
@@ -39,6 +42,11 @@ public class James extends Player {
 
     }
 
+    public String toString()    {
+        String returnString = new String("Bot player Sean - Value = " + getVal());
+        return returnString;
+    }
+
     public GridCoordinate[] chooseQueenMove() {
         // System.out.println("JAMES: right before shooting moving Queen");
         // printArrayint(Grid);
@@ -46,20 +54,12 @@ public class James extends Player {
         return queenMove;
     }
 
-    public String toString()    {
-        String returnString = new String("Bot player James - Value = " + getVal());
-        return returnString;
-    }
-
     public GridCoordinate chooseArrowMove() {
         GridCoordinate temp = new GridCoordinate(fuckinggreat.x, fuckinggreat.y);
         fuckinggreat = null;
         //System.out.println("JAMES: right before shooting arrow");
         // printArrayint(Grid);
-
         //System.out.println("ArrowMove: \nOrigin: "  + move[1] + "\tDestination: " + move[2]);
         return temp;
     }
-
-
 }

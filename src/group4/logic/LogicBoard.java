@@ -8,8 +8,14 @@ import java.util.Arrays;
 
 import group4.Players.Player;
 import group4.ui.GridCoordinate;
+import group4.utilities.BoardOperations;
+
+import static group4.utilities.BoardOperations.gameOverCheck;
+import static group4.utilities.BoardOperations.gameScore;
 
 public class LogicBoard {
+
+    boolean DEBUG = false;
 
     private final int width = 10;
     private final int height = 10;
@@ -70,20 +76,23 @@ public class LogicBoard {
 
 
     public void printBoard() {
-        System.out.println("");
-        String s;
-        for (int i = 0; i < Grid.length; i++) {
-            for (int j = 0; j < Grid[0].length; j++) {
-                if (Grid[i][j] < 10) {
-                    s = "";
-                } else {
-                    s = "0";
+        if(DEBUG) {
+
+            System.out.println("");
+            String s;
+            for (int i = 0; i < Grid.length; i++) {
+                for (int j = 0; j < Grid[0].length; j++) {
+                    if (Grid[i][j] < 10) {
+                        s = "";
+                    } else {
+                        s = "0";
+                    }
+                    System.out.print(s + Grid[i][j] + " ");
                 }
-                System.out.print(s + Grid[i][j] + " ");
+                System.out.println("");
             }
             System.out.println("");
         }
-        System.out.println("");
     }
 
     // Four white queens (player 1) and four black queens (player 2) to start
@@ -184,9 +193,9 @@ public class LogicBoard {
     public void printAllMoves()	{
         int i = 0;
         while(i < Moves.size())	{
-            System.out.println("Move: " + i + " MoveIndex: " + currentMoveIndex);
-            Moves.get(i).print();
-            System.out.println("\n");
+            //System.out.println("Move: " + i + " MoveIndex: " + currentMoveIndex);
+            //Moves.get(i).print();
+            //System.out.println("\n");
             i++;
         }
     }
@@ -240,10 +249,13 @@ public class LogicBoard {
     }
 
     public void setEmpty(GridCoordinate point)	{
+
+
         int x = point.x - 1;
         int y = point.y - 1;
 
         Grid[y][x] = 0;
+
     }
 
 
@@ -288,7 +300,7 @@ public class LogicBoard {
         //TODO HERE REDO TERRITORY STUFF
         // System.out.println("Territory for " + getCurrent() + " player: " );
         for (int i = 0; i < 4; i++) {
-            System.out.println("\n" + "moves for " + current + i + " queen: " + moveCounter(queenPositions.get(i).x, queenPositions.get(i).y, getBoard()));
+            //System.out.println("\n" + "moves for " + current + i + " queen: " + moveCounter(queenPositions.get(i).x, queenPositions.get(i).y, getBoard()));
             //  System.out.println("\n" + checkTerritory(getBoard(), getCurrent())[i]);
         }
     }
@@ -445,7 +457,7 @@ public class LogicBoard {
 
 
 
-        System.out.println("\nAfter Undo:\nCURRENT INDEX: " + currentMoveIndex + "\nCurrent Player: " + getCurrent() + "\nqueenSelect: " + queenSelect + "\narrowSpotSelect: " + arrowSpotSelect + "\n");
+        //System.out.println("\nAfter Undo:\nCURRENT INDEX: " + currentMoveIndex + "\nCurrent Player: " + getCurrent() + "\nqueenSelect: " + queenSelect + "\narrowSpotSelect: " + arrowSpotSelect + "\n");
 
         if(printBoards) {
             System.out.println("Actual Grid");
@@ -479,17 +491,19 @@ public class LogicBoard {
 
 
     public void printBoard(int[][] array) {
-        String s;
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[0].length; j++) {
-                if (array[i][j] < 10) {
-                    s = "";
-                } else {
-                    s = "0";
+        if(DEBUG) {
+            String s;
+            for (int i = 0; i < array.length; i++) {
+                for (int j = 0; j < array[0].length; j++) {
+                    if (array[i][j] < 10) {
+                        s = "";
+                    } else {
+                        s = "0";
+                    }
+                    System.out.print(s + array[i][j] + " ");
                 }
-                System.out.print(s + array[i][j] + " ");
+                System.out.println("");
             }
-            System.out.println("");
         }
     }
 
@@ -603,7 +617,7 @@ public class LogicBoard {
     public boolean isMovePossible()	{
         int posMoves = countPosMoves();
         if (posMoves == 0) {
-            System.out.println("This queen is not able to move anymore!");
+            //System.out.println("This queen is not able to move anymore!");
             return false;
         }
         else {
@@ -932,10 +946,55 @@ public class LogicBoard {
             }
         }
         for(int i = 0; i < 4; i++){
-            System.out.println(returnStatement[i]);
+            //System.out.println(returnStatement[i]);
         }
         return returnStatement;
     }
+
+
+    public void runBotGame()    {
+        while(!gameOverCheck(Grid)) {
+            Player Bot = getCurrent();
+            //System.out.println("Before passing to bot");
+            //logicBoard.printBoard();
+            Bot.giveInput(getBoard());
+
+            //QueenMove
+            if(!arrowSpotSelect) {
+                GridCoordinate[] queenMove = Bot.chooseQueenMove();
+                GridCoordinate origin = queenMove[0];
+
+                //System.out.println("Trying to set to empty: " + origin);
+                setEmpty(origin);
+
+                GridCoordinate dest = queenMove[1];
+                setQueenOfCurrentOn(dest);
+
+                arrowSpotSelect = true;
+                calcPosMoves(dest, false);
+            }
+            else{
+                //logicBoard.getCurrent().giveInput(logicBoard.getBoard());
+                GridCoordinate dest = Bot.chooseArrowMove();
+                setArrowOn(dest);
+                removePossibleMoves();
+                toggleTurn();
+            }
+           //BoardOperations.printBoard(getBoard());
+        }
+
+        System.out.println("Game Over");
+        int scorePl1 = gameScore(Grid, 1);
+        int scorePl2 = gameScore(Grid, 2);
+
+        if(scorePl1 > scorePl2){
+            System.out.println("player 1 wins");
+        }
+        else   {
+            System.out.println("player 2 wins");
+        }
+    }
+
 
     public void floodFill(int[][] board, int currentNodeX,int currentNodeY, int target, int replacement, boolean first){
 

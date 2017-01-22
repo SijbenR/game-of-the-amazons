@@ -36,8 +36,9 @@ public class MobilityEval extends EvaluationFunction {
                 if (k1 == 0 && k2 == 0)	continue;
                 int i = from.x + k1;
                 int j = from.y + k2;
-                while (i >= 0 && i < board.length && j >= 0 && j < board[0].length) {
-                    if (board[i][j] != 0) break;
+                while (j >= 0 && j < board.length && i >= 0 && i < board[0].length) {
+                    if (board[j][i] != 0)
+                        break;
                     num++;
                     i += k1;
                     j += k2;

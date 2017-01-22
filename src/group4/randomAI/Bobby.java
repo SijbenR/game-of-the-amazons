@@ -8,6 +8,8 @@ import org.omg.PortableInterceptor.ObjectReferenceFactory;
 
 import java.util.ArrayList;
 
+import static group4.utilities.BoardOperations.*;
+
 public class Bobby extends Player {
 
 
@@ -47,6 +49,10 @@ public class Bobby extends Player {
 
 	}
 
+	public void giveInput(int[][] Board)	{
+		this.Grid = getCopy(Board);
+	}
+
 
 	public GridCoordinate[] chooseQueenMove()	{
 
@@ -56,22 +62,25 @@ public class Bobby extends Player {
 
 
 		updatePosQueens();
-		int ran = (int)(Math.random() * 4);
+		int ran = (int)(Math.random() * queenPos.size());
 		GridCoordinate chosenQueen = queenPos.get(ran);
+		while(listPosDest(Grid, chosenQueen).size() == 0)	{
+			ran = (int)(Math.random() * queenPos.size());
+			chosenQueen = queenPos.get(ran);
+		}
 
 
-		System.out.println("Choosen Queen at: " + chosenQueen);
+		//System.out.println("Choosen Queen at: " + chosenQueen);
 		returner[0] = chosenQueen;
 
 		updatePossibleMoves(chosenQueen);
-		printBoard();
-		countPosMoves(4);
+		//printBoard();
 		removePossibleMoves();
-		System.out.println("Amount of Possible moves for Queen: " + isQueenMove + "\n is = " + posMoves.size());
+		//System.out.println("Amount of Possible moves for Queen: " + isQueenMove + "\n is = " + posMoves.size());
 
 		ran = (int)(Math.random() * posMoves.size());
 		GridCoordinate dest = posMoves.get(ran);
-		System.out.println("Choosen Destination at: " + dest);
+		//System.out.println("Choosen Destination at: " + dest);
 
 		returner[1] = dest;
 
@@ -82,13 +91,13 @@ public class Bobby extends Player {
 
 		posMoves= new ArrayList<>();
 
-		System.out.println("Possible Moves");
-		printBoard();
+		//System.out.println("Possible Moves");
+		//printBoard();
 		countPosMoves(5);
 
 		int ran = (int)(Math.random() * posMoves.size());
 		GridCoordinate dest = posMoves.get(ran);
-		System.out.println("Shooting Arrow at: " + dest);
+		//System.out.println("Shooting Arrow at: " + dest);
 
 
 		if(posMoves.size() > 0) {
@@ -102,26 +111,7 @@ public class Bobby extends Player {
 
 	//Calculates the position of all OWN Queens
 	public void updatePosQueens()   {
-		for(int i = 0; i < Grid.length; i++)    {
-			for(int j = 0; j < Grid[0].length; j++)    {
-				if(Grid[i][j] == super.getVal())    {
-					queenPos.add(new GridCoordinate(j+1, i+1));
-				}
-				if(queenPos.size() == 4)
-					break;
-			}
-		}
-
-		System.out.println("Possible Positions:");
-		for(GridCoordinate position : queenPos)	{
-			System.out.println(position);
-		}
-
-		try {
-			Thread.sleep(500);
-		} catch(InterruptedException ex) {
-			Thread.currentThread().interrupt();
-		}
+		queenPos = posQueens(Grid, super.getVal());
 	}
 
 	//Calculates the position of all OPPONENT Queens
@@ -164,91 +154,17 @@ public class Bobby extends Player {
 	}
 
 	public void updatePossibleMoves(GridCoordinate position)   {
-		int x = position.x - 1;
-		int y = position.y - 1;
-
-		//System.out.println("Position: X = " + x + " Y= " + y);
-
-
-		int val = 4;
+		posMoves = new ArrayList<>();
+		calcPosMoves(Grid, position, false);
+		posMoves = listPosDest(Grid, position);
+		//System.out.println("Amount of possible moves: " + posMoves.size());
 
 
+	}
 
-		int i, j;
-		int tempX, tempY;
-		int length = Grid.length;
-		i = y - 1;
-		j = x - 1;
-
-		// up
-		for (tempY = y - 1; tempY >= 0 && Grid[tempY][x] == 0; tempY--) {
-			Grid[tempY][x] = val;
-		}
-
-		// Direction: bottom vertical
-		// down
-		for (tempY = y + 1; tempY < Grid.length && Grid[tempY][x] == 0; tempY++) {
-			Grid[tempY][x] = val;
-		}
-
-		// Direction: left horizontal
-		for (tempX = x - 1; tempX >= 0 && Grid[y][tempX] == 0; tempX--) {
-			Grid[y][tempX] = val;
-		}
-		// Direction: right horizontal
-		for (tempX = x + 1; tempX < Grid[0].length && Grid[y][tempX] == 0; tempX++) {
-			Grid[y][tempX] = val;
-		}
-		// Direction: top right diagonal
-		tempY = y - 1;
-		tempX = x + 1;
-
-		while (checkBound(tempY, tempX) && Grid[tempY][tempX] == 0) {
-			//System.out.println("Position:\tY = " + tempY + "\tX = " + tempX +
-			//"\nStill in Bounds? " + checkBound(tempY, tempX));
-
-			Grid[tempY][tempX] = val;
-			tempY--;
-			tempX++;
-
-		}
-		// Direction: top left diagonal
-		tempY = y - 1;
-		tempX = x - 1;
-
-		while (checkBound(tempY, tempX) && Grid[tempY][tempX] == 0) {
-
-			Grid[tempY][tempX] = val;
-			tempY--;
-			tempX--;
-
-		}
-		// Direction: bottom right diagonal
-		tempY = y + 1;
-		tempX = x + 1;
-
-		while (checkBound(tempY, tempX) && Grid[tempY][tempX] == 0) {
-			// System.out.println("Position:\tY = " + tempY + "\tX = " + tempX +
-			// "\nStill in Bounds? " + checkBound(tempY, tempX));
-
-			Grid[tempY][tempX] = val;
-			tempY++;
-			tempX++;
-
-		}
-		// Direction: bottom left diagonal
-		tempY = y + 1;
-		tempX = x - 1;
-
-		while (checkBound(tempY, tempX) && Grid[tempY][tempX] == 0) {
-			Grid[tempY][tempX] = val;
-			tempY++;
-			tempX--;
-
-		}
-
-
-
+	public String toString()    {
+		String returnString = new String("Bot player Bobby - Value = " + getVal());
+		return returnString;
 	}
 
 	public void countPosMoves(int val)	{

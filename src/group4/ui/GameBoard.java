@@ -27,10 +27,10 @@ import group4.components.ImageLoader;
 import group4.logic.LogicBoard;
 import group4.randomAI.Bobby;
 import group4.utilities.BoardOperations;
+import sun.rmi.runtime.Log;
 
-import static group4.utilities.BoardOperations.countScoreFor;
-import static group4.utilities.BoardOperations.countmarked;
 import static group4.utilities.BoardOperations.gameOverCheck;
+import static group4.utilities.BoardOperations.gameScore;
 
 public class GameBoard extends JPanel implements MouseMotionListener, MouseListener, ActionListener {
 
@@ -457,8 +457,8 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
         yCor = e.getY();
 
 
+        if(gameOverCheck(logicBoard.getBoard())) {
 
-        if(!gameOverCheck(logicBoard.getBoard())) {
 
             //only executed when Animation is done and current player isnÂ´t a bot
             if (!startAnimation && !logicBoard.getCurrent().isBot()) {
@@ -550,29 +550,26 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                     }
                 }
 
-
-            }
-
-
-            //System.out.println("\nAnimation: " + startAnimation);
-            System.out.println("QueenSelect: " + logicBoard.queenSelect);
-            System.out.println("ArrowSelect: " + logicBoard.arrowSpotSelect + "\n");
-        }
-        else    {
-            System.out.println("GameOver:");
-            int ScorePl1 = countScoreFor(logicBoard.getBoard(), 1);
-            int ScorePl2 = countScoreFor(logicBoard.getBoard(), 2);
-
-            if(ScorePl1 > ScorePl2)   {
-                System.out.println("Player 1 wins with: " + ScorePl1 + " points");
-            }
-            else if(ScorePl1 < ScorePl2)   {
-                System.out.println("Player 2 wins with: " + ScorePl2 + " points");
-            }
-            else    {
-                System.out.println("DRAW - Both have: " + ScorePl2 + " points");
             }
         }
+        else{
+            System.out.println("Game Over");
+            int scorePl1 = gameScore(logicBoard.getBoard(), 1);
+            int scorePl2 = gameScore(logicBoard.getBoard(), 2);
+
+            if(scorePl1 > scorePl2){
+                System.out.println("player 1 wins");
+            }
+            else   {
+                System.out.println("player 2 wins");
+            }
+
+        }
+
+
+        //System.out.println("\nAnimation: " + startAnimation);
+        System.out.println("QueenSelect: " + logicBoard.queenSelect);
+        System.out.println("ArrowSelect: " + logicBoard.arrowSpotSelect + "\n");
 
         repaint();
     }
@@ -634,7 +631,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
 
     //Bot is ACTIVATED HERE
     public void activateBot()   {
-        if(logicBoard.getCurrent().isBot() && !gameOverCheck(logicBoard.getBoard())) {
+        if(logicBoard.getCurrent().isBot()) {
 
             Player Bot = logicBoard.getCurrent();
             System.out.println("Before passing to bot");
@@ -670,21 +667,6 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                 Thread.currentThread().interrupt();
             }
 
-        }
-        else   {
-            System.out.println("GameOver:");
-            int ScorePl1 = countScoreFor(logicBoard.getBoard(), 1);
-            int ScorePl2 = countScoreFor(logicBoard.getBoard(), 2);
-
-            if(ScorePl1 > ScorePl2)   {
-                System.out.println("Player 1 wins with: " + ScorePl1 + " points");
-            }
-            else if(ScorePl1 < ScorePl2)   {
-                System.out.println("Player 2 wins with: " + ScorePl2 + " points");
-            }
-            else    {
-                System.out.println("DRAW - Both have: " + ScorePl2 + " points");
-            }
         }
     }
 

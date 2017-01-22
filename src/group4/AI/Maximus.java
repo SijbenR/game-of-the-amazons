@@ -43,6 +43,11 @@ public class Maximus extends Player {
     }
 
 
+    public String toString()    {
+        String returnString = new String("Bot player Maximus - Value = " + getVal());
+        return returnString;
+    }
+
     public void territory(){
 
     }
@@ -65,13 +70,13 @@ public class Maximus extends Player {
         posMoves = new ArrayList<>();
         GridCoordinate[] returner = new GridCoordinate[2];
 
-        System.out.println("RIGHT BEFORE CALCULATING A MOVE");
-        printBoard();
+        //System.out.println("RIGHT BEFORE CALCULATING A MOVE");
+        //printBoard();
 
         fullMove = calculate.getMove(filterBoard(Grid));
 
-        System.out.println("BEST MOVE");
-        BoardOperations.printArrayint(calculate.bestBoard);
+        //System.out.println("BEST MOVE");
+        //BoardOperations.printArrayint(calculate.bestBoard);
 
         returner[0] = fullMove[0];
         returner[1] = fullMove[1];
