@@ -1,5 +1,6 @@
 package group4.utilities;
 
+import group4.AI.Maximus;
 import group4.MCTS.James;
 import group4.MCTS.Napoleon;
 import group4.MCTS.Sean;
@@ -65,84 +66,40 @@ public class TrumpClass {
 
 
 
+        //First round of Matches Bobby vs Sean
         int count = 0;
         for (int k = 0; k < 100; k++) {
-            player1 = new Bobby(true);
-            player2 = new Sean(false, 1000, true);
+            player1 = new Sean(false, 1000, false);
+            player2 = new Sean(false, 10000, true);
             game = new LogicBoard(player1, player2);
             //game.setBoard(Board);
             game.runBotGame();
 
-           int scorePl1 = gameScore(game.getBoard(), 1);
+            int scorePl1 = gameScore(game.getBoard(), 1);
             int scorePl2 = gameScore(game.getBoard(), 2);
             if (scorePl1 > scorePl2) {
-                System.out.println("player 1 wins with = " + scorePl1);
-                    count++;
-            } else if(scorePl2>scorePl1){
-                System.out.println("player 2 wins with = " + scorePl2);
-            } else if(scorePl2==scorePl1){
-                int threes=0;
-                for(int i=0;i<10;i++){
-                    for(int j=0;j<10;j++){
-                        if(game.getBoard()[i][j]==3){
+                System.out.println( player1 + " wins with = " + scorePl1);
+                count++;
+            } else if (scorePl2 > scorePl1) {
+                System.out.println( player2 + " wins with = " + scorePl2);
+            } else if (scorePl2 == scorePl1) {
+                int threes = 0;
+                for (int i = 0; i < 10; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        if (game.getBoard()[i][j] == 3) {
                             threes++;
                         }
                     }
                 }
-                if(threes%2==0){
-                    System.out.println("player 2 wins after moving last");
-                }else{
-                    System.out.println("player 1 wins after moving last");
+                if (threes % 2 == 0) {
+                    System.out.println( player2 + " wins after moving last");
+                } else {
+                    System.out.println( player1 + " wins after moving last");
                     count++;
                 }
-
             }
             printBoard(game.getBoard());
-            int count = 0;
-            for (int k = 0; k < 100; k++) {
-                player1 = new Bobby(true);
-                player2 = new Sean(false, 1000, true);
-                game = new LogicBoard(player1, player2);
-                //game.setBoard(Board);
-                game.runBotGame();
-
-                int scorePl1 = gameScore(game.getBoard(), 1);
-                int scorePl2 = gameScore(game.getBoard(), 2);
-                if (scorePl1 > scorePl2) {
-                    System.out.println("player 1 wins with = " + scorePl1);
-                    count++;
-                } else if(scorePl2>scorePl1){
-                    System.out.println("player 2 wins with = " + scorePl2);
-                } else if(scorePl2==scorePl1){
-                    int threes=0;
-                    for(int i=0;i<10;i++){
-                        for(int j=0;j<10;j++){
-                            if(game.getBoard()[i][j]==3){
-                                threes++;
-                            }
-                        }
-                    }
-                    if(threes%2==0){
-                        System.out.println("player 2 wins after moving last");
-                    }else{
-                        System.out.println("player 1 wins after moving last");
-                        count++;
-                    }
-
-                }
-                printBoard(game.getBoard());
 
         }
-
-
-            System.out.println("Simulation is over: " );
-            System.out.println("player 1 won " + count + " times");
-
-
     }
-
-
-
-
-
 }

@@ -30,17 +30,18 @@ public class Player {
         this.isBot = isBot;
     }
 
-
-    public boolean isFirst() {
-        return isFirst;
-    }
-
     public boolean isBot()	{
         if(isBot) {
             //System.out.println("Player: " + toString());
         }
         return isBot;
     }
+
+    public boolean isFirst() {
+        return isFirst;
+    }
+
+
 
     public void setFirst() {
         isFirst = true;
@@ -81,14 +82,7 @@ public class Player {
         }
     }
 
-    public String toString()	{
-        if(isFirst == true)	{
-            return new String("White");
-        }
-        else	{
-            return new String("Black");
-        }
-    }
+
 
     public void setUpQueens() {
         int startY1, startY2;
@@ -124,5 +118,10 @@ public class Player {
     }
 
     public boolean getStatus() {return true;}
+
+    public String toString()    {
+        String returnString = new String("Human Player - Value = " + getVal());
+        return returnString;
+    }
 
 }

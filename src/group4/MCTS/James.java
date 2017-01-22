@@ -46,6 +46,11 @@ public class James extends Player {
         return queenMove;
     }
 
+    public String toString()    {
+        String returnString = new String("Bot player James - Value = " + getVal());
+        return returnString;
+    }
+
     public GridCoordinate chooseArrowMove() {
         GridCoordinate temp = new GridCoordinate(fuckinggreat.x, fuckinggreat.y);
         fuckinggreat = null;

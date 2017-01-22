@@ -162,6 +162,11 @@ public class Bobby extends Player {
 
 	}
 
+	public String toString()    {
+		String returnString = new String("Bot player Bobby - Value = " + getVal());
+		return returnString;
+	}
+
 	public void countPosMoves(int val)	{
 		for(int k = 0; k < Grid.length; k++)    {
 			for(int m = 0; m < Grid[0].length; m++)    {

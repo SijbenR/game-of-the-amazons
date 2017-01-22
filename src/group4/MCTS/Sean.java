@@ -42,6 +42,11 @@ public class Sean extends Player{
 
     }
 
+    public String toString()    {
+        String returnString = new String("Bot player Sean - Value = " + getVal());
+        return returnString;
+    }
+
     public GridCoordinate[] chooseQueenMove() {
         // System.out.println("JAMES: right before shooting moving Queen");
         // printArrayint(Grid);

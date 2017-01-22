@@ -249,10 +249,13 @@ public class LogicBoard {
     }
 
     public void setEmpty(GridCoordinate point)	{
+
+
         int x = point.x - 1;
         int y = point.y - 1;
 
         Grid[y][x] = 0;
+
     }
 
 
