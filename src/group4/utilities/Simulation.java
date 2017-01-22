@@ -17,7 +17,7 @@ import static group4.utilities.BoardOperations.*;
  * Created by jonty on 21/01/2017.
  */
 
-public class TrumpClass {
+public class Simulation {
 
 
     public static void main(String[] args) {
@@ -56,8 +56,8 @@ public class TrumpClass {
 
 
 
-        Player player1;
-        Player player2;
+        Player player1 = new Player(true);
+        Player player2 = new Player(false);
         LogicBoard game;
 
         ArrayList<GridCoordinate> queens = posQueens(Board, 2);
@@ -65,12 +65,12 @@ public class TrumpClass {
         GridCoordinate queen;
 
 
-
+        int limit = 20;
         //First round of Matches Bobby vs Sean
         int count = 0;
-        for (int k = 0; k < 100; k++) {
-            player1 = new Sean(false, 1000, false);
-            player2 = new Sean(false, 10000, true);
+        for (int k = 0; k < limit; k++) {
+            player1 = new Napoleon(true);
+            player2 = new Maximus(false, 2);
             game = new LogicBoard(player1, player2);
             //game.setBoard(Board);
             game.runBotGame();
@@ -101,5 +101,8 @@ public class TrumpClass {
             printBoard(game.getBoard());
 
         }
+
+        System.out.println(player1 + " won = " + count + " times");
+        System.out.println(player2 + " won = " + (limit - count) + " times");
     }
 }

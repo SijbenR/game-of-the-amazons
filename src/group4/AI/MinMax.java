@@ -371,7 +371,7 @@ public class MinMax implements MoveProducer {
             for (int j = 0; j < B1[0].length; j++) {
                 if (B1[i][j] != B2[i][j]) {
                    // System.out.println(B1[i][j] + " " + B2[i][j]);
-                    GridCoordinate pos = new GridCoordinate(j , i );
+                    GridCoordinate pos = new GridCoordinate(j + 1, i + 1);
                     if (B1[i][j] == player) {
                         moves[0] = pos;
                         if (B2[i][j] == 3)
