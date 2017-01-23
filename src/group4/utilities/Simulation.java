@@ -72,7 +72,7 @@ public class Simulation {
         int count = 0;
         for (int k = 0; k < limit; k++) {
             player1 = new James(true);
-            player2 = new Maximus(false, 2);
+            player2 = new Bobby(false);
             game = new LogicBoard(player1, player2);
             //game.setBoard(Board);
             game.runBotGame();

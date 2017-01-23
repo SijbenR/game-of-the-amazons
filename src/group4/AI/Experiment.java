@@ -4,6 +4,8 @@ import group4.ui.GridCoordinate;
 import java.util.StringJoiner;
 
 import static group4.AI.MinMax.getBoardAsString;
+import static group4.utilities.BoardOperations.gameOverCheck;
+import static group4.utilities.BoardOperations.gameScore;
 
 
 public class Experiment {
@@ -180,10 +182,14 @@ public class Experiment {
                 if (nTurns > maxTurns) maxTurns = nTurns;
                 if (nTurns < minTurns) minTurns = nTurns;
                 avgTurns += nTurns;
-                if (mobRatio == 1)
-                    vict1++;
-                else
-                    vict2++;
+                if (gameOverCheck(board)) {
+
+                    if (gameScore(board, 1) > gameScore(board, 2)) {
+                        vict1++;
+                    } else {
+                        vict2++;
+                    }
+                }
             }
         }
         avgTime1=avgTime1/nTurn1;
