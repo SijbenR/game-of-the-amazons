@@ -59,7 +59,11 @@ public class Sean extends Player implements MoveProducer{
 
         }
         fuckinggreat=null;
-        return move;
+        return new GridCoordinate[]{
+                new GridCoordinate(move[0].x-1,move[0].y-1),
+                new GridCoordinate(move[1].x-1,move[1].y-1),
+                new GridCoordinate(move[2].x-1,move[2].y-1),
+        };
     }
 
     public String toString()    {

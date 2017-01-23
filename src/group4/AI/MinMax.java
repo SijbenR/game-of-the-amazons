@@ -239,7 +239,7 @@ public class MinMax implements MoveProducer {
             }
         }
 
-        /*for(int[][] b: finalB)
+        for(int[][] b: finalB)
         {
             if(Experiment.isLegalMove(board,deduceMoves2(board,b,player),player))
             {
@@ -248,7 +248,7 @@ public class MinMax implements MoveProducer {
                 System.err.println(getBoardAsString(b));
                 System.err.println(m[0]+""+m[1]+""+m[2]);
             }
-        }*/
+        }
         return finalB;
     }
 
