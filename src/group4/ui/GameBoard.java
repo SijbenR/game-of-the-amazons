@@ -632,7 +632,7 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
 
     //Bot is ACTIVATED HERE
     public void activateBot()   {
-        if(logicBoard.getCurrent().isBot()) {
+        if(logicBoard.getCurrent().isBot() && !gameOverCheck(boardArray)) {
 
             Player Bot = logicBoard.getCurrent();
             System.out.println("Before passing to bot");
@@ -668,6 +668,18 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
                 Thread.currentThread().interrupt();
             }
 
+        }
+        else    {
+            System.out.println("Game Over");
+            int scorePl1 = gameScore(logicBoard.getBoard(), 1);
+            int scorePl2 = gameScore(logicBoard.getBoard(), 2);
+
+            if(scorePl1 > scorePl2){
+                System.out.println("player 1 wins");
+            }
+            else   {
+                System.out.println("player 2 wins");
+            }
         }
     }
 

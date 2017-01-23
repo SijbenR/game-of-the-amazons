@@ -67,7 +67,7 @@ public class Sean extends Player implements MoveProducer{
     }
 
     public String toString()    {
-        String returnString = new String("Bot player Sean - Value = " + getVal());
+        String returnString = new String("Bot player Sean - Value = " + getVal() + "Territory eval = "  + useTer);
         return returnString;
     }
 
