@@ -1,5 +1,6 @@
 package group4.MCTS;
 
+import group4.AI.MoveProducer;
 import group4.Players.Player;
 import group4.tree.NodeTree;
 import group4.ui.GridCoordinate;
@@ -9,7 +10,7 @@ import static group4.utilities.BoardOperations.getCopy;
 /**
  * Created by jonty on 21/01/2017.
  */
-public class Sean extends Player{
+public class Sean extends Player implements MoveProducer{
     NodeTree tree;
     int[][] Grid;
     GridCoordinate[] move;
@@ -40,6 +41,23 @@ public class Sean extends Player{
 
         }
 
+    }
+    public GridCoordinate[] getMove(int[][] Board)	{
+        if(fuckinggreat == null) {
+            this.Grid = getCopy(Board);
+            move = new GridCoordinate[3];
+            tree = new utcTree(Grid, super.getVal(), false, timeToRun, useTer);
+
+            move = tree.Movethebest();
+
+            queenMove[0] = move[0];
+            queenMove[1] = move[1];
+
+            fuckinggreat = move[2];
+
+
+        }
+        return move;
     }
 
     public String toString()    {
