@@ -165,7 +165,13 @@ public class utcTree extends NodeTree{
             super.nodePointer.evaluateChildrenByTer(ListOfNodes.get(0));
         }
 
-        backpropagate(ListOfNodes.get(0).getChildren().get(0));
+        int i = 0;
+
+        while(ListOfNodes.get(i).getChildren().size() == 0) {
+            i++;
+        }
+
+        backpropagate(ListOfNodes.get(i).getChildren().get(0));
         bubbleSortNodesByValue(ListOfNodes);
     }
 

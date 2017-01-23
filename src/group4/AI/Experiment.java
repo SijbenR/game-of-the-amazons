@@ -88,7 +88,7 @@ public class Experiment {
         double avgTurns=0;
 
 
-        //Let's test it for numTest times
+        //Let's  it for numTest times
         for(int i=0;i<numTest;i++)
         {
             long btime;
