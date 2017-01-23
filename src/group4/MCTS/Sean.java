@@ -5,6 +5,7 @@ import group4.Players.Player;
 import group4.tree.NodeTree;
 import group4.ui.GridCoordinate;
 
+import static group4.utilities.BoardOperations.filterBoard;
 import static group4.utilities.BoardOperations.getCopy;
 
 /**
@@ -57,6 +58,7 @@ public class Sean extends Player implements MoveProducer{
 
 
         }
+        fuckinggreat=null;
         return move;
     }
 
