@@ -670,7 +670,16 @@ public class GameBoard extends JPanel implements MouseMotionListener, MouseListe
 
         }
         else    {
+            System.out.println("Game Over");
+            int scorePl1 = gameScore(logicBoard.getBoard(), 1);
+            int scorePl2 = gameScore(logicBoard.getBoard(), 2);
 
+            if(scorePl1 > scorePl2){
+                System.out.println("player 1 wins");
+            }
+            else   {
+                System.out.println("player 2 wins");
+            }
         }
     }
 
