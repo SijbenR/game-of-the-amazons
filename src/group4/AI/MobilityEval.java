@@ -5,10 +5,15 @@ package group4.AI;
 
 public class MobilityEval extends EvaluationFunction {
 
+    private int player;
+    public MobilityEval(int player)
+    {
+        this.player=player;
+    }
 
 
     @Override
-    public double evaluate(int[][] board, int player) {
+    public double evaluate(int[][] board) {
         double pl1=0;
         double pl2=0;
         for(GridCoordinate i: getQueensPositions(board, player))

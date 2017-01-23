@@ -38,7 +38,7 @@ public class Maximus extends Player {
     public Maximus(boolean isFirst, int depth)   {
         super(isFirst, true);
 
-        calculate = new MinMax(super.getVal(), new MobilityEval());
+        calculate = new MinMax(super.getVal(), new MobilityEval(1));
         calculate.setDepth(depth);
     }
 

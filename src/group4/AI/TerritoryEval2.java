@@ -1,108 +1,137 @@
 package group4.AI;
 
 
+import group4.ui.GridCoordinate;
 import group4.utilities.BoardOperations;
 
 import java.util.Arrays;
 
 import static group4.AI.MinMax.getBoardAsString;
+import static group4.AI.MinMax.getQueensPositions;
 
 public class TerritoryEval2 extends EvaluationFunction{
     public static void main(String[] args)
     {
-        int[] li=  new int[]{
-                        0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,3,0,3,3,0,0,0,
-                        0,0,0,0,3,3,3,0,0,0,
-                        2,3,3,3,3,2,3,3,0,0,
-                        3,3,1,0,3,3,3,3,2,0,
-                        3,0,3,0,3,0,0,3,3,0,
-                        0,3,0,3,0,0,1,0,3,3,
-                        1,3,0,0,2,0,0,0,0,0,
-                        3,3,0,0,3,0,0,0,0,0,
-                        0,0,3,1,0,0,0,0,0,0};
-
-        int[][] board= BoardOperations.listToArray(li);
-        System.out.println("First");
+        int[][] board=new Experiment().setBoard().getInitBoard();
         System.out.println(getBoardAsString(board));
-        TerritoryEval2 eval=new TerritoryEval2();
-        System.out.println(eval.evaluate(board,1));
+        EvaluationFunction eval= new TerritoryEval2(1);
+        eval.evaluate(board);
     }
+    private int player;
+    private int opp;
+    private int futPlay;
+    private int futOpp;
+    private int nTurns=1;
+
+    public TerritoryEval2(int player)
+    {
+        this.player=player;
+        opp = 3 - player;
+        futPlay = player + 3;
+        futOpp = opp + 3;
+    }
+    public TerritoryEval2 setTurns(int n)
+    {
+        nTurns=n;
+        return this;
+    }
+
     @Override
-    public double evaluate(int[][] board, int player) {
-        int[][] b2=territoryBoard(board);
-        int p1=0,p2=0;
-        for(int i=0;i<b2.length;i++)
-            for(int j=0;j<b2[0].length;j++) {
-                if (player == b2[i][j])
-                    p1++;
-                else if((3-player) == b2[i][j])
-                    p2++;
-            }
-        return p1/((double) p1+p2);
+    public double evaluate(int[][] board)
+    {
+        int[][] b=new int[board.length][];
+        for(int i=0;i<board.length;i++)
+            b[i]=Arrays.copyOf(board[i],board[i].length);
+        return getEval(b);
     }
 
+    private double getEval(int[][] b) {
 
-    public static int[][] territoryBoard(int[][] board) {
-        int length = board[0].length;
-        int height = board.length;
+        int[][] board=new int[b.length][];
+        for(int i=0;i<b.length;i++)
+            board[i]=b[i].clone();
 
-        int[][] fromBoard = board;
-        int[][] newBoard = new int[length][height];
+        int ter1 = 0;
+        int ter2 = 0;
 
-        boolean zeros = false;
+        boolean zeros;
+        int turns=nTurns;
+
         do {
-            zeros = false;
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < length; j++) {
-                    if (fromBoard[i][j] != 0) {
-                        newBoard[i][j] = fromBoard[i][j];
-                        continue;
-                    }
-                    zeros = true;
-                /*
-                If this cell is reachable by one player in just one move, it belongs to that player.
-                If more players can reach it, it is par(-1).
-                 */
-                    {
-                        int status = 0;
-                        int dirY = -1;
-                        while (dirY <= 1 && status != -1) {
-                            int dirX = -1;
-                            while (dirX <= 1 && status != -1) {
-                                if (dirX == 0 && dirY == 0) {
-                                    dirX++;
-                                    continue;
-                                }
-                                int x = i;
-                                int y = j;
-                                while (x < height && x >= 0 && y < length && y >= 0) {
-                                    if (fromBoard[x][y] != 0) {
-                                        if (fromBoard[x][y] < 3) {
-                                            if (status != 0)
-                                                status = (status == fromBoard[x][y]) ? status : -1;
-                                            else status = fromBoard[x][y];
-                                        }
-                                        break;
-                                    }
-                                    x += dirX;
-                                    y += dirY;
-                                }
-                                dirX++;
-                            }
-                            dirY++;
-                        }
+            for (GridCoordinate p : getQueensPositions(board, player)) {
+            //For each direction
+                for (int k1 = -1; k1 < 2; k1++)
+                    for (int k2 = -1; k2 < 2; k2++) {
+                        if (k1 == 0 && k2 == 0)
+                            continue;
 
-                        newBoard[i][j] = status;
-                        //System.out.println(i + "," + j + ":" + status);
-                    }//LALALA
+                        int i = p.x + k1;
+                        int j = p.y + k2;
 
+                        while (j >= 0 && j < board.length && i >= 0 && i < board[0].length) {
+                            if (board[j][i] > 0 && board[j][i] < 4) //We encounter either another player's queen, an arrow or an enemy queen
+                                break;
+                    /*No future state possible yet,
+                    except for futPlay which can accept us to rewrite it
+                     */
+                    board[j][i] = futPlay;
+                    i += k1;
+                    j += k2;
+                }
+            }
+
+    }
+    for (GridCoordinate p : getQueensPositions(board, opp)) {
+        //For each direction
+        for (int k1 = -1; k1 < 2; k1++)
+            for (int k2 = -1; k2 < 2; k2++) {
+                if (k1 == 0 && k2 == 0)
+                    continue;
+
+                int i = p.x + k1;
+                int j = p.y + k2;
+
+                while (j >= 0 && j < board.length && i >= 0 && i < board[0].length) {
+
+                    if (board[j][i] > 0 && board[j][i] < 4) //We encounter either another player's queen, an arrow or an enemy queen
+                        break;
+                    /*No future state possible yet,
+                    except for futPlay which can accept us to rewrite it
+                     */
+                    if (board[j][i] == 0)
+                        board[j][i] = futOpp;
+                    else if (board[j][i] == futPlay)
+                        board[j][i] = -1;
+                    i += k1;
+                    j += k2;
 
                 }
             }
-            fromBoard=newBoard;
-            //System.out.println(getBoardAsString(fromBoard));
-        } while(zeros);
-        return newBoard;
     }
+    //System.out.println(getBoardAsString(board));
+    zeros = false;
+    for (int j = 0; j < board.length; j++)
+        for (int i = 0; i < board[0].length; i++) {
+            if (board[j][i]==-1)
+                board[j][i] = 3;
+
+            else if (board[j][i]==0)
+                zeros=true;
+            else if (board[j][i]==futPlay)
+            {
+                ter1+=turns;
+                board[j][i] = player;
+            }
+            else if (board[j][i]==futOpp)
+            {
+                ter2+=turns;
+                board[j][i] = opp;
+            }
+        }
+
+    turns--;
+} while(turns>0 && zeros);
+    return ((double) ter1)/(ter1+ter2);
+
+}
 }

@@ -67,7 +67,7 @@ public class Experiment {
 
     public void run()
     {
-        MobilityEval eval=new MobilityEval();
+        MobilityEval eval=new MobilityEval(1);
 
 
 
@@ -82,6 +82,7 @@ public class Experiment {
         int nTurn2=0;
         int vict1=0;
         int vict2=0;
+        int failed=0;
         int maxTurns=0;
         int minTurns=Integer.MAX_VALUE;
         double avgTurns=0;
@@ -99,9 +100,10 @@ public class Experiment {
 
             if(randomize)
             {
-                moveToBoard(board, new RandomAI(1).getMove(board),1);
-                moveToBoard(board, new RandomAI(2).getMove(board),2);
+                moveToBoardF(board, new RandomAI(1).getMove(board),1);
+                moveToBoardF(board, new RandomAI(2).getMove(board),2);
             }
+            boolean gameDrop=false;
             boolean turn=true;
             double mobRatio=0.5;
             //We initialise the board
@@ -110,20 +112,36 @@ public class Experiment {
             //The game goes on until one has 0 mobility
             do{
                 GridCoordinate[] move;
+                int[][] lastBoard=new int[board.length][];
+                for (int u = 0; u < board.length ; u++) {
+                    lastBoard[u]=board[u].clone();
+                }
                 if (turn) //Player 1
                 {
                     //Compute the move
                     btime=System.currentTimeMillis();
                     move=pl1.getMove(board);
                     dtime=System.currentTimeMillis() - btime;
-
-                    //Check if the move is legal and updates the board
-                    if(!isLegalMove(board,move,1)) {
-                        System.err.println(getBoardAsString(board));
-                        System.err.println(move[0]+"\n"+move[1]+"\n"+move[2]);
-                        throw new RuntimeException("Illegal Move (player 1)");
+                    boolean diff=false;
+                    for (int j = 0; j < board.length; j++) {
+                        for (int k = 0; k < board[0].length; k++) {
+                            if(board[j][k] != ((MinMax) pl1).lastBoard[j][k])
+                                throw new RuntimeException("Sono board differenti");
+                        }
                     }
-                    moveToBoard(board, move, 1);
+                    //Check if the move is legal and updates the board
+                    if(!isLegalMove(lastBoard,move,1)) {
+                        //DROP GAME
+                        gameDrop=true;
+                        break;
+                        //System.err.println(isLegalMove(lastBoard,move,2));
+                        //((MinMax)pl1).getBoardss();
+                        /*System.err.println(getBoardAsString(lastBoard));
+                        System.err.println(getBoardAsString(board));
+                        System.err.println(move[0]+""+move[1]+""+move[2]);
+                        throw new RuntimeException("Illegal Move (player 1)");*/
+                    }
+                    moveToBoardF(board, move, 1);
 
                     //Update Statistics
                     avgTime1+=dtime;
@@ -139,10 +157,13 @@ public class Experiment {
                     dtime=System.currentTimeMillis() - btime;
 
                     if(!isLegalMove(board,move,2)){
-                        System.err.println(getBoardAsString(board));
+                        gameDrop=true;
+                        break;
+                       /* System.err.println(getBoardAsString(board));
                         System.err.println(move[0]+"\n"+move[1]+"\n"+move[2]);
-                        throw new RuntimeException("Illegal Move (player 2)");}
-                    moveToBoard(board,move,2);
+                        throw new RuntimeException("Illegal Move (player 2)");*/
+                    }
+                    moveToBoardF(board,move,2);
 
                     //Update Statistics
                     avgTime2+=dtime;
@@ -154,16 +175,23 @@ public class Experiment {
                 if (verbose) System.out.print(".");
                 //Change turn
                 turn=!turn;
-                mobRatio=eval.evaluate(board,1);
+                mobRatio=eval.evaluate(board);
             } while(mobRatio < 1 && mobRatio > 0);
-            if (verbose) System.out.println( mobRatio==1 ? 1 : 2);
-            if(nTurns > maxTurns) maxTurns=nTurns;
-            if(nTurns < minTurns) minTurns=nTurns;
-            avgTurns += nTurns;
-            if (mobRatio==1)
-                vict1++;
-            else
-                vict2++;
+            if(gameDrop)
+            {
+                if(verbose) System.out.println("X");
+                failed++;
+            }
+            else {
+                if (verbose) System.out.println(mobRatio == 1 ? 1 : 2);
+                if (nTurns > maxTurns) maxTurns = nTurns;
+                if (nTurns < minTurns) minTurns = nTurns;
+                avgTurns += nTurns;
+                if (mobRatio == 1)
+                    vict1++;
+                else
+                    vict2++;
+            }
         }
         avgTime1=avgTime1/nTurn1;
         avgTime2=avgTime2/nTurn2;
@@ -171,6 +199,7 @@ public class Experiment {
         StringJoiner msg=new StringJoiner("\n");
         msg
                 .add("Number of tests:\t"+numTest)
+                .add("Failed tests:\t"+failed)
                 .add("Max turns per game:\t"+maxTurns)
                 .add("Min turns per game:\t"+minTurns)
                 .add("Avg turns per game:\t"+avgTurns)
@@ -195,21 +224,24 @@ public class Experiment {
 
     public static boolean isLegalMove(int[][] board, GridCoordinate[] move, int player)
     {
-
+        if(board==null) System.err.println("Null board");
+        if(move==null || move[0]==null) System.err.println("Null move");
         //The origin position is not occupied by the player
-        if(board[move[0].y][move[0].x]!=player) {System.err.println("Wrong from cell");return false;}
+
+        if(board[move[0].y][move[0].x]!=player) {
+            return false;
+        }
         //The destination is already occupied
-        if(board[move[1].y][move[1].x] != 0) {System.err.println("Wrong to cell");return false;}
+        if(board[move[1].y][move[1].x] != 0) {return false;}
 
         //If the arrow is shot in a occupied place, except if is the previous position of the queen
         if(board[move[2].y][move[2].x]!=0 && (move[0].x !=move[2].x || move[0].y != move[2].y))
         {
-            System.err.println("Wrong arrow cell");
             return false;}
 
         return true;
     }
-    public static void moveToBoard(int[][] board, GridCoordinate[] move, int player) {
+    public static void moveToBoardF(int[][] board, GridCoordinate[] move, int player) {
 
         board[move[0].y][move[0].x]=0;
         board[move[1].y][move[1].x]=player;

@@ -21,7 +21,7 @@ public class MinMax implements MoveProducer {
         int[] list = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 2, 3, 3, 3, 3, 2, 3, 3, 0, 0, 3, 3, 1, 0, 3, 3, 3, 3, 2, 0, 3, 0, 3, 0, 3, 0, 0, 3, 3, 0, 0, 3, 0, 3, 0, 0, 1, 0, 3, 3, 1, 3, 0, 0, 2, 0, 0, 0, 0, 0, 3, 3, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 1, 0, 0, 0, 0, 0, 0};
         board = BoardOperations.listToArray(list);
         System.out.println(getBoardAsString(board));
-        MinMax m = new MinMax(1, new MobilityEval())
+        MinMax m = new MinMax(1, new MobilityEval(1))
                 .setDepth(8)
                 .setMaxfinal(5);
 
@@ -40,6 +40,8 @@ public class MinMax implements MoveProducer {
     private Comparator<int[][]> maxSort;
     private Comparator<int[][]> minSort;
     public GridCoordinate[] lastMove;
+    public int[][] prelastBoard;
+    public int[][] lastBoard;
     public int[][] bestBoard;
     private int depth = 3;
     private int maxstep = 100;
@@ -47,6 +49,7 @@ public class MinMax implements MoveProducer {
     public int betacut = 0;
     public int alphacut = 0;
     private int nKilMov = 3;
+    private int offset=0;
 
     //GridCoordinate[][] killerMoves=new GridCoordinate[depth+1][];
 
@@ -61,10 +64,10 @@ public class MinMax implements MoveProducer {
         playerIndex = index;
         this.evalF = evalF;
         maxSort = (b1, b2) -> {
-            return (evalF.evaluate(b2, playerIndex) > evalF.evaluate(b1, playerIndex)) ? 1 : -1;
+            return (evalF.evaluate(b2) > evalF.evaluate(b1)) ? 1 : -1;
         };
         minSort = (b1, b2) -> {
-            return (evalF.evaluate(b2, playerIndex) > evalF.evaluate(b1, playerIndex)) ? -1 : 1;
+            return (evalF.evaluate(b2) > evalF.evaluate(b1)) ? -1 : 1;
         };
         killerConstructor();
     }
@@ -111,14 +114,17 @@ public class MinMax implements MoveProducer {
      *         contains where the arrow is thrown to.
      */
     public GridCoordinate[] getMove(int[][] board) {
-        GridCoordinate[] move = new GridCoordinate[3];
-        minmax(board, depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true, move);
-        return move;
+        lastBoard=new int[board.length][];
+        for (int i = 0; i < board.length ; i++) {
+            lastBoard[i]=board[i].clone();
+        }
+        minmax(board, depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true, true);
+        return lastMove;
     }
 
-    private double minmax(int[][] board, int depth, double alpha, double beta, boolean isMax, GridCoordinate[] moves) {
+    private double minmax(int[][] board, int depth, double alpha, double beta, boolean isMax, boolean first) {
         // terminal node
-        double value = evalF.evaluate(board, playerIndex);
+        double value = evalF.evaluate(board);
         if (depth <= 0 || value == 1.0 || value == 0.0)
             return value;
 
@@ -128,7 +134,7 @@ public class MinMax implements MoveProducer {
             int[][] bmax = null;
             double vmax = Double.NEGATIVE_INFINITY;
             for (int[][] i : boards) {
-                double v = minmax(i, depth - 1, alpha, beta, false, null);
+                double v = minmax(i, depth - 1, alpha, beta, false, false);
                 if (v > vmax) {
                     vmax = v;
                     bmax = i;
@@ -144,11 +150,16 @@ public class MinMax implements MoveProducer {
                 }
 
             }
-            if (moves != null)
+            if (first)
             {
+                if (lastBoard != null)
+                    prelastBoard=lastBoard;
+                lastBoard=board;
                 bestBoard=bmax;
-                deduceMoves(board, bmax, playerIndex, moves);
-                lastMove=moves;
+                //deduceMoves(board, bmax, playerIndex, moves);
+                lastMove=deduceMoves2(board, bmax, playerIndex);
+                if(!Experiment.isLegalMove(board,lastMove,playerIndex))
+                    System.err.println("Mierda");
             }
 
             //System.out.println(Arrays.toString(moves));
@@ -159,7 +170,7 @@ public class MinMax implements MoveProducer {
         else {
             double vmin = Double.POSITIVE_INFINITY;
             for (int[][] i : boards) {
-                double v = minmax(i, depth - 1, alpha, beta, true, null);
+                double v = minmax(i, depth - 1, alpha, beta, true, false);
                 if (v < vmin)
                     vmin = v;
                 if (v < beta)
@@ -177,19 +188,17 @@ public class MinMax implements MoveProducer {
         }
     }
 
-    public static List<GridCoordinate> getQueensPositions(int[][] board, int player) {
-        List<GridCoordinate> queens = new ArrayList<>();
-        for (int j = 0; j < board.length; j++)
-            for (int i = 0; i < board[0].length; i++)
-                if (board[j][i] == player)
-                    queens.add(new GridCoordinate(i, j));
-        return queens;
+    public void getBoardss()
+    {
+        System.err.println(getBoardAsString(prelastBoard));
+        System.err.println(getBoardAsString(lastBoard));
+        System.err.println(getBoardAsString(bestBoard));
+        System.err.println(Arrays.toString(lastMove));
     }
-
 
     public List<int[][]> getPossibleBoards(int[][] board, boolean isMax, int depth) {
 
-        int player = isMax ? playerIndex : 3- playerIndex;
+        int player = isMax ? playerIndex : 3 - playerIndex;
         TreeSet<int[][]> finalBoards = new TreeSet<>(isMax ? maxSort : minSort);
         Map<int[][], GridCoordinate> queenStuff=new TreeMap<>(isMax ? maxSort : minSort);
 
@@ -201,10 +210,13 @@ public class MinMax implements MoveProducer {
         int count=0;
         for(Entry<int[][], GridCoordinate> e: queenStuff.entrySet())
         {
+
             if(count>=maxstep)
                 break;
-            for (GridCoordinate k : getPossibleMoves(e.getKey(),e.getValue()))
+            for (GridCoordinate k : getPossibleMoves(e.getKey(),e.getValue())) {
+
                 finalBoards.add(moveToBoard(e.getKey(), player, e.getValue(), k, true));
+            }
             count++;
         }
         // Now we compute the boards according to the arrow moves
@@ -213,61 +225,32 @@ public class MinMax implements MoveProducer {
                 finalB.subList(0, maxfinal) : finalB;
         if (!killerMoves[depth].isEmpty())
         {
-            for(GridCoordinate[] k: killerMoves[depth]) {
-                if (isLegalMove(board, k, player))
-                    finalB.add(0,
-                            moveToBoard(
+            for(GridCoordinate[] k: killerMoves[depth])
+            {
+                if (Experiment.isLegalMove(board, k, player))
+                    finalB.add
+                            (0,
+                            moveToBoard
+                                    (
                                     moveToBoard(board, player, k[0], k[1], false),
-                                    player, k[1], k[2], true)
-                );
+                                    player, k[1], k[2], true
+                                    )
+                            );
             }
         }
+
+        /*for(int[][] b: finalB)
+        {
+            if(Experiment.isLegalMove(board,deduceMoves2(board,b,player),player))
+            {
+                GridCoordinate[] m=deduceMoves2(board, b, player);
+                System.err.println(getBoardAsString(board));
+                System.err.println(getBoardAsString(b));
+                System.err.println(m[0]+""+m[1]+""+m[2]);
+            }
+        }*/
         return finalB;
     }
-    /**
-     * Returns the possible boards
-     *
-     * @param board
-     *            the board
-     * @param player
-     *            the player index
-     * @param evalF
-     *            the evaluation function that we use
-     * @param isMax
-     *            whether the player is
-     * @param maxSort comparator for max
-     * @param minSort comparator for min
-     * @param maxStepSize max number of the intermediate boards
-     * @param maxFinalSize max number of the final boards
-     * @return the list of the possible boards that can be generated by a move
-     */
-    public static List<int[][]> getPossibleBoards(int[][] board, int player,
-                                                  EvaluationFunction evalF, boolean isMax, Comparator<int[][]> maxSort, Comparator<int[][]> minSort,
-                                                  int maxStepSize, int maxFinalSize) {
-
-        TreeSet<int[][]> finalBoards = new TreeSet<>(isMax ? maxSort : minSort);
-        Map<int[][], GridCoordinate> queenStuff=new TreeMap<>(isMax ? maxSort : minSort);
-
-        // First we compute all the possible boards according to the queen moves
-        for (GridCoordinate i : getQueensPositions(board, player))
-            for (GridCoordinate j : getPossibleMoves(board, i))
-                queenStuff.put(moveToBoard(board, player, i, j, false), j);
-
-        int count=0;
-        for(Entry<int[][], GridCoordinate> e: queenStuff.entrySet())
-        {
-            if(count>=maxStepSize)
-                break;
-            for (GridCoordinate k : getPossibleMoves(e.getKey(),e.getValue()))
-                finalBoards.add(moveToBoard(e.getKey(), player, e.getValue(), k, true));
-            count++;
-        }
-        // Now we compute the boards according to the arrow moves
-        List<int[][]> finalB=new ArrayList<>(finalBoards);
-        return (finalB.size() > maxFinalSize) ?
-                finalB.subList(0, maxFinalSize) : finalB;
-    }
-
 
     /**
      * Translates a move to a new board
@@ -325,7 +308,7 @@ public class MinMax implements MoveProducer {
         return to;
     }
 
-    public static boolean isLegalMove(int[][] board, GridCoordinate[] move, int player)
+  /*  public static boolean isLegalMove(int[][] board, GridCoordinate[] move, int player)
     {
 
         //The origin position is not occupied by the player
@@ -339,6 +322,7 @@ public class MinMax implements MoveProducer {
 
         return true;
     }
+    */
 
 
 
@@ -366,12 +350,12 @@ public class MinMax implements MoveProducer {
      *         position, [1] the queen's final position, [2] the arrow's final
      *         position
      */
-    public static void deduceMoves(int[][] B1, int[][] B2, int player, GridCoordinate[] moves) {
+    public void deduceMoves(int[][] B1, int[][] B2, int player, GridCoordinate[] moves) {
         for (int i = 0; i < B1.length; i++)
             for (int j = 0; j < B1[0].length; j++) {
                 if (B1[i][j] != B2[i][j]) {
                    // System.out.println(B1[i][j] + " " + B2[i][j]);
-                    GridCoordinate pos = new GridCoordinate(j + 1, i + 1);
+                    GridCoordinate pos = new GridCoordinate(j + offset , i + offset);
                     if (B1[i][j] == player) {
                         moves[0] = pos;
                         if (B2[i][j] == 3)
@@ -389,14 +373,17 @@ public class MinMax implements MoveProducer {
             }
     }
 
-    public static GridCoordinate[] deduceMoves2(int[][] B1, int[][] B2, int player) {
+    public GridCoordinate[] deduceMoves2(int[][] B1, int[][] B2, int player) {
         GridCoordinate[] moves=new GridCoordinate[3];
+        boolean diff=false;
         for (int i = 0; i < B1.length; i++)
             for (int j = 0; j < B1[0].length; j++) {
                 if (B1[i][j] != B2[i][j]) {
+                    diff=true;
                     // System.out.println(B1[i][j] + " " + B2[i][j]);
-                    GridCoordinate pos = new GridCoordinate(j, i );
-                    if (B1[i][j] == player) {
+                    GridCoordinate pos = new GridCoordinate(j+offset, i+offset );
+                    if (B1[i][j] == player)
+                    {
                         moves[0] = pos;
                         if (B2[i][j] == 3)
                             moves[2] = pos;
@@ -411,9 +398,18 @@ public class MinMax implements MoveProducer {
                         break;
                 }
             }
-
+            if(!diff)
+                throw new RuntimeException("No Difference");
         return moves;
     }
 
+    public static List<GridCoordinate> getQueensPositions(int[][] board, int player) {
+        List<GridCoordinate> queens = new ArrayList<>();
+        for (int j = 0; j < board.length; j++)
+            for (int i = 0; i < board[0].length; i++)
+                if (board[j][i] == player)
+                    queens.add(new GridCoordinate(i, j));
+        return queens;
+    }
 }
 
