@@ -19,7 +19,7 @@ public class NodeTree {
 
     private boolean arrowMoveSeperate;
 
-    private int ownVal;
+    protected int ownVal;
 
     public Node root;
     protected int depth, branch;
@@ -67,6 +67,10 @@ public class NodeTree {
 
     public void addChildren(Node parent) {
 
+        if(parent != root)  {
+            System.out.println("Entered addchildren for: " + parent);
+        }
+
         if (parent == null) {
             System.out.println("EXCERPTION CAUGHT");
         }
@@ -84,7 +88,7 @@ public class NodeTree {
 
             GridCoordinate origin = parent.getDest();
 
-            limit = nodePointer.countPosOptions(origin);
+            limit = nodePointer.countPosOptions(origin) + 1;
             if (limit > branch) {
                 limit = branch;
             }
@@ -134,11 +138,20 @@ public class NodeTree {
 
             // We know the origijn from which we are goiung to shoort
             GridCoordinate origin = parent.getDest();
-
-            limit = nodePointer.countPosOptions(origin);
+            if(parent != root) {
+                nodePointer.printBoard();
+                System.out.println("Origin: " + origin);
+                System.out.println("Possible options: " + nodePointer.countPosOptions(origin));
+            }
+            //Because you include where you just moved the queen
+            limit = nodePointer.countPosOptions(origin) + 1;
             //System.out.println("Limit for: ArrowMove" + "\t is = " + limit);
             if (limit > branch) {
                 limit = branch;
+            }
+
+            if(parent != root)  {
+                    System.out.println("Amount of children: " + parent.getChildren().size() + "Limit = " + limit);
             }
             while (parent.getChildren().size() < limit) {
                 childNode = nodePointer.createChild(parent);

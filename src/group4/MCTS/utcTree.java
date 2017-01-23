@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Stack;
 
-import static group4.utilities.BoardOperations.bubbleSortNodesByScore;
-import static group4.utilities.BoardOperations.bubbleSortNodesByValue;
-import static group4.utilities.BoardOperations.evaluate;
+import static group4.utilities.BoardOperations.*;
 
 /**
  * Created by I6106804 on 18-1-2017.
@@ -26,6 +24,8 @@ public class utcTree extends NodeTree{
 
     ArrayList<Node> ListOfNodes = new ArrayList<>();
     double TimeToRun;
+
+    boolean simulate = false;
 
 
     BoardOperations Boardop = new BoardOperations();
@@ -37,6 +37,14 @@ public class utcTree extends NodeTree{
         super(Board, ownVal, arrowMove, 15, 22);
         this.TimeToRun = timeToRun;
         this.useTer = useTer;
+    }
+
+    public utcTree(int[][] Board, int ownVal, boolean arrowMove, double timeToRun, boolean useTer, double newC) {
+
+        super(Board, ownVal, arrowMove, 15, 22);
+        this.TimeToRun = timeToRun;
+        this.useTer = useTer;
+        this.c = Math.sqrt(newC);
     }
 
     public GridCoordinate[] Movethebest(){
@@ -72,6 +80,127 @@ public class utcTree extends NodeTree{
         return move;
     }
 
+
+    public void mctBuild()  {
+        super.branch = 20;
+
+        //Generate Random children for root (root = already visited)
+        addChildren(root);
+
+        //Evaluate the children
+        super.nodePointer.evaluateChildren(root);
+
+        //BubbleSort
+        BoardOperations.bubbleSortNodesByValue(root.getChildren());
+
+        //Take best one
+        Node toExpand = root.getChildren().get(0);
+
+        //Generate RandomChildren
+        addChildren(toExpand);
+
+        //For each child => Play until finish)
+        recBuild(toExpand);
+        int j = 0;
+
+
+        System.out.println("First Layer: " + root.getChildren().size());
+
+        while(root.getChildren().get(j).getChildren().size() == 0)    {
+            System.out.println("Second Layer: " + root.getChildren().get(j).getChildren().size());
+            j++;
+        }
+        Node child = root.getChildren().get(j).getChildren().get(0);
+
+        for(int i = 1; i < root.getChildren().get(0).getChildren().size(); i++)   {
+            if(child.getWins() <= root.getChildren().get(0).getChildren().get(i).getWins() && child.getLosses() > root.getChildren().get(0).getChildren().get(i).getLosses())  {
+                child = root.getChildren().get(0).getChildren().get(i);
+            }
+        }
+
+        System.out.println("First Move = " + root.getChildren().get(0));
+        System.out.println("Arrow = " + child);
+
+
+    }
+
+
+    public void recBuild(Node child)  {
+        if(child.getChildren().size() == 0 && !gameOverCheck(super.nodePointer.getBoard())) {
+            //If children.size == 0 && !gameOverCheck
+            //Generate randomchildren
+            System.out.println("Entered for: " + child);
+            addChildren(child);
+            System.out.println("Amount of children = " + child.getChildren().size());
+            recBuild(child);
+        }
+        else if(child.getChildren().size() != 0 && !gameOverCheck(super.nodePointer.getBoard()) && (child.getChildren().size()) > getStillUnknown(child))   {
+            //else if(children.size != 0 && !gameOverCheck && Child(size-1) not visited )
+                //Go to first one that has not been visited
+            int notyetVis = getStillUnknown(child);
+            Node newChild = child.getChildren().get(notyetVis);
+
+            //Perform move
+            super.nodePointer.performMove(newChild);
+            System.out.println("Stuck in 1");
+            //Repeat process
+            recBuild(newChild);
+        }
+        else if(child.getChildren().size() != 0 && !gameOverCheck(super.nodePointer.getBoard()) && child.getChildren().get(child.getChildren().size()-1).wasVisited())   {
+            //All nodes have been visited
+            //So we count all Wins and losses
+            double wins = 0;
+            double losses = 0;
+
+            //Set to visited
+            child.visited();
+            for(Node kid : child.getChildren())   {
+                if(kid.isWin() || kid.getWins() > 0) {
+                    child.addWins(kid.getWins());
+                }
+                if(!kid.isWin() || kid.getLosses() > 0)    {
+                    child.addLosses(kid.getLosses());
+                }
+            }
+            // for that Node and return
+            super.nodePointer.performMove(child);
+            System.out.println("Stuck in 2");
+            recBuild(child.getParent());
+        }
+        else if(gameOverCheck(super.nodePointer.getBoard()))    {
+            //Our gameScore
+            int ownScore = gameScore(super.nodePointer.getBoard(), super.ownVal);
+
+            //Enemy gameScore
+            int enemScore = gameScore(super.nodePointer.getBoard(), (3-super.ownVal));
+
+            //Set to visited
+            child.visited();
+            if(ownScore > enemScore)    {
+                child.setWin(true);
+            }
+            else    {
+                child.setWin(false);
+            }
+            super.nodePointer.performMove(child);
+            System.out.println("Stuck in 3");
+            recBuild(child.getParent());
+        }
+        System.out.println("I have no idea how I got here");
+    }
+
+    public int getStillUnknown(Node cur)    {
+        int i = 0;
+        for(Node child : cur.getChildren()) {
+            if(child.wasVisited())  {
+                return i;
+            }
+            else    {
+                i++;
+            }
+        }
+        return i;
+    }
 
 
     public Node bestchoice(){
@@ -158,12 +287,13 @@ public class utcTree extends NodeTree{
         addChildren(ListOfNodes.get(0));
 
 
-        if(!useTer) {
+        if(!useTer && !simulate) {
             super.nodePointer.evaluateChildren(ListOfNodes.get(0));
         }
-        else    {
+        else if(useTer && !simulate)    {
             super.nodePointer.evaluateChildrenByTer(ListOfNodes.get(0));
         }
+
 
         int i = 0;
 

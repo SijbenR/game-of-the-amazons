@@ -20,17 +20,26 @@ public class Sean extends Player implements MoveProducer{
     double timeToRun;
     boolean useTer = true;
 
+    double c = 2;
+
     public Sean(boolean isFirst, double timeToRun, boolean useTer) {
         super(isFirst,true);
         this.timeToRun=timeToRun;
         this.useTer = useTer;
-
     }
+
+    public Sean(boolean isFirst, double timeToRun, boolean useTer, double c) {
+        super(isFirst,true);
+        this.timeToRun=timeToRun;
+        this.useTer = useTer;
+        this.c = c;
+    }
+
     public void giveInput(int[][] Board)	{
         if(fuckinggreat == null) {
             this.Grid = getCopy(Board);
             move = new GridCoordinate[3];
-            tree = new utcTree(Grid, super.getVal(), false, timeToRun, useTer);
+            tree = new utcTree(Grid, super.getVal(), false, timeToRun, useTer, c);
 
             move = tree.Movethebest();
 

@@ -23,8 +23,13 @@ public class Node {
     protected double score;
     protected GridCoordinate origin, dest;
     protected int depthOfNode;
-    protected double winLoss;
-    protected int visited;
+
+
+    protected boolean win;
+    protected boolean visited;
+
+    protected int numOfWins;
+    protected int numOfLosses;
 
     public int playerVal;
 
@@ -44,6 +49,11 @@ public class Node {
         this.origin = null;
         this.dest = null;
         this.depthOfNode = 0;
+
+        this.visited = true;
+        this.win = false;
+        this.numOfWins = 0;
+        this.numOfLosses = 0;
     }
 
 
@@ -59,6 +69,8 @@ public class Node {
 
 
     public void addChild(Node Child)   {
+
+
         if(ownMove == true && arrowMove == true)  {
             Child.setOwnMove(false);
             Child.setArrowMove(false);
@@ -92,7 +104,7 @@ public class Node {
             System.out.println("Exception caught");
         }
 
-        //System.out.println("Adding child: " + Child);
+        System.out.println("Adding child: " + Child);
         Children.add(Child);
 
     }
@@ -112,9 +124,50 @@ public class Node {
         return value;
     }
 
+    public void setWin(boolean win) {
+        if(win == true)
+            addWin();
+        else
+            addLoss();
 
+        this.win = win;
+    }
 
+    public boolean isWin() {
+        return win;
+    }
 
+    public void visited() {
+        this.visited = true;
+    }
+
+    public boolean wasVisited() {
+        return visited;
+    }
+
+    public void addWin()    {
+        this.numOfWins++;
+    }
+
+    public void addWins(double amount)    {
+        this.numOfWins+= amount;
+    }
+
+    public void addLoss()    {
+        this.numOfLosses++;
+    }
+
+    public void addLosses(double amount)    {
+        this.numOfWins+= amount;
+    }
+
+    public double getWins() {
+        return numOfWins;
+    }
+
+    public double getLosses() {
+        return numOfLosses;
+    }
 
     public void setOwnMove(boolean ownMove) {
         this.ownMove = ownMove;

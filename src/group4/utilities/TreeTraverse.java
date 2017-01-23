@@ -146,6 +146,10 @@ public class TreeTraverse {
     }
 
     public Node generateRanMove(Node parent)    {
+
+        if(parent != root)
+            System.out.println("Entered random move for = " + parent);
+
         int val;
 
         //Position 0 => Origin
@@ -278,16 +282,20 @@ public class TreeTraverse {
             //STARTCASE 2
 
             returner[0] = parent.getDest();
+            printBoard();
 
             posDest = listPosDest(Board, returner[0]);
+            System.out.println("Possible options = " + posDest.size());
+
             int ran = (int) (posDest.size() * Math.random());
             GridCoordinate tar = posDest.get(ran);
             Node newNode = new Node(parent, returner[0], tar);
 
-            while(!parent.validAmongChildren(newNode))   {
+            while(!parent.validAmongChildren(newNode) && parent.getChildren().size() < posDest.size())   {
                 ran = (int) (posDest.size() * Math.random());
                 tar = posDest.get(ran);
                 newNode = new Node(parent, returner[0], tar);
+
             }
 
             return newNode;
@@ -476,6 +484,10 @@ public class TreeTraverse {
             removePosMoves(Board);
         }
         return count;
+    }
+
+    public int[][] getBoard()  {
+        return Board;
     }
 
     //For QueenMoves
