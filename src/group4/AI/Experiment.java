@@ -122,13 +122,6 @@ public class Experiment {
                     btime=System.currentTimeMillis();
                     move=pl1.getMove(board);
                     dtime=System.currentTimeMillis() - btime;
-                    boolean diff=false;
-                    for (int j = 0; j < board.length; j++) {
-                        for (int k = 0; k < board[0].length; k++) {
-                            if(board[j][k] != ((MinMax) pl1).lastBoard[j][k])
-                                throw new RuntimeException("Sono board differenti");
-                        }
-                    }
                     //Check if the move is legal and updates the board
                     if(!isLegalMove(lastBoard,move,1)) {
                         //DROP GAME

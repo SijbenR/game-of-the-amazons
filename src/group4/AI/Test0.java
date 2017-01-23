@@ -10,7 +10,7 @@ public class Test0 {
     {
         Experiment exp=new Experiment()
             .setBoard()
-            .setNumTest(60)
+            .setNumTest(300)
             .setPlayer1(new MinMax(1,new TerritoryEval2(1)).setMaxfinal(10).setDepth(1))
             .setPlayer2(new MinMax(2,new MobilityEval(2)).setMaxfinal(10).setDepth(1))
             //.setPlayer1(new RandomAI(1))

@@ -89,6 +89,11 @@ public class MinMax implements MoveProducer {
         return this;
     }
 
+    public MinMax setOffset(int o)
+    {
+        this.offset=o;
+        return this;
+    }
     public MinMax setDepth(int depth) {
         this.depth = depth;
         killerMoves=new ArrayList[depth+1];
@@ -158,8 +163,6 @@ public class MinMax implements MoveProducer {
                 bestBoard=bmax;
                 //deduceMoves(board, bmax, playerIndex, moves);
                 lastMove=deduceMoves2(board, bmax, playerIndex);
-                if(!Experiment.isLegalMove(board,lastMove,playerIndex))
-                    System.err.println("Mierda");
             }
 
             //System.out.println(Arrays.toString(moves));
@@ -239,16 +242,6 @@ public class MinMax implements MoveProducer {
             }
         }
 
-        for(int[][] b: finalB)
-        {
-            if(Experiment.isLegalMove(board,deduceMoves2(board,b,player),player))
-            {
-                GridCoordinate[] m=deduceMoves2(board, b, player);
-                System.err.println(getBoardAsString(board));
-                System.err.println(getBoardAsString(b));
-                System.err.println(m[0]+""+m[1]+""+m[2]);
-            }
-        }
         return finalB;
     }
 
