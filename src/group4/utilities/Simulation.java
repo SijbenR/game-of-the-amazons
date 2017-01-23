@@ -55,6 +55,8 @@ public class Simulation {
 
 
 
+        double avgScorePl1 = 0;
+        double avgScorePl2 = 0;
 
         Player player1 = new Player(true);
         Player player2 = new Player(false);
@@ -64,12 +66,12 @@ public class Simulation {
         ArrayList<GridCoordinate> posDest;
         GridCoordinate queen;
 
-
-        int limit = 20;
+        int threes = 0;
+        int limit = 50;
         //First round of Matches Bobby vs Sean
         int count = 0;
         for (int k = 0; k < limit; k++) {
-            player1 = new Napoleon(true);
+            player1 = new James(true);
             player2 = new Maximus(false, 2);
             game = new LogicBoard(player1, player2);
             //game.setBoard(Board);
@@ -77,20 +79,26 @@ public class Simulation {
 
             int scorePl1 = gameScore(game.getBoard(), 1);
             int scorePl2 = gameScore(game.getBoard(), 2);
+
+            avgScorePl1 += scorePl1;
+            avgScorePl2 += scorePl2;
+
+            threes = 0;
+            for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                    if (game.getBoard()[i][j] == 3) {
+                        threes++;
+                    }
+                }
+            }
+
             if (scorePl1 > scorePl2) {
                 System.out.println( player1 + " wins with = " + scorePl1);
                 count++;
             } else if (scorePl2 > scorePl1) {
                 System.out.println( player2 + " wins with = " + scorePl2);
             } else if (scorePl2 == scorePl1) {
-                int threes = 0;
-                for (int i = 0; i < 10; i++) {
-                    for (int j = 0; j < 10; j++) {
-                        if (game.getBoard()[i][j] == 3) {
-                            threes++;
-                        }
-                    }
-                }
+
                 if (threes % 2 == 0) {
                     System.out.println( player2 + " wins after moving last");
                 } else {
@@ -98,11 +106,11 @@ public class Simulation {
                     count++;
                 }
             }
-            printBoard(game.getBoard());
-
+            //printBoard(game.getBoard());
+            System.out.println("In " + threes + " turns\n");
         }
 
-        System.out.println(player1 + " won = " + count + " times");
-        System.out.println(player2 + " won = " + (limit - count) + " times");
+        System.out.println(player1 + " won = " + count + " times\tWith average Score of: " + (avgScorePl1/limit));
+        System.out.println(player2 + " won = " + (limit - count) + " times	With average Score of: " + avgScorePl2/limit);
     }
 }

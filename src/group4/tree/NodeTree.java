@@ -103,8 +103,6 @@ public class NodeTree {
             limit = nodePointer.countPosOptions(queenVal);
             if (limit > branch) {
                 limit = branch;
-            } else {
-
             }
 
            // System.out.println("Limit for: " + queenVal + "\t is = " + limit);
