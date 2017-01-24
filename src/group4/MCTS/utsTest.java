@@ -39,11 +39,11 @@ public static void main(String[] args0) {
         // System.out.println("score for the start is= " + boardOperations.evaluate(Board.getBoard(),1));
                */
 
-        mctTree tree = new mctTree(Board,2,false,100);
+        //utcTree tree = new utcTree(Board, 1, false, 1000, false, true);
         //calcPosMoves(Board, new GridCoordinate(4,2), false);
         //printBoard(Board);
 
-        tree.buildTree();
+        //tree.utcbuild(tree.root);
 
         }
 

@@ -22,7 +22,7 @@ public class mctTree extends NodeTree {
 
     public void buildTree() {
         addChildren(root);
-        nodePointer.evaluateChildren(root);
+        //nodePointer.evaluateChildrenBySelect(root);
         bubbleSortNodesByScore(root.getChildren());
 
         Node best = root.getChildren().get(0);

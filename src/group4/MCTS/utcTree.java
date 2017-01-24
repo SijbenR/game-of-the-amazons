@@ -19,7 +19,9 @@ import static group4.utilities.BoardOperations.*;
  * Created by I6106804 on 18-1-2017.
  */
 public class utcTree extends NodeTree{
-    boolean useTer = true;
+
+    boolean useTer = false;
+    boolean useSelect= false;
 
     ArrayList<Node> ListOfNodes = new ArrayList<>();
     double TimeToRun;
@@ -35,6 +37,19 @@ public class utcTree extends NodeTree{
         this.TimeToRun = timeToRun;
         this.useTer = useTer;
     }
+
+    public utcTree(int[][] Board, int ownVal, boolean arrowMove, double timeToRun, boolean useTer, boolean useSelect, double newC) {
+
+        super(Board, ownVal, arrowMove, 15, 22);
+        this.TimeToRun = timeToRun;
+
+        this.useTer = useTer;
+
+        this.useSelect = useSelect;
+        this.c = newC;
+    }
+
+
 
     public GridCoordinate[] Movethebest(){
         //  System.out.println("entered 1");
@@ -104,11 +119,14 @@ public class utcTree extends NodeTree{
         addChildren(root);
         // System.out.println(root.getChildren().size());
 
-        if(!useTer) {
+        if(!useTer && !useSelect) {
             super.nodePointer.evaluateChildren(root);
         }
-        else    {
+        else if  (useTer && !useSelect)  {
             super.nodePointer.evaluateChildrenByTer(root);
+        }
+        else    {
+            super.nodePointer.evaluateChildren(root);
         }
 
         allNodes(root);
@@ -152,14 +170,30 @@ public class utcTree extends NodeTree{
         }
 
         //System.out.println("EXPANDING: " + ListOfNodes.get(0));
-        addChildren(ListOfNodes.get(0));
 
 
-        if(!useTer) {
+
+        if(!useTer && !useSelect) {
+            addChildren(ListOfNodes.get(0));
             super.nodePointer.evaluateChildren(ListOfNodes.get(0));
         }
-        else    {
+        else if(!useSelect)   {
+            addChildren(ListOfNodes.get(0));
             super.nodePointer.evaluateChildrenByTer(ListOfNodes.get(0));
+        }
+        else    {
+
+
+            for(int i = 0; i < 10; i++) {
+                Node newNode = nodePointer.generateRanMove(ListOfNodes.get(0));
+                ListOfNodes.get(0).addChild(newNode);
+            }
+
+            for(int i = ListOfNodes.get(0).getChildren().size() - 1; i >= (ListOfNodes.get(0).getChildren().size() - 10); i--) {
+                simulate(ListOfNodes.get(0).getChildren().get(i));
+            }
+
+
         }
 
         int i = 0;
@@ -170,6 +204,43 @@ public class utcTree extends NodeTree{
 
         backpropagate(ListOfNodes.get(i).getChildren().get(0));
         bubbleSortNodesByValue(ListOfNodes);
+    }
+
+    public void simulate(Node parent)  {
+        //We assume nodepointer is at the right position
+
+        Node newMove, newParent;
+        newParent =  parent;
+        Stack<Node> simMoves = new Stack<Node>();
+
+        //Adding new Moves until the game is over
+        while(!gameOverCheck(super.nodePointer.getBoard())) {
+            System.out.println("Simulation loop 1");
+            System.out.println("For: " + newParent);
+            super.nodePointer.performMove(newParent);
+            newMove = super.nodePointer.generateRanMove(newParent);
+            newParent.addChild(newMove);
+            //nodePointer.printBoard();
+            simMoves.push(newMove);
+            newParent = newMove;
+        }
+
+        //Adding the win /Loss to the parent
+        if(gameScore(super.nodePointer.getBoard(), ownVal) > gameScore(super.nodePointer.getBoard(), 3 - ownVal))    {
+            parent.addWin();
+        }
+        else    {
+            parent.addLoss();
+        }
+
+        //Moving the nodepointer back
+        while(simMoves.size() != 0) {
+            newMove = simMoves.pop();
+            super.nodePointer.performMove(newMove);
+            System.out.println("Simulation loop 2");
+        }
+
+
     }
 
 
@@ -187,7 +258,6 @@ public class utcTree extends NodeTree{
         if(parent.getChildren().size()>0){
             for (int i=0; i<parent.getChildren().size();i++){
                 countnodes(parent.getChildren().get(i), ++t);
-
             }
         }
         return t;
@@ -202,11 +272,27 @@ public class utcTree extends NodeTree{
 
 //todo need a second score saved in the nodes for the selection score
 //todo once a second score is saved then we can use that rather than evaluating the board again
-        for (int i=0; i<parent.getChildren().size();i++){
-            if(parent.getChildren().get(i).ownMove){
-                parent.getChildren().get(i).setValue(selection(parent.getChildren().get(i).getScore(), parent.getChildren().size(), countnodes(parent,1)));
-            }else{
-                parent.getChildren().get(i).setValue(selection(parent.getChildren().get(i).getScore(), parent.getChildren().size(), countnodes(parent,1)));
+        for (int i=0; i<parent.getChildren().size();i++) {
+
+
+            if (useSelect) {
+                int wins = parent.getChildren().get(i).getWins();
+                int losses = parent.getChildren().get(i).getLosses();
+                if ((wins + losses) != 0) {
+                    parent.getChildren().get(i).setScore(wins / (wins + losses));
+                } else {
+                    simulate(parent.getChildren().get(i));
+                    wins = parent.getChildren().get(i).getWins();
+                    losses = parent.getChildren().get(i).getLosses();
+                    parent.getChildren().get(i).setScore(wins / (wins + losses));
+                }
+            } else {
+                if (parent.getChildren().get(i).ownMove) {
+                    parent.getChildren().get(i).setValue(selection(parent.getChildren().get(i).getScore(), parent.getChildren().size(), countnodes(parent, 1)));
+                } else {
+                    parent.getChildren().get(i).setValue(selection(parent.getChildren().get(i).getScore(), parent.getChildren().size(), countnodes(parent, 1)));
+                }
+
 
             }
         }
@@ -214,9 +300,27 @@ public class utcTree extends NodeTree{
 
     public void backpropagate(Node leaf){
         if(leaf.getParent()!=null){
-            leaf.getParent().setScore(avgScoreChild(leaf.getParent()));
+            //leaf.getParent().setScore(avgScoreChild(leaf.getParent()));
+
+            if(useSelect)   {
+                int wins = 0;
+                int losses = 0;
+
+                for(Node child : leaf.getParent().getChildren()) {
+                    wins += child.getWins();
+                    losses += child.getLosses();
+
+                }
+                leaf.getParent().setWins(wins);
+                leaf.getParent().setLosses(losses);
+            }
+            else    {
+                leaf.getParent().setScore(avgScoreChild(leaf.getParent()));
+            }
+
             backpropagate(leaf.getParent());
         }
+
 
 
     }

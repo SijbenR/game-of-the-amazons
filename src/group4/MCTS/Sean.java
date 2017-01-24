@@ -20,7 +20,7 @@ public class Sean extends Player implements MoveProducer{
     double timeToRun;
     boolean useTer = true;
 
-    double c = 2;
+    double c = Math.sqrt(2);
 
     public Sean(boolean isFirst, double timeToRun, boolean useTer) {
         super(isFirst,true);

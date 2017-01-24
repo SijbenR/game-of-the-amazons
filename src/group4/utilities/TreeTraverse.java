@@ -279,6 +279,8 @@ public class TreeTraverse {
         else if(parent.ownMove && !parent.arrowMove)    {
             //Because the previous queen destination is where WE are going to shoot an arrow from
             //STARTCASE 2
+            //System.out.println("For: " + parent);
+            //printBoard();
 
             returner[0] = parent.getDest();
 
@@ -555,4 +557,13 @@ public class TreeTraverse {
 
 
 
+    protected double c = Math.sqrt(2);
+
+    public double selection(double eval, double n, double t){
+        double score;
+
+        score= eval + c* Math.sqrt(Math.log(t)/n);
+
+        return score;
+    }
 }

@@ -149,6 +149,13 @@ public class Node {
         this.numOfWins++;
     }
 
+    public void setWins(int val)    {
+        this.numOfWins = val;
+    }
+
+    public void setLosses(int val)    {
+        this.numOfLosses = val;
+    }
     public void addWins(double amount)    {
         this.numOfWins+= amount;
     }
@@ -162,11 +169,11 @@ public class Node {
         this.numOfWins+= amount;
     }
 
-    public double getWins() {
+    public int getWins() {
         return numOfWins;
     }
 
-    public double getLosses() {
+    public int getLosses() {
         return numOfLosses;
     }
 
