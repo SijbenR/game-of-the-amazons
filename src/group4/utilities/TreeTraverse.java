@@ -54,25 +54,15 @@ public class TreeTraverse {
                 temp = Move.getParent();
                 path.push(temp);
             }
-
-
             //get Nodepointer back to root
             while (currentNode != root) {
                 currentNode = currentNode.getParent();
                 performMove(currentNode);
                 if (currentNode == Move.getParent())
                     break;
-
             }
-
             // now go along the path
-
-
-
-
             //We wanna movbe up
-
-
         }
         */
 
@@ -87,7 +77,6 @@ public class TreeTraverse {
     //TODO Maybe conmtinue here
     /*
     public boolean checkStack(Node check, Stack<>) {
-
     }
     */
 
@@ -145,11 +134,23 @@ public class TreeTraverse {
         return Board[y][x];
     }
 
+    public int[][] getBoard()  {
+        return Board;
+    }
+
+
+    public Node generateMCTRanMove(Node parent)    {
+        //TODO CAREFUL MAYBE TAKE OUT
+        performMove(parent);
+        return generateRanMove(parent);
+    }
+
+    public Node createMCTChild(Node parent)   {
+        return generateMCTRanMove(parent);
+    }
+
+
     public Node generateRanMove(Node parent)    {
-
-        if(parent != root)
-            System.out.println("Entered random move for = " + parent);
-
         int val;
 
         //Position 0 => Origin
@@ -174,7 +175,7 @@ public class TreeTraverse {
             //Filter out all queens that can't move anymore
             int count = 0;
             GridCoordinate queen;
-                //System.out.println(queen);
+            //System.out.println(queen);
 
             for(int i = 0; i < queens.size(); i++)  {
                 queen = queens.get(i);
@@ -240,12 +241,10 @@ public class TreeTraverse {
                     int iterations = 0;
                     /*
                     printBoard();
-
                     int pos = 0;
                     for(GridCoordinate tempQ: queens)   {
                         pos += listPosDest(Board, tempQ).size();
                     }
-
                     System.out.println("Possbile: " + pos + " Children already existent: " + parent.getChildren().size());
                     */
                     while (!parent.validAmongChildren(newNode) && iterations < 10000) {
@@ -282,20 +281,16 @@ public class TreeTraverse {
             //STARTCASE 2
 
             returner[0] = parent.getDest();
-            printBoard();
 
             posDest = listPosDest(Board, returner[0]);
-            System.out.println("Possible options = " + posDest.size());
-
             int ran = (int) (posDest.size() * Math.random());
             GridCoordinate tar = posDest.get(ran);
             Node newNode = new Node(parent, returner[0], tar);
 
-            while(!parent.validAmongChildren(newNode) && parent.getChildren().size() < posDest.size())   {
+            while(!parent.validAmongChildren(newNode))   {
                 ran = (int) (posDest.size() * Math.random());
                 tar = posDest.get(ran);
                 newNode = new Node(parent, returner[0], tar);
-
             }
 
             return newNode;
@@ -380,18 +375,16 @@ public class TreeTraverse {
                 //TODO Temp fix here - if possible, try to solve
                 int iterations = 0;
 //todo was using print
-               // printBoard();
+                // printBoard();
 
 //todo was using print
                 /*for(GridCoordinate pos : queens)  {
                   //  System.out.println("Queen: " + pos);
                 }
-
                 int pos = 0;
                 for(GridCoordinate tempQ: queens)   {
                     pos += listPosDest(Board, tempQ).size();
                 }
-
                 System.out.println("Possbile: " + pos + " Children already existent: " + parent.getChildren().size());
 */
 
@@ -486,13 +479,9 @@ public class TreeTraverse {
         return count;
     }
 
-    public int[][] getBoard()  {
-        return Board;
-    }
-
     //For QueenMoves
     public Node createChild(Node parent)   {
-       return generateRanMove(parent);
+        return generateRanMove(parent);
     }
 
     public void printBoard()    {

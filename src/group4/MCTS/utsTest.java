@@ -9,6 +9,9 @@ import group4.tree.NodeTree;
 import group4.ui.GridCoordinate;
 import group4.utilities.BoardOperations;
 
+import static group4.utilities.BoardOperations.calcPosMoves;
+import static group4.utilities.BoardOperations.printBoard;
+
 public class utsTest {
 
 public static void main(String[] args0) {
@@ -36,8 +39,12 @@ public static void main(String[] args0) {
         // System.out.println("score for the start is= " + boardOperations.evaluate(Board.getBoard(),1));
                */
 
-        utcTree tree = new utcTree(Board, 1, false, 10000, true);
-        tree.mctBuild();
+        mctTree tree = new mctTree(Board,2,false,100);
+        //calcPosMoves(Board, new GridCoordinate(4,2), false);
+        //printBoard(Board);
+
+        tree.buildTree();
 
         }
+
 }

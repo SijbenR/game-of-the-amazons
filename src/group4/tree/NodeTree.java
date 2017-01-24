@@ -67,10 +67,6 @@ public class NodeTree {
 
     public void addChildren(Node parent) {
 
-        if(parent != root)  {
-            System.out.println("Entered addchildren for: " + parent);
-        }
-
         if (parent == null) {
             System.out.println("EXCERPTION CAUGHT");
         }
@@ -88,7 +84,7 @@ public class NodeTree {
 
             GridCoordinate origin = parent.getDest();
 
-            limit = nodePointer.countPosOptions(origin) + 1;
+            limit = nodePointer.countPosOptions(origin);
             if (limit > branch) {
                 limit = branch;
             }
@@ -109,7 +105,7 @@ public class NodeTree {
                 limit = branch;
             }
 
-           // System.out.println("Limit for: " + queenVal + "\t is = " + limit);
+            // System.out.println("Limit for: " + queenVal + "\t is = " + limit);
 
 
             //create children
@@ -138,20 +134,11 @@ public class NodeTree {
 
             // We know the origijn from which we are goiung to shoort
             GridCoordinate origin = parent.getDest();
-            if(parent != root) {
-                nodePointer.printBoard();
-                System.out.println("Origin: " + origin);
-                System.out.println("Possible options: " + nodePointer.countPosOptions(origin));
-            }
-            //Because you include where you just moved the queen
-            limit = nodePointer.countPosOptions(origin) + 1;
+
+            limit = nodePointer.countPosOptions(origin);
             //System.out.println("Limit for: ArrowMove" + "\t is = " + limit);
             if (limit > branch) {
                 limit = branch;
-            }
-
-            if(parent != root)  {
-                    System.out.println("Amount of children: " + parent.getChildren().size() + "Limit = " + limit);
             }
             while (parent.getChildren().size() < limit) {
                 childNode = nodePointer.createChild(parent);
@@ -163,7 +150,7 @@ public class NodeTree {
 
     public void partBuild(Node newNode) {
 
-      //  System.out.println("NewNode = " + newNode);
+        //  System.out.println("NewNode = " + newNode);
         //nodePointer.printBoard();
 
         // System.out.println(++numberofnodesexplored);
@@ -175,7 +162,7 @@ public class NodeTree {
                 nodePointer.evaluateChildren(newNode);
                 bubbleSortNodesByScore(newNode.getChildren());
 
-               // System.out.println("Size: " + newNode.getChildren().size());
+                // System.out.println("Size: " + newNode.getChildren().size());
                 for (int i = 0; i < 5 && i < newNode.getChildren().size(); i++) {
                     nodePointer.performMove(newNode.getChildren().get(i));
                     //System.out.println(newNode.getChildren().get(0));
@@ -200,9 +187,9 @@ public class NodeTree {
 
             }
         }
-            value = value / parent.getChildren().size() + 10;
-            return value;
-        }
+        value = value / parent.getChildren().size() + 10;
+        return value;
+    }
 
     public Node bestchoice(){
         partBuild(root);
@@ -222,11 +209,11 @@ public class NodeTree {
         //nodePointer.printBoard();
 
         //System.out.println("QueenMove: " + best);
-     //   nodePointer.performMove(best);
-       // nodePointer.printBoard();
+        //   nodePointer.performMove(best);
+        // nodePointer.printBoard();
 
         //System.out.println("Best Arrow: " + bestArrow);
-       // nodePointer.performMove(best.getChildren().get(0));
+        // nodePointer.performMove(best.getChildren().get(0));
         //nodePointer.printBoard();
         GridCoordinate[] move = new GridCoordinate[3];
         move[0] = best.origin;
@@ -246,7 +233,7 @@ public class NodeTree {
         addChildren(root);
 
         ArrayList<Node> children = root.getChildren();
-       // System.out.println("Size: " + children.size());
+        // System.out.println("Size: " + children.size());
         nodePointer.evaluateChildren(root);
         //nodePointer.printBoard();
 
@@ -300,6 +287,102 @@ public class NodeTree {
 
     public void expand(Node parent)    {
 
+    }
+
+    public void addMCTChildren(Node parent) {
+
+        if(parent != root)  {
+            System.out.println("Entered addchildren for: " + parent);
+        }
+
+        if (parent == null) {
+            System.out.println("EXCERPTION CAUGHT");
+        }
+        //We know the current Tree from tree traverse, so tahts where we need to ask for the possible moves for the parent Node´s possible moves
+        int queens;
+
+        //First check if the number of Possible moves is lesser than the Branch, because then we need to adjust the limit of Child
+        // -> But for that we first need to know whether WE are supposed to move OR the OPPONENT
+        int queenVal;
+        int limit;
+        Node childNode;
+
+        //System.out.println("OwnVal: " + ownVal);
+        if (!parent.ownMove && !parent.arrowMove) {  //Opponent is supposed to shoot an Arrow
+
+            GridCoordinate origin = parent.getDest();
+
+            limit = nodePointer.countPosOptions(origin) + 1;
+            if (limit > branch) {
+                limit = branch;
+            }
+
+            //System.out.println("Limit for: ArrowMove" + "\t is = " + limit);
+
+            while (parent.getChildren().size() < limit) {
+                childNode = nodePointer.createChild(parent);
+                parent.addChild(childNode);
+            }
+        } else if (!parent.ownMove && parent.arrowMove) {      //This means WE are supposed to move a Queen
+
+            //Check limit of options
+
+            queenVal = ownVal;
+            limit = nodePointer.countPosOptions(queenVal);
+            if (limit > branch) {
+                limit = branch;
+            }
+
+            // System.out.println("Limit for: " + queenVal + "\t is = " + limit);
+
+
+            //create children
+            while (parent.getChildren().size() < limit) {
+                childNode = nodePointer.createChild(parent);
+                parent.addChild(childNode);
+            }
+        } else if (parent.ownMove && parent.arrowMove) {  //This means the opponent is supposed to move
+
+            //We set the value we are going to look for the Queens of the opponent
+            queenVal = parent.getOpVal();
+
+            limit = nodePointer.countPosOptions(queenVal);
+
+            //in case we have more options than we need
+            if (limit > branch) {
+                limit = branch;
+            }
+
+            //System.out.println("Limit for: " + queenVal + "\t is = " + limit);
+            while (parent.getChildren().size() < limit) {
+                childNode = nodePointer.createChild(parent);
+                parent.addChild(childNode);
+            }
+        } else if (parent.ownMove && !parent.arrowMove) {  //We are supposed dto shoot an arrow now
+
+            // We know the origijn from which we are goiung to shoort
+            GridCoordinate origin = parent.getDest();
+            if(parent != root) {
+                nodePointer.printBoard();
+                System.out.println("Origin: " + origin);
+                System.out.println("Possible options: " + nodePointer.countPosOptions(origin));
+            }
+            //Because you include where you just moved the queen
+            limit = nodePointer.countPosOptions(origin) + 1;
+            //System.out.println("Limit for: ArrowMove" + "\t is = " + limit);
+            if (limit > branch) {
+                limit = branch;
+            }
+
+            if(parent != root)  {
+                System.out.println("Amount of children: " + parent.getChildren().size() + "Limit = " + limit);
+            }
+            while (parent.getChildren().size() < limit) {
+                childNode = nodePointer.createChild(parent);
+                parent.addChild(childNode);
+            }
+
+        }
     }
 
 }

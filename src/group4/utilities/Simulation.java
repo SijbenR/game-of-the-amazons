@@ -55,6 +55,7 @@ public class Simulation {
 
 
 
+
         double avgScorePl1 = 0;
         double avgScorePl2 = 0;
 

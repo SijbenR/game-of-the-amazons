@@ -988,10 +988,10 @@ public class LogicBoard {
         int scorePl2 = gameScore(Grid, 2);
 
         if(scorePl1 > scorePl2){
-            System.out.println("player 1 wins");
+            System.out.println("player 1 wins - Score: " + scorePl1);
         }
         else   {
-            System.out.println("player 2 wins");
+            System.out.println("player 2 wins - Score: " + scorePl2);
         }
     }
 

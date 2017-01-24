@@ -854,7 +854,7 @@ public class BoardOperations {
 
         }
 
-        printBoard(Array);
+        //printBoard(Array);
     }
 
 
@@ -1004,8 +1004,8 @@ public class BoardOperations {
         ArrayList<GridCoordinate> posMoves = new ArrayList<GridCoordinate>();
         int[][] tempGrid = getCopy(Array);
         calcPosMoves(tempGrid, start, false);
-        System.out.println("After calculating moves");
-        printBoard(tempGrid);
+        //System.out.println("After calculating moves");
+        //printBoard(tempGrid);
         GridCoordinate pos;
         for(int k = 1; k < 11; k++) {
             for(int l = 1; l < 11; l++) {

@@ -104,7 +104,7 @@ public class Node {
             System.out.println("Exception caught");
         }
 
-        System.out.println("Adding child: " + Child);
+        //System.out.println("Adding child: " + Child);
         Children.add(Child);
 
     }
@@ -154,6 +154,7 @@ public class Node {
     }
 
     public void addLoss()    {
+        System.out.println("Loss added");
         this.numOfLosses++;
     }
 

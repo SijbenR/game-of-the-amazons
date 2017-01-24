@@ -39,7 +39,7 @@ public class Sean extends Player implements MoveProducer{
         if(fuckinggreat == null) {
             this.Grid = getCopy(Board);
             move = new GridCoordinate[3];
-            tree = new utcTree(Grid, super.getVal(), false, timeToRun, useTer, c);
+            tree = new utcTree(Grid, super.getVal(), false, timeToRun, useTer);
 
             move = tree.Movethebest();
 
