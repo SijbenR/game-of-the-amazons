@@ -65,6 +65,7 @@ public class NodeTree {
 
     }
 
+
     public void addChildren(Node parent) {
 
         if (parent == null) {

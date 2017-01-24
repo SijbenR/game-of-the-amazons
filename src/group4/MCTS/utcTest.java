@@ -12,7 +12,7 @@ import group4.utilities.BoardOperations;
 import static group4.utilities.BoardOperations.calcPosMoves;
 import static group4.utilities.BoardOperations.printBoard;
 
-public class utsTest {
+public class utcTest {
 
 public static void main(String[] args0) {
 

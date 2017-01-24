@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import static group4.utilities.BoardOperations.*;
+import static group4.utilities.BoardOperations.listPosDest;
 
 /**
  * Created by Robins on 06.01.2017.
@@ -284,15 +285,23 @@ public class TreeTraverse {
 
             returner[0] = parent.getDest();
 
-            posDest = listPosDest(Board, returner[0]);
+            //ToDO maybe take out
+            int[][] tempBoard = getCopy(getBoard());
+            setEmpty(tempBoard, parent.getOrigin());
+
+
+            posDest = listPosDest(tempBoard, returner[0]);
             int ran = (int) (posDest.size() * Math.random());
             GridCoordinate tar = posDest.get(ran);
             Node newNode = new Node(parent, returner[0], tar);
 
-            while(!parent.validAmongChildren(newNode))   {
+            //System.out.println(posDest.size())
+
+            while(!parent.validAmongChildren(newNode) && posDest.size() > 1 && posDest.size() > parent.getChildren().size())   {
                 ran = (int) (posDest.size() * Math.random());
                 tar = posDest.get(ran);
                 newNode = new Node(parent, returner[0], tar);
+                //System.out.println("Stuck");
             }
 
             return newNode;
@@ -424,12 +433,16 @@ public class TreeTraverse {
 
             returner[0] = parent.getDest();
 
-            posDest = listPosDest(Board, returner[0]);
+            //ToDO maybe take out
+            int[][] tempBoard = getCopy(getBoard());
+            setEmpty(tempBoard, parent.getOrigin());
+
+            posDest = listPosDest(tempBoard, returner[0]);
             int ran = (int) (posDest.size() * Math.random());
             GridCoordinate tar = posDest.get(ran);
             Node newNode = new Node(parent, returner[0], tar);
 
-            while(!parent.validAmongChildren(newNode))   {
+            while(!parent.validAmongChildren(newNode) && posDest.size() > 1 && posDest.size() > parent.getChildren().size())   {
                 ran = (int) (posDest.size() * Math.random());
                 tar = posDest.get(ran);
                 newNode = new Node(parent, returner[0], tar);

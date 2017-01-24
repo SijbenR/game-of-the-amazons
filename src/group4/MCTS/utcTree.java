@@ -206,6 +206,10 @@ public class utcTree extends NodeTree{
         bubbleSortNodesByValue(ListOfNodes);
     }
 
+
+
+
+
     public void simulate(Node parent)  {
         //We assume nodepointer is at the right position
 
@@ -218,6 +222,8 @@ public class utcTree extends NodeTree{
             System.out.println("Simulation loop 1");
             System.out.println("For: " + newParent);
             super.nodePointer.performMove(newParent);
+            super.nodePointer.printBoard();
+
             newMove = super.nodePointer.generateRanMove(newParent);
             newParent.addChild(newMove);
             //nodePointer.printBoard();
@@ -233,12 +239,21 @@ public class utcTree extends NodeTree{
             parent.addLoss();
         }
 
+
+        System.out.println("Values Saved:\nWins = " + parent.getWins() + "\tLosses = " + parent.getLosses());
+
+        System.out.println("Returning to root:");
+        super.nodePointer.retToRoot();
+        super.nodePointer.printBoard();
+
+        /*
         //Moving the nodepointer back
         while(simMoves.size() != 0) {
             newMove = simMoves.pop();
             super.nodePointer.performMove(newMove);
             System.out.println("Simulation loop 2");
         }
+        */
 
 
     }
@@ -504,4 +519,64 @@ public class utcTree extends NodeTree{
             }
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    public void testMethods()   {
+
+        //add children
+        addChildren(root);
+
+        //evaluate the first layer with the normal eval and sort
+        nodePointer.evaluateChildren(root);
+
+        //Look at first one and move the nodepointer there
+        ArrayList<Node> firstLayer = root.getChildren();
+        //System.out.println("First Node: " + firstLayer.get(0));
+        nodePointer.performMove(firstLayer.get(0));
+
+        //add Limited amount of children and
+        Node toExpand = firstLayer.get(0);
+        super.nodePointer.performMove(toExpand);
+
+        int limit = 10;
+        int i = 0;
+        while(i < limit)    {
+            Node newNode = super.nodePointer.generateRanMove(toExpand);
+            //System.out.println("Reached, adding " + newNode);
+            toExpand.addChild(newNode);
+            i++;
+        }
+
+        //TODO SCORE HERE?
+
+        //perform a Simulation on one
+        int pos = 0;
+        //System.out.println("For Node: " + toExpand.getChildren().get(pos));
+        super.nodePointer.performMove(toExpand.getChildren().get(pos));
+
+        simulate(toExpand.getChildren().get(pos));
+
+        //TODO Backprop HERE?
+
+
+    }
+
+
+
+
+
+
+
+
+
 }

@@ -104,7 +104,8 @@ public class Node {
             System.out.println("Exception caught");
         }
 
-        //System.out.println("Adding child: " + Child);
+        //if(Child.getParent().getParent() != null)
+            //System.out.println("Adding child: " + Child + " For Parent = " + this);
         Children.add(Child);
 
     }
@@ -184,6 +185,8 @@ public class Node {
     public void setChildren(ArrayList<Node> newChildren) {
         Collections.copy(this.Children, newChildren);
     }
+
+    public void deleteChildren()    {Children = new ArrayList<>();}
 
 
     public void setArrowMove(boolean arrowMove) {
