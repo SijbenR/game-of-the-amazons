@@ -21,7 +21,7 @@ import static group4.utilities.BoardOperations.*;
 public class utcTree extends NodeTree{
 
     boolean useTer = false;
-    boolean useSelect= false;
+    boolean useSelect= true;
 
     ArrayList<Node> ListOfNodes = new ArrayList<>();
     double TimeToRun;
@@ -217,19 +217,28 @@ public class utcTree extends NodeTree{
         newParent =  parent;
         Stack<Node> simMoves = new Stack<Node>();
 
-        //Adding new Moves until the game is over
-        while(!gameOverCheck(super.nodePointer.getBoard())) {
-            System.out.println("Simulation loop 1");
-            System.out.println("For: " + newParent);
-            super.nodePointer.performMove(newParent);
-            super.nodePointer.printBoard();
+        int breaker = 0;
 
+        //Adding new Moves until the game is over
+        while(!gameOverCheck(super.nodePointer.getBoard()) && mobCheck(super.nodePointer.getBoard())) {
+            //System.out.println("Simulation loop 1");
+            //System.out.println("For: " + newParent);
+            super.nodePointer.performMove(newParent);
+            //super.nodePointer.printBoard();
+            System.out.println("New Parent = " + newParent);
             newMove = super.nodePointer.generateRanMove(newParent);
             newParent.addChild(newMove);
-            //nodePointer.printBoard();
+
+            if(newMove.getNodeDepth() > 33) {
+                System.out.println("Simulation loop");
+                nodePointer.printBoard();
+            }
             simMoves.push(newMove);
             newParent = newMove;
+            breaker++;
         }
+
+        System.out.println("Got out");
 
         //Adding the win /Loss to the parent
         if(gameScore(super.nodePointer.getBoard(), ownVal) > gameScore(super.nodePointer.getBoard(), 3 - ownVal))    {
@@ -242,9 +251,9 @@ public class utcTree extends NodeTree{
 
         System.out.println("Values Saved:\nWins = " + parent.getWins() + "\tLosses = " + parent.getLosses());
 
-        System.out.println("Returning to root:");
-        super.nodePointer.retToRoot();
-        super.nodePointer.printBoard();
+        //System.out.println("Returning to root:");
+        //super.nodePointer.retToRoot();
+        //super.nodePointer.printBoard();
 
         /*
         //Moving the nodepointer back
@@ -324,8 +333,10 @@ public class utcTree extends NodeTree{
                 for(Node child : leaf.getParent().getChildren()) {
                     wins += child.getWins();
                     losses += child.getLosses();
-
                 }
+
+                //System.out.println("BackProp: Wins = " + wins + " Losses = " + losses);
+
                 leaf.getParent().setWins(wins);
                 leaf.getParent().setLosses(losses);
             }
@@ -531,16 +542,94 @@ public class utcTree extends NodeTree{
 
 
 
-    public void testMethods()   {
+    public GridCoordinate[] testMethods()   {
+
+        super.branch = 10;
 
         //add children
         addChildren(root);
 
         //evaluate the first layer with the normal eval and sort
-        nodePointer.evaluateChildren(root);
+        //nodePointer.evaluateChildren(root);
 
         //Look at first one and move the nodepointer there
-        ArrayList<Node> firstLayer = root.getChildren();
+        //ArrayList<Node> firstLayer = root.getChildren();
+
+
+        //Simulate for ll Children for node
+        for(int k = 0; k < root.getChildren().size(); k++) {
+            //System.out.println("Reached 1");
+            super.nodePointer.performMove(root.getChildren().get(k));
+            //System.out.println("Reached 2");
+            simulate(root.getChildren().get(k));
+            //System.out.println("Reached 3");
+            super.nodePointer.performMove(root.getChildren().get(k));
+        }
+
+        backpropagate(root.getChildren().get(0));
+
+        double startTime = System.currentTimeMillis();
+        double endTime = System.currentTimeMillis();
+        while(endTime - startTime < TimeToRun) {
+            allNodes(root);
+            //System.out.println("Size of AllNodes: " + ListOfNodes.size());
+            bubbleSortNodesByValue(ListOfNodes);
+
+
+            //Expansion
+            Node toExpand = ListOfNodes.get(0);
+            int limit = 10;
+            int i = 0;
+            while(i < limit)    {
+                Node newNode = super.nodePointer.generateRanMove(toExpand);
+                //System.out.println("Reached, adding " + newNode);
+                toExpand.addChild(newNode);
+                i++;
+            }
+
+            //Simulation
+            for(int k = 0; k < toExpand.getChildren().size(); k++) {
+                super.nodePointer.performMove(toExpand.getChildren().get(k));
+                simulate(toExpand.getChildren().get(k));
+                super.nodePointer.performMove(toExpand.getChildren().get(k));
+
+            }
+
+
+            backpropagate(toExpand.getChildren().get(0));
+            endTime = System.currentTimeMillis();
+
+        }
+
+        allNodes(root);
+        bubbleSortNodesByValue(root.getChildren());
+
+        Node bestFirst = root.getChildren().get(0);
+
+        bubbleSortNodesByValue(root.getChildren().get(0).getChildren());
+        Node bestSecond = root.getChildren().get(0).getChildren().get(0);
+
+
+        nodePointer.retToRoot();
+        GridCoordinate[] returnVal = new GridCoordinate[3];
+
+        returnVal[0] = bestFirst.getOrigin();
+        returnVal[1] = bestFirst.getDest();
+        returnVal[2] = bestSecond.getDest();
+
+        return returnVal;
+        /*
+        nodePointer.printBoard();
+
+        System.out.println("First Move: " + bestFirst);
+        nodePointer.performMove(bestFirst);
+        nodePointer.printBoard();
+
+        System.out.println("Best Second: " + bestSecond);
+        nodePointer.performMove(bestSecond);
+        nodePointer.printBoard();
+        */
+        /*
         //System.out.println("First Node: " + firstLayer.get(0));
         nodePointer.performMove(firstLayer.get(0));
 
@@ -562,14 +651,33 @@ public class utcTree extends NodeTree{
         //perform a Simulation on one
         int pos = 0;
         //System.out.println("For Node: " + toExpand.getChildren().get(pos));
-        super.nodePointer.performMove(toExpand.getChildren().get(pos));
+        for(int k = 0; k < toExpand.getChildren().size(); k++) {
+            super.nodePointer.performMove(toExpand.getChildren().get(k));
+            simulate(toExpand.getChildren().get(k));
+            super.nodePointer.performMove(toExpand.getChildren().get(k));
 
-        simulate(toExpand.getChildren().get(pos));
+        }
 
         //TODO Backprop HERE?
 
+        backpropagate(toExpand.getChildren().get(0));
+
+        System.out.println("Node: " + toExpand);
+
+
+
+        System.out.println("Parent Loss = " + toExpand.getLosses() + "\t Win = " + toExpand.getWins() + "\n");
+
+        /*
+        for(int p = 0; p < toExpand.getChildren().size(); p++)    {
+            System.out.println("For Child " + p + " Wins = "  + toExpand.getChildren().get(p).getWins() + "\nLosses = " + toExpand.getChildren().get(p).getLosses());
+        }
+        */
+
 
     }
+
+
 
 
 

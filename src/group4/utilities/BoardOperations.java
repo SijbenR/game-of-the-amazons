@@ -628,6 +628,29 @@ public class BoardOperations {
 
 
 
+    public static boolean mobCheck(int[][] Board)  {
+        boolean pl1Done = false;
+        boolean pl2Done = false;
+
+        ArrayList<GridCoordinate> Quees = posQueens(Board, 1);
+        for(GridCoordinate queen : Quees)   {
+            if(listPosDest(Board, queen).size() > 0)
+                pl1Done = true;
+        }
+
+
+        ArrayList<GridCoordinate> Queess = posQueens(Board, 2);
+        for(GridCoordinate queen : Queess)   {
+            if(listPosDest(Board, queen).size() > 0)
+                pl2Done = true;
+        }
+
+        if(!pl1Done || !pl2Done)
+            return false;
+        else
+            return true;
+    }
+
 
 
 

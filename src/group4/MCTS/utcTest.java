@@ -9,8 +9,7 @@ import group4.tree.NodeTree;
 import group4.ui.GridCoordinate;
 import group4.utilities.BoardOperations;
 
-import static group4.utilities.BoardOperations.calcPosMoves;
-import static group4.utilities.BoardOperations.printBoard;
+import static group4.utilities.BoardOperations.*;
 
 public class utcTest {
 
@@ -18,17 +17,19 @@ public static void main(String[] args0) {
 
         int[][] Board = new int[][]{
 
-                {0, 0, 1, 3, 3, 3, 0, 0, 0, 0},
-                {0, 2, 1, 0, 3, 3, 0, 0, 0, 0},
-                {0, 3, 1, 3, 3, 0, 3, 3, 3, 0},
-                {3, 3, 3, 3, 0, 0, 0, 1, 0, 0},
-                {3, 0, 3, 3, 3, 0, 0, 0, 0, 3},
-                {0, 3, 0, 0, 0, 0, 2, 0, 3, 3},
-                {3, 3, 0, 0, 2, 0, 3, 0, 0, 0},
-                {3, 0, 3, 2, 0, 0, 0, 0, 0, 3},
-                {3, 0, 0, 0, 3, 0, 0, 3, 0, 3},
-                {0, 0, 0, 3, 3, 3, 3, 0, 0, 0}
+                {3, 2, 3, 3, 3, 3, 0, 0, 0, 0},
+                {1, 3, 3, 1, 3, 3, 0, 0, 0, 0},
+                {3, 3, 1, 3, 3, 3, 3, 3, 3, 0},
+                {3, 3, 3, 3, 2, 1, 3, 0, 0, 0},
+                {3, 0, 3, 3, 3, 3, 3, 3, 3, 3},
+                {0, 3, 0, 2, 3, 3, 3, 0, 3, 3},
+                {3, 3, 0, 3, 3, 0, 3, 2, 3, 0},
+                {3, 0, 3, 0, 0, 0, 0, 0, 0, 3},
+                {3, 0, 0, 0, 3, 3, 0, 3, 0, 3},
+                {0, 0, 3, 3, 3, 3, 3, 0, 0, 0}
         };
+
+        System.out.println("GameOverCheck = " + mobCheck(Board));
         /*
         Player player1 = new Player(true);
         Player player2 = new Player(false);

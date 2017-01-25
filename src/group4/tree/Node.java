@@ -162,7 +162,7 @@ public class Node {
     }
 
     public void addLoss()    {
-        System.out.println("Loss added");
+        //System.out.println("Loss added");
         this.numOfLosses++;
     }
 

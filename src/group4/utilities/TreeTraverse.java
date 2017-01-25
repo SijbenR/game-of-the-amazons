@@ -44,6 +44,37 @@ public class TreeTraverse {
     public void performMove(Node Move)   {
 
 
+        //System.out.println("For Node: " + Move + "\nCurrent = " + currentNode);
+        //printBoard();
+
+        if(Move.getParent() != currentNode && Move != currentNode) {
+
+            Node temp = Move;
+            Stack<Node> path = new Stack<>();
+
+
+            while(temp.getParent() != null) {
+                //System.out.println("TT loop check");
+                path.push(temp);
+                temp = temp.getParent();
+            }
+
+            retToRoot();
+
+            while(path.size() != 0) {
+
+                Node tNode = path.pop();
+
+                GridCoordinate origin = tNode.getOrigin();
+                GridCoordinate dest = tNode.getDest();
+                boolean arrowMove = tNode.arrowMove;
+                performMove(origin, dest, arrowMove);
+            }
+
+
+
+        }
+
 
         /*
         //First make sure that you are at the correct parent
@@ -67,7 +98,12 @@ public class TreeTraverse {
         }
         */
 
-
+        if(currentNode == Move) {
+            currentNode = Move.getParent();
+        }
+        else {
+            currentNode = Move;
+        }
         GridCoordinate origin = Move.getOrigin();
         GridCoordinate dest = Move.getDest();
         boolean arrowMove = Move.arrowMove;
@@ -179,6 +215,7 @@ public class TreeTraverse {
             //System.out.println(queen);
 
             for(int i = 0; i < queens.size(); i++)  {
+                System.out.println("Reached 0");
                 queen = queens.get(i);
                 posDest = listPosDest(Board, queen);
                 count = posDest.size();
@@ -201,11 +238,14 @@ public class TreeTraverse {
                     }
 
                 }
-                //System.out.println("Not getting out 1");
+                //
 
             }
-
+            System.out.println("Reached 1");
             if(queens.size() != 0)  {
+
+                System.out.println("More than one queen");
+                printBoard();
 
                 //randomly choose queen
                 int ran = (int) (queens.size() * Math.random());
@@ -218,6 +258,8 @@ public class TreeTraverse {
                 //randomly choose destination
                 posDest = listPosDest(Board, origin);
                 while(posDest.size() == 0)  {
+                    //System.out.println("Reached 3");
+
                     ran = (int) (queens.size() * Math.random());
                     origin = queens.get(ran);
                     posDest = listPosDest(Board, origin);
@@ -233,6 +275,8 @@ public class TreeTraverse {
 
 
                 if(parent.getChildren().size() > 0) {
+                    System.out.println("Reached 4");
+
                     //parent.getChildren().get(0).printNode();
                     //System.out.println("Size: " + parent.getChildren().size());
 
@@ -248,8 +292,8 @@ public class TreeTraverse {
                     }
                     System.out.println("Possbile: " + pos + " Children already existent: " + parent.getChildren().size());
                     */
-                    while (!parent.validAmongChildren(newNode) && iterations < 10000) {
-                        //System.out.println("NOT VALID = " + newNode);
+                    while (!parent.validAmongChildren(newNode) && posDest.size() > 1 && posDest.size() > parent.getChildren().size()) {
+                        System.out.println("NOT VALID = " + newNode);
 
                         ran = (int) (queens.size() * Math.random());
                         origin = queens.get(ran);
@@ -258,6 +302,7 @@ public class TreeTraverse {
                         ran = (int) (posDest.size() * Math.random());
 
                         while(posDest.size()==0){
+                            System.out.println("NOT VALID  2");
                             ran = (int) (queens.size() * Math.random());
                             origin = queens.get(ran);
 

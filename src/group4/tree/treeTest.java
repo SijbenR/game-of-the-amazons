@@ -42,7 +42,12 @@ public class treeTest {
                 {0, 0, 0, 3, 3, 3, 3, 0, 0, 0}
         };
 
-        utcTree tree = new utcTree(Board, 1, false, 1000, true);
+        Player pl1 = new Player(true);
+        Player pl2 = new Player(false);
+
+        LogicBoard Lboard = new LogicBoard(pl1, pl2);
+
+        utcTree tree = new utcTree(Lboard.getBoard(), 1, false, 2000, false, true, 1.6);
 
         //tree.addChildren(tree.root);
 

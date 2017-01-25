@@ -12,11 +12,14 @@ import static group4.utilities.BoardOperations.getCopy;
  * Created by jonty on 21/01/2017.
  */
 public class Sean extends Player implements MoveProducer{
-    NodeTree tree;
+    utcTree tree;
     int[][] Grid;
     GridCoordinate[] move;
     GridCoordinate fuckinggreat;
     GridCoordinate[] queenMove = new GridCoordinate[2];
+
+    boolean alt;
+
     double timeToRun;
     boolean useTer = true;
 
@@ -26,6 +29,7 @@ public class Sean extends Player implements MoveProducer{
         super(isFirst,true);
         this.timeToRun=timeToRun;
         this.useTer = useTer;
+        alt = false;
     }
 
     public Sean(boolean isFirst, double timeToRun, boolean useTer, double c) {
@@ -33,15 +37,23 @@ public class Sean extends Player implements MoveProducer{
         this.timeToRun=timeToRun;
         this.useTer = useTer;
         this.c = c;
+        alt = true;
     }
 
     public void giveInput(int[][] Board)	{
         if(fuckinggreat == null) {
             this.Grid = getCopy(Board);
             move = new GridCoordinate[3];
-            tree = new utcTree(Grid, super.getVal(), false, timeToRun, useTer);
 
-            move = tree.Movethebest();
+            if(!alt) {
+                tree = new utcTree(Grid, super.getVal(), false, timeToRun, useTer);
+                move = tree.Movethebest();
+            }
+            else    {
+                tree = new utcTree(Grid, super.getVal(), false, timeToRun, false, true, c);
+                move = tree.testMethods();
+            }
+
 
             queenMove[0] = move[0];
             queenMove[1] = move[1];
@@ -56,9 +68,15 @@ public class Sean extends Player implements MoveProducer{
         if(fuckinggreat == null) {
             this.Grid = getCopy(Board);
             move = new GridCoordinate[3];
-            tree = new utcTree(Grid, super.getVal(), false, timeToRun, useTer);
 
-            move = tree.Movethebest();
+            if(!alt) {
+                tree = new utcTree(Grid, super.getVal(), false, timeToRun, useTer);
+                move = tree.Movethebest();
+            }
+            else    {
+                tree = new utcTree(Grid, super.getVal(), false, timeToRun, false, true, c );
+                move = tree.testMethods();
+            }
 
             queenMove[0] = move[0];
             queenMove[1] = move[1];
